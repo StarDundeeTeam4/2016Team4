@@ -30,12 +30,12 @@ namespace StarMeter.Tests.Controllers
             const string testData = @"08-09-2016 13:57:18.1076
 3
 
-08-09-2016 13:57:29.2493
+08-09-2016 13:57:29.249
 P
 01 fe 00 01 02 03 04 05 06 07
 EOP
 
-08-09-2016 13:58:23.5436";
+08-09-2016 13:58:23.546";
 
             var parser = new ParserTests();
             StringReader r = new StringReader(testData);
