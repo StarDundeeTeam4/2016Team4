@@ -28,7 +28,7 @@ namespace StarMeter.Tests.Controllers
             var actualResult = parser.GetPacketType(inputLine);
 
 
-            Assert.Equals(actualResult, expectedResult);
+            Assert.AreEqual(actualResult, expectedResult);
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace StarMeter.Tests.Controllers
 
             var actualResult = parser.GetPacketType(inputLine);
 
-            Assert.Equals(actualResult, expectedResult);
+            Assert.AreEqual(actualResult, expectedResult);
         }
             
     }
