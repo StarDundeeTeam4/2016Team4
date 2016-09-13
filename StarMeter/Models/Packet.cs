@@ -20,6 +20,11 @@ namespace StarMeter.Models
         public Guid     PrevPacket   { get; set; }
         public Guid     NextPacket   { get; set; }
 
+        public Packet()
+        {
+            
+        }
+
         public Packet(string type, byte[] cargo, byte[] address, DateTime date, int port)
         {
             PacketID = new Guid();

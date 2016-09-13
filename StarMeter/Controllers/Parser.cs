@@ -10,6 +10,8 @@ namespace StarMeter.Controllers
 {
     public class Parser
     {
+        private int portNumber;
+
         public void ParseFile()
         {
             //set up string buffer/etc.
@@ -20,8 +22,9 @@ namespace StarMeter.Controllers
             }
         }
 
-        private IEnumerable<Packet> ParsePacket(TextReader r)
+        protected IEnumerable<Packet> ParsePacket(TextReader r)
         {
+            restart:
             //Parse DateTime
             string line = r.ReadLine();
             if (line == null) //ensure file exists
@@ -42,15 +45,17 @@ namespace StarMeter.Controllers
             else
             {
                 //identify packet type
-                char type = line[0];
-                if (char.IsDigit(type))
+                if (char.IsDigit(line[0]))
                 {
                     //then is port number
-                    //set "global" port number variable
+                    portNumber = int.Parse(line);
+                    r.ReadLine();
+                    goto restart;
                 }
                 else
                 {
                     //packet type is var type
+                    char type = line[0];
                 }
             }
 
@@ -62,11 +67,15 @@ namespace StarMeter.Controllers
             line = r.ReadLine();
             if (line == "EOP")
             {
-                Packet packet = new Packet
-                {
-                    //set packet data here
-                };
-                yield return packet;
+                //create & return packet
+                yield return new Packet(
+                    );
+                    //type,
+                    //cargo,
+                    //address,
+                    //date,
+                    //portNumber
+                    //);
             }
             else
             {
