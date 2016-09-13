@@ -17,5 +17,18 @@ namespace StarMeter.Tests.Controllers
 
             Assert.IsInstanceOfType(result, typeof(DateTime));
         }
+
+
+        [TestMethod]
+        public void PassingStringReturnsCorrectDateTime()
+        {
+            var parser = new Parser();
+            const string stringDateTime = "08-09-2016 14:27:53.726";
+
+            var result = parser.ParseDateTime(stringDateTime);
+
+            var correctDateTime = new DateTime(2016,09,08, 14, 27, 53, 726);
+            Assert.AreEqual(correctDateTime, result);
+        }
     }
 }
