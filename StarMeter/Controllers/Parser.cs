@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StarMeter.Models;
 
 namespace StarMeter.Controllers
@@ -16,7 +12,7 @@ namespace StarMeter.Controllers
         public void ParseFile()
         {
             //set up string buffer/etc.
-            StreamReader r = new StreamReader("");
+            var r = new StreamReader("");
             foreach (Packet packet in ParsePacket(r))
             {
                 //add packet to data structure
@@ -25,6 +21,11 @@ namespace StarMeter.Controllers
 
         protected IEnumerable<Packet> ParsePacket(TextReader r)
         {
+            DateTime date;
+            byte[] address;
+            byte[] cargo;
+            string type;
+
             restart:
             //Parse DateTime
             string line = r.ReadLine();
@@ -34,7 +35,7 @@ namespace StarMeter.Controllers
             }
             else
             {
-                DateTime date = ParseDateTime(line);
+                date = ParseDateTime(line);
             }
 
             //Check if current section is end section. i.e. is only datetime then EOF
@@ -56,31 +57,45 @@ namespace StarMeter.Controllers
                 else
                 {
                     //packet type is var type
-                    char type = line[0];
+                    type = line;
                 }
             }
 
-            //parse cargo
-            line = r.ReadLine();
-            ParseCargo(line);
-
-            //is end of packet?
-            line = r.ReadLine();
-            if (line == "EOP")
+            if (type == "P")
             {
-                //create & return packet
-                yield return new Packet(
-                    );
-                    //type,
-                    //cargo,
-                    //address,
-                    //date,
-                    //portNumber
-                    //);
+                //parse cargo
+                line = r.ReadLine();
+                ParseCargo(line);
             }
             else
             {
-                //is an EEP/Disconnect packet
+                //no cargo in error packets
+                goto endOfPacket;
+            }
+
+            //PLACEHOLDER
+            cargo = new byte[1];
+            address = new byte[1];
+            //PLACEHOLDER
+
+            //is end of packet?
+            endOfPacket:
+            line = r.ReadLine();
+            if (line == "EOP") //EOP, EEP, None, Disconnect?
+            {
+                //create & return packet
+                yield return new Packet(
+                    type,
+                    cargo,
+                    address,
+                    date,
+                    portNumber
+                    );
+            }
+            else
+            {
+                //is an EEP/None/Disconnect packet
+                //a None->Disconnect on link A will be followed by an EEP->Disconnect on link B
                 //deal with that here
             }
         }

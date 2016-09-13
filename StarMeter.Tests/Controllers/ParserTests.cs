@@ -22,6 +22,7 @@ namespace StarMeter.Tests.Controllers
             var result = parser.ParseDateTime(stringDateTime);
 
             Assert.IsInstanceOfType(result, typeof(DateTime));
+            Assert.AreEqual(result, new DateTime(2016, 09, 08, 14, 27, 53, 726));
         }
 
         [TestMethod]
@@ -38,9 +39,9 @@ EOP
 08-09-2016 13:58:23.546";
 
             var parser = new ParserTests();
-            StringReader r = new StringReader(testData);
+            var r = new StringReader(testData);
 
-            var e = parser.ParsePacket(r);
+            IEnumerable<Packet> e = parser.ParsePacket(r);
             Assert.AreEqual(1, e.Count());
         }
     }
