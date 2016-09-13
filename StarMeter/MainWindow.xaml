@@ -8,7 +8,6 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <!--Column used to preserve formatting of columns.-->
-                <ColumnDefinition Width="*" />
                 <!--These columns show the packet data for each channel.-->
                 <ColumnDefinition  Name="Data1a" Width="2*" />
                 <ColumnDefinition Name="Data1b" Width="2*" />
@@ -20,7 +19,6 @@
                 <ColumnDefinition Name="Data4b" Width="2*" />
 
                 <!--Column used to preserve formatting of columns.-->
-                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
         </Grid>
     </StackPanel>

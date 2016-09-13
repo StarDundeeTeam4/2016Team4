@@ -96,12 +96,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\IMG_6457.JPG" />
-  </ItemGroup>
-  <ItemGroup>
+<<<<<<< HEAD
     <Folder Include="Controllers\" />
     <Folder Include="Models\" />
     <Folder Include="View\" />
+=======
+    <Resource Include="Resources\IMG_6457.JPG" />
+>>>>>>> 8ff9f2573638956e5b94670f81ec8db902400ebf
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
