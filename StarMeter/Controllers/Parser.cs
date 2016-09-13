@@ -73,13 +73,13 @@ namespace StarMeter.Controllers
                 goto endOfPacket;
             }
 
+            endOfPacket:
             //PLACEHOLDER
             cargo = new byte[1];
             address = new byte[1];
             //PLACEHOLDER
 
             //is end of packet?
-            endOfPacket:
             line = r.ReadLine();
             if (line == "EOP") //EOP, EEP, None, Disconnect?
             {
