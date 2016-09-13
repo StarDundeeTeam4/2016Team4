@@ -27,5 +27,14 @@ namespace StarMeter.Controllers
         {
             return new DateTime();
         }
+
+        public string GetPacketType(string inputLine)
+        {
+            var packetType = char.IsDigit(inputLine[0]) 
+                ? "port number" 
+                : "packet";
+            return packetType;
+        }
+
     }
 }
