@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using StarMeter.Models;
 
 namespace StarMeter.Controllers
@@ -100,14 +100,22 @@ namespace StarMeter.Controllers
             }
         }
 
+        public byte[] ParseCargo(string line)
+        {
+            return new byte[1];
+        }
+
         public DateTime ParseDateTime(string stringDateTime)
         {
             return DateTime.ParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null);
         }
 
-        public byte[] ParseCargo(string str)
+        public string GetPacketType(string inputLine)
         {
-            return new byte[1]; //placeholder
+            var packetType = char.IsDigit(inputLine[0]) 
+                ? "port number" 
+                : "packet";
+            return packetType;
         }
     }
 }

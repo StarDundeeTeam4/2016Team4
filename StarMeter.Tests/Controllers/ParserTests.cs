@@ -44,5 +44,31 @@ EOP
             IEnumerable<Packet> e = parser.ParsePacket(r);
             Assert.AreEqual(1, e.Count());
         }
+
+        [TestMethod]
+        public void GivenAnIntGetPacketTypeShouldReturnPortNumberTest()
+        {
+            var inputLine = "1";
+            var parser = new Parser();
+            var expectedResult = "port number";
+
+            var actualResult = parser.GetPacketType(inputLine);
+
+
+            Assert.AreEqual(actualResult, expectedResult);
+        }
+
+        [TestMethod]
+        public void GivenACharGetPacketTypeShouldReturnPacketTest()
+        {
+            var inputLine = "P";
+            var parser = new Parser();
+            var expectedResult = "packet";
+
+            var actualResult = parser.GetPacketType(inputLine);
+
+            Assert.AreEqual(actualResult, expectedResult);
+        }
+            
     }
 }
