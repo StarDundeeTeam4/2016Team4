@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StarMeter.Controllers;
-using StarMeter.Models;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace StarMeter.Tests.Controllers
 {
     [TestClass]
-    public class ParserTests : Parser
+    public class ParserTests
     {
         [TestMethod]
         public void PassingCorrectStringReturnsDateTimeTest()
@@ -26,31 +19,11 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
-        public void ParsePacketTest()
-        {
-            const string testData = @"08-09-2016 13:57:18.107
-3
-
-08-09-2016 13:57:29.249
-P
-01 fe 00 01 02 03 04 05 06 07
-EOP
-
-08-09-2016 13:58:23.546";
-
-            var parser = new ParserTests();
-            var r = new StringReader(testData);
-
-            IEnumerable<Packet> e = parser.ParsePacket(r);
-            Assert.AreEqual(1, e.Count());
-        }
-
-        [TestMethod]
         public void GivenAnIntGetPacketTypeShouldReturnPortNumberTest()
         {
-            var inputLine = "1";
+            const string inputLine = "1";
             var parser = new Parser();
-            var expectedResult = "port number";
+            const string expectedResult = "port number";
 
             var actualResult = parser.GetPacketType(inputLine);
 
@@ -61,14 +34,22 @@ EOP
         [TestMethod]
         public void GivenACharGetPacketTypeShouldReturnPacketTest()
         {
-            var inputLine = "P";
+            const string inputLine = "P";
             var parser = new Parser();
-            var expectedResult = "packet";
+            const string expectedResult = "packet";
 
             var actualResult = parser.GetPacketType(inputLine);
 
             Assert.AreEqual(actualResult, expectedResult);
         }
-            
+
+        [TestMethod]
+        public void GiveOnePacketRecording()
+        {
+            var parser = new Parser();
+            parser.ParseFile();
+
+        }
+
     }
 }

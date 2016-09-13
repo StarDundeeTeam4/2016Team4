@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Documents;
 using StarMeter.Models;
 
 namespace StarMeter.Controllers
@@ -9,95 +12,50 @@ namespace StarMeter.Controllers
     {
         private int portNumber;
 
+        private const string DateTimeRegex = @"^(0[1-9]|1\d|2[0-8]|29(?=-\d\d-(?!1[01345789]00|2[1235679]00)\d\d(?:[02468][048]|[13579][26]))|30(?!-02)|31(?=-0[13578]|-1[02]))-(0[1-9]|1[0-2])-([12]\d{3}) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d).(\d{3})$";
+
         public void ParseFile()
         {
             //set up string buffer/etc.
-            var r = new StreamReader("");
-            foreach (Packet packet in ParsePacket(r))
-            {
-                //add packet to data structure
-            }
-        }
+            var r = new StreamReader(@"C:\Users\arturpopov\Desktop\test2_link3.rec");
+            var line = "";
 
-        protected IEnumerable<Packet> ParsePacket(TextReader r)
-        {
+            var startStamp = ParseDateTime(r.ReadLine());
+            DateTime endStamp;
+            portNumber = int.Parse(r.ReadLine());
+            r.ReadLine();
+
+            var packetList = new List<Packet>();
+
             DateTime date;
-            byte[] address;
-            byte[] cargo;
-            string type;
-
-            restart:
-            //Parse DateTime
-            string line = r.ReadLine();
-            if (line == null) //ensure file exists
+           
+            while ((line = r.ReadLine()) != null && r.Peek() > -1)
             {
-                yield break;
-            }
-            else
-            {
-                date = ParseDateTime(line);
-            }
-
-            //Check if current section is end section. i.e. is only datetime then EOF
-            line = r.ReadLine();
-            if (line == null)
-            {
-                yield break;
-            }
-            else
-            {
-                //identify packet type
-                if (char.IsDigit(line[0]))
+                var packet = new Packet();
+                
+                if (Regex.IsMatch(line, DateTimeRegex))
                 {
-                    //then is port number
-                    portNumber = int.Parse(line);
-                    r.ReadLine();
-                    goto restart;
+                    packet.DateRecieved = ParseDateTime(line);
+                }
+            
+
+                var packetType = r.ReadLine();
+                if (string.Compare(packetType, "P") == 0)
+                {
+                    
+                    packet.Cargo = r.ReadLine().Split(' ');
+                    var endingState = r.ReadLine();
+                    packet.IsError = string.Compare(endingState, "EOP") != 0;
                 }
                 else
                 {
-                    //packet type is var type
-                    type = line;
+                    packet.IsError = true;
+                    r.ReadLine();
                 }
+                packetList.Add(packet);
+                r.ReadLine();
             }
-
-            if (type == "P")
-            {
-                //parse cargo
-                line = r.ReadLine();
-                ParseCargo(line);
-            }
-            else
-            {
-                //no cargo in error packets
-                goto endOfPacket;
-            }
-
-            endOfPacket:
-            //PLACEHOLDER
-            cargo = new byte[1];
-            address = new byte[1];
-            //PLACEHOLDER
-
-            //is end of packet?
-            line = r.ReadLine();
-            if (line == "EOP") //EOP, EEP, None, Disconnect?
-            {
-                //create & return packet
-                yield return new Packet(
-                    type,
-                    cargo,
-                    address,
-                    date,
-                    portNumber
-                    );
-            }
-            else
-            {
-                //is an EEP/None/Disconnect packet
-                //a None->Disconnect on link A will be followed by an EEP->Disconnect on link B
-                //deal with that here
-            }
+            endStamp = ParseDateTime(line);
         }
 
         public byte[] ParseCargo(string line)
