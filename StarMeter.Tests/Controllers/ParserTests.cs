@@ -17,5 +17,31 @@ namespace StarMeter.Tests.Controllers
 
             Assert.IsInstanceOfType(result, typeof(DateTime));
         }
+
+        [TestMethod]
+        public void GivenAnIntGetPacketTypeShouldReturnPortNumberTest()
+        {
+            var inputLine = "1";
+            var parser = new Parser();
+            var expectedResult = "port number";
+
+            var actualResult = parser.GetPacketType(inputLine);
+
+
+            Assert.Equals(actualResult, expectedResult);
+        }
+
+        [TestMethod]
+        public void GivenACharGetPacketTypeShouldReturnPacketTest()
+        {
+            var inputLine = "P";
+            var parser = new Parser();
+            var expectedResult = "packet";
+
+            var actualResult = parser.GetPacketType(inputLine);
+
+            Assert.Equals(actualResult, expectedResult);
+        }
+            
     }
 }
