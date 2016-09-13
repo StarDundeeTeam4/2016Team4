@@ -63,9 +63,19 @@ namespace StarMeter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IMG_6457 {
+        internal static System.Drawing.Bitmap down_arrow {
             get {
-                object obj = ResourceManager.GetObject("IMG_6457", resourceCulture);
+                object obj = ResourceManager.GetObject("down_arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap up_arrow {
+            get {
+                object obj = ResourceManager.GetObject("up_arrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

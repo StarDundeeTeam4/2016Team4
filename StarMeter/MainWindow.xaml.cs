@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -103,6 +104,61 @@ namespace StarMeter
                 }
             }
         }
+
+
+        //This lets us know which image to change to.
+        private bool is_up_arrow = true;
+
+        private void ShowDataVisPopup(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("CLEEK");
+            //t = new Timer();
+            //t.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
+            //t.Interval = 10;
+            //t.Start();
+            int height = 0;
+            ImageBrush image = null;
+            if (is_up_arrow == true)
+            {
+                height = 10;
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/down-arrow.png")));
+            }
+            else
+            {
+                height = 1;
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")));
+            }
+
+            DataVisualisationPopup.Height = new GridLength(height, GridUnitType.Star);
+            DataVisButton.Background = image;
+            is_up_arrow = !is_up_arrow;
+        }
+        
+        
+        // This is the method to run when the timer is raised.
+        private void TimerEventProcessor(Object myObject,EventArgs myEventArgs)
+        {
+            t.Stop();
+
+
+            // Restarts the timer and increments the counter.
+            count += 1;
+            t.Enabled = true;
+
+            Console.WriteLine(count);
+
+            DataVisualisationPopup.Height = new GridLength(count, GridUnitType.Star); ;
+
+            //if (count > 40)
+            //{
+            //    t.Stop();
+            //    Console.WriteLine("STOP");
+            //}
+
+        }
+
+        Timer t;
+        int count = 0;
 
     }
 }

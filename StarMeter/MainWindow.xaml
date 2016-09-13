@@ -22,7 +22,7 @@
             <Setter Property="Foreground" Value="White"></Setter>
             <Setter Property="Background" Value="Transparent"></Setter>
         </Style>
-
+    
     </Window.Resources>
 
     <Grid
@@ -35,8 +35,8 @@
 
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="6*" />
-            <RowDefinition Height="0" Name="DataVisualisationPopup" />
+            <RowDefinition Height="26*" />
+            <RowDefinition Height="1*" Name="DataVisualisationPopup" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
@@ -50,12 +50,16 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="#0CFFFFFF">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="8*" />
-            </Grid.RowDefinitions>
+        <Button Grid.Row="1" Grid.Column="1"  Width="50" Content="" VerticalAlignment="Top" Click="ShowDataVisPopup" Name="DataVisButton">
+            <Button.Background>
+                <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png"/>
+            </Button.Background>
+        </Button>
 
-            <Grid Grid.Row="2">
+        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="#0CFFFFFF" VerticalAlignment="Stretch">
+
+
+            <Grid Background="#7F008080">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -103,8 +107,8 @@
                 />
             <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White"/>
         </Canvas>
-    </Grid>
 
+    </Grid>
 
 </Window>
 
