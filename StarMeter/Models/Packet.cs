@@ -9,15 +9,15 @@ namespace StarMeter.Models
 {
     public class Packet
     {
-        public Guid packetId { get; set; }
-        public String typeOfPacket { get; set; }
-        public Byte[] cargo { get; set; }
-        public Byte[] address { get; set; }
-        public Guid previousPacket { get; set; }
-        public DateTime dateRecieved { get; set; }
-        public Boolean isError { get; set; }
-        public String errorType { get; set; }
-        public int portNumber { get; set; }
-
+        public Guid     packetId       { get; }
+        public string   typeOfPacket   { get; }
+        public byte[]   cargo          { get; }
+        public byte[]   address        { get; }
+        public DateTime dateRecieved   { get; }
+        public bool     isError        { get; }
+        public string   errorType      { get; }
+        public int      portNumber     { get; }
+        public Guid     previousPacket { get; set; }
+        public Guid     nextPacket     { get; set; }
     }
 }
