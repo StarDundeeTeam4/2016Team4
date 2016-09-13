@@ -5,9 +5,18 @@ namespace StarMeter.Controllers
 {
     public class Parser
     {
-        public Packet ParsePacket()
+        public void ParseFile()
         {
-            return new Packet();
+            //set up string buffer/etc.
+            foreach (Packet packet in ParsePacket())
+            {
+                //add packet to data structure
+            }
+        }
+
+        private static System.Collections.Generic.IEnumerable<Packet> ParsePacket()
+        {
+            yield return new Packet();
         }
     }
 }
