@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace StarMeter.Tests
+namespace StarMeter.Tests.Controllers
 {
     [TestClass]
     public class ParserTests
