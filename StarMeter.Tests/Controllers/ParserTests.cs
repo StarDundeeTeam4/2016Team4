@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StarMeter.Controllers;
+using StarMeter.Models;
 
 namespace StarMeter.Tests.Controllers
 {
@@ -6,8 +8,11 @@ namespace StarMeter.Tests.Controllers
     public class ParserTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void TestParsePacket()
         {
+            Parser parser = new Parser();
+            var packet = parser.ParsePacket();
+            Assert.IsInstanceOfType( packet, typeof(Packet) );
         }
     }
 }
