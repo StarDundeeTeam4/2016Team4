@@ -123,13 +123,14 @@ namespace StarMeter
             if (is_up_arrow == true)
             {
                 //height = 10;
+                DataVisButton.VerticalAlignment = VerticalAlignment.Top;
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/down-arrow.png")));
-
             }
             else
             {
-                height = 1;
+                //height = 1;
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")));
+                image.Stretch = Stretch.UniformToFill;
             }
 
             if (t == null)
@@ -164,6 +165,9 @@ namespace StarMeter
             if ((count > 10 && is_up_arrow) || (count < 2 && !is_up_arrow))
             {
                 t.Stop();
+
+                DataVisualisationPopup.Dispatcher.Invoke(new UpdateSlider(FixStretch));
+                
                 Console.WriteLine("STOP");
                 is_up_arrow = !is_up_arrow;
                 t = null;
@@ -183,6 +187,15 @@ namespace StarMeter
         private void MoveSlider()
         {
             DataVisualisationPopup.Height = new GridLength(count, GridUnitType.Star); ;
+        }
+
+        private void FixStretch()
+        {
+            if (!is_up_arrow)
+            {
+                DataVisButton.VerticalAlignment = VerticalAlignment.Stretch;
+            }
+
         }
 
     }
