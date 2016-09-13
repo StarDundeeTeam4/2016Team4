@@ -28,11 +28,11 @@ namespace StarMeter.Controllers
             return new DateTime();
         }
 
-        public string GetPacketType(string input)
+        public string GetPacketType(string inputLine)
         {
-            var packetType = input.Contains("P") 
-                ? "packet" 
-                : "port number";
+            var packetType = char.IsDigit(inputLine[0]) 
+                ? "port number" 
+                : "packet";
             return packetType;
         }
 
