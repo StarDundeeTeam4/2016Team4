@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -86,7 +87,7 @@ namespace StarMeter.Controllers
 
         public DateTime ParseDateTime(string stringDateTime)
         {
-            return new DateTime(); //placeholder
+            return DateTime.ParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null);
         }
 
         public byte[] ParseCargo(string str)
