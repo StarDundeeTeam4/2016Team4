@@ -111,6 +111,7 @@ namespace StarMeter
 
         private void ShowDataVisPopup(object sender, RoutedEventArgs e)
         {
+
             Console.WriteLine("CLEEK");
             //t = new Timer();
             //t.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
@@ -118,10 +119,12 @@ namespace StarMeter
             //t.Start();
             int height = 0;
             ImageBrush image = null;
+
             if (is_up_arrow == true)
             {
-                height = 10;
+                //height = 10;
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/down-arrow.png")));
+
             }
             else
             {
@@ -129,36 +132,60 @@ namespace StarMeter
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")));
             }
 
-            DataVisualisationPopup.Height = new GridLength(height, GridUnitType.Star);
+            if (t == null)
+            {
+                t = new Timer();
+                t.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
+                t.Interval = 10;
+                t.Start();
+            }
+
             DataVisButton.Background = image;
-            is_up_arrow = !is_up_arrow;
         }
-        
-        
+
+
+        public delegate void UpdateSlider();
+
+
         // This is the method to run when the timer is raised.
         private void TimerEventProcessor(Object myObject,EventArgs myEventArgs)
         {
-            t.Stop();
-
 
             // Restarts the timer and increments the counter.
-            count += 1;
-            t.Enabled = true;
+            if (is_up_arrow)
+            {
+                count += 1;
+            }
+            else 
+            {
+                count -= 1;
+            }
+
+            if ((count > 10 && is_up_arrow) || (count < 2 && !is_up_arrow))
+            {
+                t.Stop();
+                Console.WriteLine("STOP");
+                is_up_arrow = !is_up_arrow;
+                t = null;
+            }
+
 
             Console.WriteLine(count);
+            DataVisualisationPopup.Dispatcher.Invoke(new UpdateSlider(MoveSlider));
 
-            DataVisualisationPopup.Height = new GridLength(count, GridUnitType.Star); ;
 
-            //if (count > 40)
-            //{
-            //    t.Stop();
-            //    Console.WriteLine("STOP");
-            //}
 
         }
 
-        Timer t;
+        Timer t = null;
         int count = 0;
 
+        private void MoveSlider()
+        {
+            DataVisualisationPopup.Height = new GridLength(count, GridUnitType.Star); ;
+        }
+
     }
+
+
 }
