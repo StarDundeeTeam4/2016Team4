@@ -1,8 +1,86 @@
 ﻿<Window x:Class="StarMeter.MainWindow"
+        
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="MainWindow" Height="600" Width="1000" Background="#00000000">
+
+    <Grid
+        x:Name="theGrid"
+        MouseDown="Grid_MouseDown"
+        MouseUp="Grid_MouseUp"
+        MouseMove="Grid_MouseMove"
+        >
+
+
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Black" Offset="1"/>
+                <GradientStop Color="#FF000037"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+
+        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="#0CFFFFFF">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="3*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16*" />
+                    <ColumnDefinition Width= "*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="1" Background="#FFC61414">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+
+
+            </Grid>
+            
+            <Canvas x:Name="BarCanvas" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+               
+                <Label Grid.Row ="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22" Foreground="White" Margin="-10,0,9.8,0">A heading</Label>
+
+            </Canvas>
+        </Grid>
+        <Canvas>
+            <!-- This canvas is overlaid over the previous canvas and is used to 
+                place the rectangle that implements the drag selection box. -->
+            <Rectangle
+                x:Name="selectionBox"
+                Visibility="Collapsed"
+                Stroke="White"
+                StrokeThickness="1"
+                />
+            <Label Name="SizeLabelTest" Content="Label" Canvas.Left="125" Canvas.Top="190" Foreground="White"/>
+        </Canvas>
     </Grid>
+
+
 </Window>

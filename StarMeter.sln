@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarMeter", "StarMeter\StarMeter.csproj", "{B244C096-7639-4AD2-A8A7-A017B4444C14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarMeter.Tests", "UnitTestProject1\StarMeter.Tests.csproj", "{665BE57A-A2C9-4B38-92F3-92A5924CB8ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B244C096-7639-4AD2-A8A7-A017B4444C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B244C096-7639-4AD2-A8A7-A017B4444C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B244C096-7639-4AD2-A8A7-A017B4444C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665BE57A-A2C9-4B38-92F3-92A5924CB8ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665BE57A-A2C9-4B38-92F3-92A5924CB8ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665BE57A-A2C9-4B38-92F3-92A5924CB8ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665BE57A-A2C9-4B38-92F3-92A5924CB8ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
