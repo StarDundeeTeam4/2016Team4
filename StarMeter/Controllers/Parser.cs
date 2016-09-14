@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
 using StarMeter.Interfaces;
 using StarMeter.Models;
 
@@ -11,58 +8,54 @@ namespace StarMeter.Controllers
 {
     public class Parser
     {
-        public Recording recording;
+        public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
 
         private const string DateTimeRegex = @"^(0[1-9]|1\d|2[0-8]|29(?=-\d\d-(?!1[01345789]00|2[1235679]00)\d\d(?:[02468][048]|[13579][26]))|30(?!-02)|31(?=-0[13578]|-1[02]))-(0[1-9]|1[0-2])-([12]\d{3}) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d).(\d{3})$";
 
-        public Recording ParseRecording(string path)
+        public void ParseFile()
         {
-            recording = new Recording();
-
-            //set up string buffer/etc.
-            var r = new StreamReaderWrapper(path);
-
-
-            recording.startStamp = ParseDateTime(r.ReadLine());
-            recording.portNumber = int.Parse(r.ReadLine());
-            r.ReadLine(); // Skip over whitespace
-
-            recording.packetList = ParsePackets(r, out recording.endStamp);
-
-            return recording;
+            const string filePath = ""; 
+            var r = new StreamReaderWrapper(filePath);
+            PacketDict = ParsePackets(r);
         }
 
-        public List<Packet> ParsePackets(IStreamReader r, out DateTime recordingEndStamp)
+        public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)
         {
             var line = "";
-            var packetList = new List<Packet>();
+            r.ReadLine();
+            var strPortNumber = r.ReadLine();
+            var portNumber = int.Parse(strPortNumber);
+            r.ReadLine();
             while ((line = r.ReadLine()) != null && r.Peek() > -1)
             {
-                var packet = new Packet();
-
+                var packetId = Guid.NewGuid();
+                var packet = new Packet {PortNumber = portNumber, PacketId = packetId};
                 if (Regex.IsMatch(line, DateTimeRegex))
                 {
                     packet.DateRecieved = ParseDateTime(line);
                 }
 
-
                 var packetType = r.ReadLine();
-                if (string.Compare(packetType, "P") == 0)
+                if (IsPType(packetType))
                 {
                     packet.Cargo = r.ReadLine().Split(' ');
                     var endingState = r.ReadLine();
-                    packet.IsError = string.Compare(endingState, "EOP") != 0;
+                    packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }
                 else
                 {
                     packet.IsError = true;
                     r.ReadLine();
                 }
-                packetList.Add(packet);
+                PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
-            recordingEndStamp = ParseDateTime(line);
-            return packetList;
+            return PacketDict;
+        }
+
+        protected static bool IsPType(string packetType)
+        {
+            return string.CompareOrdinal(packetType, "P") == 0;
         }
 
         public byte[] ParseCargo(string line)
@@ -75,12 +68,5 @@ namespace StarMeter.Controllers
             return DateTime.ParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null);
         }
 
-        public string GetPacketType(string inputLine)
-        {
-            var packetType = char.IsDigit(inputLine[0]) 
-                ? "port number" 
-                : "packet";
-            return packetType;
-        }
     }
 }
