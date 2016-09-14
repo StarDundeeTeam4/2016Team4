@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
+using StarMeter.Interfaces;
 using StarMeter.Models;
 
 namespace StarMeter.Controllers
@@ -19,7 +20,7 @@ namespace StarMeter.Controllers
             recording = new Recording();
 
             //set up string buffer/etc.
-            var r = new StreamReader(path);
+            var r = new StreamReaderWrapper(path);
 
 
             recording.startStamp = ParseDateTime(r.ReadLine());
@@ -31,7 +32,7 @@ namespace StarMeter.Controllers
             return recording;
         }
 
-        public List<Packet> ParsePackets(StreamReader r, out DateTime recordingEndStamp)
+        public List<Packet> ParsePackets(IStreamReader r, out DateTime recordingEndStamp)
         {
             var line = "";
             var packetList = new List<Packet>();
