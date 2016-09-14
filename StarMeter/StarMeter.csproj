@@ -63,6 +63,8 @@
     </Compile>
     <Compile Include="Controllers\CRC.cs" />
     <Compile Include="Controllers\Parser.cs" />
+    <Compile Include="Controllers\StreamReaderWrapper.cs" />
+    <Compile Include="Interfaces\IStreamReader.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -3,10 +3,10 @@ using System.Text;
 
 namespace StarMeter.Controllers
 {
-    public static class CRC
+    public static class Crc
     {
         /** The lookup table used to calculate the RMAP CRC for a buffer. */
-        private static readonly ushort[] RMAP_CRCTable = {  0x00, 0x91, 0xe3, 0x72, 0x07, 0x96, 0xe4, 0x75,
+        private static readonly ushort[] RmapCrcTable = {  0x00, 0x91, 0xe3, 0x72, 0x07, 0x96, 0xe4, 0x75,
                                                             0x0e, 0x9f, 0xed, 0x7c, 0x09, 0x98, 0xea, 0x7b,
                                                             0x1c, 0x8d, 0xff, 0x6e, 0x1b, 0x8a, 0xf8, 0x69,
                                                             0x12, 0x83, 0xf1, 0x60, 0x15, 0x84, 0xf6, 0x67,
@@ -55,8 +55,8 @@ namespace StarMeter.Controllers
             {
                 /* The value of the byte from the buffer is XORed with the current CRC value. */
                 /* The result is then used to lookup the new CRC value from the lookup table */
-                byte index = (byte) (crc ^ bytes[i]);
-                crc = (ushort) ((crc >> 8) ^ RMAP_CRCTable[index]);
+                byte index = (byte) (crc ^ i);
+                crc = (ushort) ((crc >> 8) ^ RmapCrcTable[index]);
             }
             return crc;
         }
@@ -78,11 +78,11 @@ namespace StarMeter.Controllers
         /// </summary>
         /// <param name="packet">The packet to validate</param>
         /// <returns>Whether the provided checksum matches the calculated value</returns>
-        public static bool CheckCRCForPacket(byte[] packet)
+        public static bool CheckCrcForPacket(byte[] packet)
         {
-            byte[] packetBody = packet.Take(packet.Count() - 1).ToArray();
+            byte[] packetBody = packet.Take(packet.Length - 1).ToArray();
             ushort crcToCheck = packet.Last();
-            ushort calculatedCrc = CRC.RMAP_CalculateCRC(packetBody);
+            ushort calculatedCrc = RMAP_CalculateCRC(packetBody);
 
             return Equals(crcToCheck, calculatedCrc);
         }

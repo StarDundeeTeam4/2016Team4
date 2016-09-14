@@ -1,44 +1,41 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StarMeter.Controllers;
 
 namespace StarMeter.Tests.Controllers
 {
     [TestClass]
-    public class CRCTest
+    public class CrcTest
     {
         /// <summary>
         /// Checks whether the CRC class produces the correct checksum for a given packet
         /// </summary>
         [TestMethod]
-        public void TestCRC()
+        public void TestCrc()
         {
             byte[] packet = { 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08 };
 
-            ushort result = CRC.RMAP_CalculateCRC(packet);
+            var result = Crc.RMAP_CalculateCRC(packet);
 
             Assert.AreEqual(result, 0x3e);
-            System.Diagnostics.Trace.WriteLine(CRC.ByteToHexString(result));
+            System.Diagnostics.Trace.WriteLine(Crc.ByteToHexString(result));
         }
 
         /// <summary>
         /// Checks whether the comparison correctly returns true for a correct checksum for a given packet
         /// </summary>
         [TestMethod]
-        public void TestCheckCRCForPacketTrue()
+        public void TestCheckCrcForPacketTrue()
         {
             byte[] packet = { 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e };
 
-            Assert.IsTrue(CRC.CheckCRCForPacket(packet));
+            Assert.IsTrue(Crc.CheckCrcForPacket(packet));
         }
 
         /// <summary>
         /// Checks whether the comparison correctly returns false for a correct checksum for a given packet
         /// </summary>
         [TestMethod]
-        public void TestCheckCRCForPacketFalse()
+        public void TestCheckCrcForPacketFalse()
         {
             byte[] packet =
             {
@@ -48,7 +45,7 @@ namespace StarMeter.Tests.Controllers
                 0x06, 0xcf, 0x54, 0xd5, 0x16, 0x37, 0x96, 0xe4, 0xab, 0x6c, 0x5a, 0xb0, 0x3e
             };
 
-            Assert.IsFalse(CRC.CheckCRCForPacket(packet));
+            Assert.IsFalse(Crc.CheckCrcForPacket(packet));
         }
     }
 }

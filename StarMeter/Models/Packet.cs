@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StarMeter.Models
 {
     public class Packet
     {
-        public Guid     PacketID     { get; set; }
+        public Guid     PacketId     { get; set; }
         public string   TypeOfPacket { get; private set; }
         public string[]   Cargo        { get; set; }
         public byte[]   Address      { get; private set; }
@@ -27,7 +22,7 @@ namespace StarMeter.Models
 
         public Packet(string type, string[] cargo, byte[] address, DateTime date, int port)
         {
-            PacketID = new Guid();
+            PacketId = new Guid();
             TypeOfPacket = type;
             Cargo = cargo;
             Address = address;
@@ -37,7 +32,7 @@ namespace StarMeter.Models
 
         public Packet(string type, string[] cargo, byte[] address, DateTime date, int port, string errorType)
         {
-            PacketID = new Guid();
+            PacketId = new Guid();
             TypeOfPacket = type;
             Cargo = cargo;
             Address = address;
