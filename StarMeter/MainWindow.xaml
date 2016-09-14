@@ -157,7 +157,9 @@
                 StrokeThickness="5"
                 />
             <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White" />
-            <Button Content="Button" Canvas.Left="106" Canvas.Top="470" Width="75" Click="TestTimeCreation"/>
+            <Label HorizontalAlignment="Center" Name="FileSelected" Content="No File Selected" Canvas.Left="10" Canvas.Top="63" Foreground="White" Width="Auto" Height="Auto" />
+            <Button Content="Add Test values" Canvas.Left="55" Canvas.Top="248" Width="91" Click="TestTimeCreation"/>
+            <Button Content="Select File" Canvas.Left="71" Canvas.Top="44" Width="75" Click="FileSelection"/>
 
 
 

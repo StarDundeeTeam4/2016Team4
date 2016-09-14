@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -129,7 +131,43 @@ namespace StarMeter
         }
 
 
+        void FileSelection(object sender, RoutedEventArgs e) 
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
 
+            ofd.Multiselect = true;
+
+            bool? confirmed = ofd.ShowDialog();
+
+            if (confirmed == true) 
+            {
+                // this is where we read the file
+
+                // display file name
+                string[] filename = ofd.FileNames;
+
+                string output = "";
+
+                foreach (var s in filename)
+                {
+                    string[] split = s.Split('\\');
+                    string actualName = split[split.Length - 1];
+
+                    output += actualName + ",\n";
+                }
+
+                if(output.Length > 1)
+                {
+                    output = output.Substring(0, output.Length - 2);
+                }
+
+                FileSelected.Content = output;
+
+            }
+
+
+
+        }
 
 
         //This lets us know which image to change to.
