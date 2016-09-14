@@ -10,35 +10,26 @@ namespace StarMeter.Controllers
 {
     public class Parser
     {
-        public Recording recording;
+        public Dictionary<Guid, Packet> packetDict = new Dictionary<Guid, Packet>();
 
         private const string DateTimeRegex = @"^(0[1-9]|1\d|2[0-8]|29(?=-\d\d-(?!1[01345789]00|2[1235679]00)\d\d(?:[02468][048]|[13579][26]))|30(?!-02)|31(?=-0[13578]|-1[02]))-(0[1-9]|1[0-2])-([12]\d{3}) ([01]\d|2[0-3]):([0-5]\d):([0-5]\d).(\d{3})$";
 
-        public Recording ParseRecording(string path)
+        public void ParseFile()
         {
-            recording = new Recording();
-
-            //set up string buffer/etc.
-            var r = new StreamReader(path);
-
-
-            recording.startStamp = ParseDateTime(r.ReadLine());
-            recording.portNumber = int.Parse(r.ReadLine());
-            r.ReadLine(); // Skip over whitespace
-
-            recording.packetList = ParsePackets(r, out recording.endStamp);
-
-            return recording;
+            String filePath = ""; 
+            StreamReader r = new StreamReader(filePath);
+            packetDict = ParsePackets(r);
         }
 
-        public List<Packet> ParsePackets(StreamReader r, out DateTime recordingEndStamp)
+        public Dictionary<Guid, Packet> ParsePackets(StreamReader r)
         {
             var line = "";
-            var packetList = new List<Packet>();
+            r.ReadLine();
+            var portNumber = int.Parse(r.ReadLine());
             while ((line = r.ReadLine()) != null && r.Peek() > -1)
             {
-                var packet = new Packet();
-
+                var packetId = Guid.NewGuid();
+                var packet = new Packet {PortNumber = portNumber, PacketID = packetId};
                 if (Regex.IsMatch(line, DateTimeRegex))
                 {
                     packet.DateRecieved = ParseDateTime(line);
@@ -57,11 +48,10 @@ namespace StarMeter.Controllers
                     packet.IsError = true;
                     r.ReadLine();
                 }
-                packetList.Add(packet);
+                packetDict.Add(packetId, packet);
                 r.ReadLine();
             }
-            recordingEndStamp = ParseDateTime(line);
-            return packetList;
+            return packetDict;
         }
 
         public byte[] ParseCargo(string line)
