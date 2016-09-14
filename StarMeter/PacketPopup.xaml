@@ -4,11 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="600"
+      d:DesignHeight="300" d:DesignWidth="400"
 	Title="PacketPopup">
 
-    <Grid Background="HotPink" Name="BackgroundColour">
-        <Label x:Name="TestLabel" Content="STARTING" HorizontalAlignment="Left" Margin="277,178,0,0" VerticalAlignment="Top"/>
+    <Grid Background="#FF7EFF69" Name="BackgroundColour">
+        <Label x:Name="TestLabel" Content="STARTING" HorizontalAlignment="Left" Margin="175,149,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Page>

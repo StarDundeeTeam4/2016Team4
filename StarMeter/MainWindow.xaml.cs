@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -108,21 +109,22 @@ namespace StarMeter
             }
         }
 
+
+        void ScrollBackToBottom() 
+        {
+            PacketScroller.ScrollToBottom();
+        }
+
+
         void TestTimeCreation(object sender, RoutedEventArgs e) 
         {
-            Label l = new Label();
-            l.Content = "NEW LABEL";
-            Style s = FindResource("Timestamp") as Style;
-            l.Style = s;
-            TimeList.Children.Add(l);
-
 
             for (int i = 0; i < 8; i++) 
             {
                 Label lo = new Label();
-                lo.Content = "LOOP LABEL";
-                Style so = FindResource("Timestamp") as Style;
-                lo.Style = so;
+                lo.Content = "00:00:00.000";
+                lo.SetResourceReference(Control.StyleProperty, "Timestamp");
+                
                 TimeList.Children.Add(lo);
 
 
@@ -132,37 +134,104 @@ namespace StarMeter
 
                 int inte = r.Next(0, 10);
 
-                Style sty = null;
+                string sty = null;
 
                 
+
 
                 var b = new Button();
                 b.Click += OpenPopup;
 
                 var lab = new Label();
-                lab.Content = "NEW PACKET";
+                lab.Content = "NEW PACKET\nNew Data";
 
                 b.Tag = "f622066e-f9f5-4529-93b1-d1d50146cc1d";
                 b.Content = lab; 
                 
-                if (inte > 5)
+                if (inte > 8)
                 {
-                    lab.Foreground = Brushes.Black;
-                    sty = FindResource("Success") as Style;
+                    sty = "Error";
                 }
                 else
                 {
-                    lab.Foreground = Brushes.White;
-                    sty = FindResource("Error") as Style;
+                    sty = "Success";
                 }
 
-                b.Style = sty;
+                b.SetResourceReference(Control.StyleProperty, sty); 
+                
+                
+                
+                var b2 = new Button();
+                b2.Click += OpenPopup;
+
+                var lab2 = new Label();
+                lab2.Content = "NEW PACKET\nMore Data";
+
+                b2.Tag = "f622066e-f9f5-4529-93b1-d1d50146cc1d";
+                b2.Content = lab;
+
+                if (inte > 5)
+                {
+                    sty = "Error";
+                }
+                else
+                {
+                    sty = "Success";
+                }
+
+                b2.SetResourceReference(Control.StyleProperty, sty);
+
                 Port1AHolder.Children.Add(b);
+                Port1BHolder.Children.Add(b2);
 
 
 
             }
 
+
+            RatesLineChart.Series.Clear();
+
+            List<KeyValuePair<string, int>> valueList = new List<KeyValuePair<string, int>>();
+
+            valueList.Add(new KeyValuePair<string, int>("00:00:00:000", 4));
+            valueList.Add(new KeyValuePair<string, int>("00:00:01:000", 1));
+            valueList.Add(new KeyValuePair<string, int>("00:00:04:102", 42));
+            valueList.Add(new KeyValuePair<string, int>("00:00:14:000", 21));
+            valueList.Add(new KeyValuePair<string, int>("00:00:41:000", 41));
+            valueList.Add(new KeyValuePair<string, int>("00:01:12:050", 24));
+            valueList.Add(new KeyValuePair<string, int>("00:01:17:000", 17));
+            valueList.Add(new KeyValuePair<string, int>("00:01:60:100", 19));
+
+            LineSeries lineSeries1 = new LineSeries();
+            lineSeries1.Title = "Data Rate";
+            lineSeries1.Foreground = Brushes.White;
+            lineSeries1.DependentValuePath = "Value";
+            lineSeries1.IndependentValuePath = "Key";
+            lineSeries1.ItemsSource = valueList;
+            RatesLineChart.Series.Add(lineSeries1);
+
+
+
+            List<KeyValuePair<string, int>> valueList2 = new List<KeyValuePair<string, int>>();
+
+            valueList2.Add(new KeyValuePair<string, int>("00:00:00:000", 8));
+            valueList2.Add(new KeyValuePair<string, int>("00:00:01:000", 2));
+            valueList2.Add(new KeyValuePair<string, int>("00:00:04:102", 42));
+            valueList2.Add(new KeyValuePair<string, int>("00:00:14:000", 23));
+            valueList2.Add(new KeyValuePair<string, int>("00:00:41:000", 19));
+            valueList2.Add(new KeyValuePair<string, int>("00:01:12:050", 25));
+            valueList2.Add(new KeyValuePair<string, int>("00:01:17:000", 18));
+            valueList2.Add(new KeyValuePair<string, int>("00:01:60:100", 19));
+
+            LineSeries lineSeries2 = new LineSeries();
+            lineSeries2.Foreground = Brushes.White;
+            lineSeries2.Title = "Error Rate";
+            lineSeries2.DependentValuePath = "Value";
+            lineSeries2.IndependentValuePath = "Key";
+            lineSeries2.ItemsSource = valueList2;
+            RatesLineChart.Series.Add(lineSeries2);
+
+            //ScrollBackToBottom();
 
         }
 
@@ -181,24 +250,52 @@ namespace StarMeter
 
                 // display file name
                 string[] filename = ofd.FileNames;
-
-                string output = "";
-
+                
                 foreach (var s in filename)
                 {
                     string[] split = s.Split('\\');
                     string actualName = split[split.Length - 1];
 
-                    output += actualName + ",\n";
+                    Grid g = new Grid();
+                    g.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                    g.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                    g.Height = 30;
+                    g.Margin = new Thickness(0, 0, 0, 5);
+                    g.Background = Brushes.White;
+                    ColumnDefinition cd = new ColumnDefinition();
+                    ColumnDefinition cd2 = new ColumnDefinition();
+                    cd.Width = new GridLength(8, GridUnitType.Star);
+                    cd2.Width = new GridLength(1, GridUnitType.Star);
+
+                    g.ColumnDefinitions.Add(cd);
+                    g.ColumnDefinitions.Add(cd2);
+
+
+                    Label l = new Label();
+                    l.Style = (Style)Application.Current.Resources["FileSelected"];
+                    l.Content = actualName;
+
+                    Button b = new Button();
+                    b.Content = "X";
+                    b.Background = Brushes.Red;
+                    b.Foreground = Brushes.White;
+                    b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+                    b.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
+                    b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                    b.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+
+
+
+                    Grid.SetColumn(l, 0);
+                    Grid.SetColumn(b, 1);
+
+                    g.Children.Add(l);
+                    g.Children.Add(b);
+                    SelectedFiles.Children.Add(g);
+
+
                 }
-
-                if(output.Length > 1)
-                {
-                    output = output.Substring(0, output.Length - 2);
-                }
-
-                FileSelected.Content = output;
-
+                
             }
 
 
@@ -229,6 +326,8 @@ namespace StarMeter
 
             var host = new Window();
             host.Content = pp;
+            host.Width = 500;
+            host.Height = 500;
             pp.SetupElements(); // send the packet as a parameter
             host.ShowDialog();
 
@@ -331,6 +430,58 @@ namespace StarMeter
                 DataVisButton.VerticalAlignment = VerticalAlignment.Stretch;
             }
 
+        }
+
+        Style GetErrorStyle(double val)
+        {
+
+            Style style = new Style { TargetType = typeof(Button) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.White));
+            style.Setters.Add(new Setter(Button.BackgroundProperty, Brushes.Red));
+            style.Setters.Add(new Setter(Button.HeightProperty, val));
+
+            return style;
+        }
+        Style GetSuccessStyle(double val) 
+        {
+
+            Style style = new Style { TargetType = typeof(Button) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+            style.Setters.Add(new Setter(Button.BackgroundProperty, Brushes.Blue));
+            style.Setters.Add(new Setter(Button.HeightProperty, val));
+
+            return style;
+        }
+        Style GetTimeStyle(double val)
+        {
+
+            Style style = new Style { TargetType = typeof(Label) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+            style.Setters.Add(new Setter(BackgroundProperty, Brushes.SkyBlue));
+            style.Setters.Add(new Setter(HeightProperty, val));
+
+            return style;
+        }
+
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Application.Current.Resources["Success"] = GetSuccessStyle(HeightScroller.Value);
+            Application.Current.Resources["Error"] = GetErrorStyle(HeightScroller.Value);
+            Application.Current.Resources["Timestamp"] = GetTimeStyle(HeightScroller.Value);            
         }
 
     }

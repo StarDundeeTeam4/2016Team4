@@ -3,6 +3,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        <Style TargetType="Button" x:Key="Success">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="Black"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Blue"></Setter>
+        </Style>
+
+        <Style TargetType="Label" x:Key="Timestamp">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#FF6B6BE5"></Setter>
+        </Style>
+        
+        <Style TargetType="Label" x:Key="FileSelected">
+            <Setter Property="Margin" Value="0,0,0,0"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="Black"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#a4ed95"></Setter>
+        </Style>
+
+        <Style TargetType="Button" x:Key="Error">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Red"></Setter>             
+        </Style>
+
     </Application.Resources>
 </Application>
