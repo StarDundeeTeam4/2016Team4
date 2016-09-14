@@ -124,7 +124,43 @@ namespace StarMeter
                 Style so = FindResource("Timestamp") as Style;
                 lo.Style = so;
                 TimeList.Children.Add(lo);
-                Thread.Sleep(100);
+
+
+                Random r = new Random(DateTime.Now.Millisecond);
+
+                Thread.Sleep(2);
+
+                int inte = r.Next(0, 10);
+
+                Style sty = null;
+
+                
+
+                var b = new Button();
+                b.Click += OpenPopup;
+
+                var lab = new Label();
+                lab.Content = "NEW PACKET";
+
+                b.Tag = "f622066e-f9f5-4529-93b1-d1d50146cc1d";
+                b.Content = lab; 
+                
+                if (inte > 5)
+                {
+                    lab.Foreground = Brushes.Black;
+                    sty = FindResource("Success") as Style;
+                }
+                else
+                {
+                    lab.Foreground = Brushes.White;
+                    sty = FindResource("Error") as Style;
+                }
+
+                b.Style = sty;
+                Port1AHolder.Children.Add(b);
+
+
+
             }
 
 

@@ -165,7 +165,7 @@
                         <Label Style="{StaticResource Timestamp}">00:05:200</Label>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource PortA}">
+                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource PortA}" Name="Port1AHolder">
                         <Button Click="OpenPopup" Style="{StaticResource Success}" Tag="3979d26e-1a51-47bc-aebb-ddb2a7387ec0">
                             <!-- tag should be the GUID of the packet -->
                             <Label >
