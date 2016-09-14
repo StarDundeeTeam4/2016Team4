@@ -9,17 +9,18 @@
 
         <Style TargetType="Label" x:Key="Timestamp">
             <Setter Property="Margin" Value="0,0,0,10"></Setter>
-            <Setter Property="Foreground" Value="Black"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"></Setter>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Background" Value="White"></Setter>
+            <Setter Property="Background" Value="#FF6B6BE5"></Setter>
         </Style>
 
         <Style TargetType="StackPanel" x:Key="PortA">
-            <Setter Property="Background" Value="#3364049B"></Setter>
+            <Setter Property="Background" Value="#FFFFFFFF"></Setter>
         </Style>
         <Style TargetType="StackPanel" x:Key="PortB">
-            <Setter Property="Background" Value="#7FFFFFFF"></Setter>
+            <Setter Property="Background" Value="#FFB8B6B9"></Setter>
         </Style>
 
         <Style TargetType="Label" x:Key="PortHeader">
@@ -29,19 +30,19 @@
             <Setter Property="Foreground" Value="White"></Setter>
             <Setter Property="Background" Value="Transparent"></Setter>
         </Style>
-        
+
         <Style TargetType="Border" x:Key="PortBorder">
             <Setter Property="BorderThickness" Value="3"/>
             <Setter Property="BorderBrush" Value="Black" />
         </Style>
-    
+
     </Window.Resources>
 
     <Grid
         x:Name="theGrid"
         MouseDown="Grid_MouseDown"
         MouseUp="Grid_MouseUp"
-        MouseMove="Grid_MouseMove"
+        MouseMove="Grid_MouseMove" Background="#FF171753"
         >
 
 
@@ -55,27 +56,20 @@
             <ColumnDefinition Width="10*" />
         </Grid.ColumnDefinitions>
 
-        
-        <Grid.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="Black" Offset="1"/>
-                <GradientStop Color="#FF000037"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-
-        <Rectangle Grid.Row="1" Grid.Column="1" Fill="#4C396FFF"></Rectangle>
+        <!--<Rectangle Grid.Row="1" Grid.Column="1" Fill="#4C396FFF"></Rectangle> -->
         <Button Grid.Row="1" Grid.Column="1"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
         </Button>
 
-        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="#0CFFFFFF" VerticalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch">
 
 
 
-                
-            <Grid Background="#7F404040">
+
+            <Grid Background="#FF171753
+">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -93,16 +87,19 @@
                     <ColumnDefinition Width="*" Name="Port4B"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="1">
+                <StackPanel Grid.Row="1" Background="#FF616161" Name="TimeList">
                     <Label Style="{StaticResource Timestamp}">00:00:000</Label>
+                    <Label Style="{StaticResource Timestamp}">00:01:000</Label>
+                    <Label Style="{StaticResource Timestamp}">00:03:600</Label>
+                    <Label Style="{StaticResource Timestamp}">00:05:200</Label>
                 </StackPanel>
 
 
-                <Border Style="{StaticResource PortBorder}" Grid.Row="2" Grid.Column="1">
+               <!-- <Border Style="{StaticResource PortBorder}" Grid.Row="2" Grid.Column="1"> -->
                     <StackPanel Grid.Row="1" Grid.Column="1" Style="{StaticResource PortA}">
-                   </StackPanel>
-                </Border>
-                    
+                    </StackPanel>
+               <!-- </Border> -->
+
                 <StackPanel Grid.Row="1" Grid.Column="2" Style="{StaticResource PortB}">
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="3" Style="{StaticResource PortA}">
@@ -117,8 +114,8 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="8" Style="{StaticResource PortB}">
                 </StackPanel>
-                
-                
+
+
 
                 <Label Grid.Row="0" Grid.Column ="1" Style="{StaticResource PortHeader}">Port 1A</Label>
                 <Label Grid.Row="0" Grid.Column ="2" Style="{StaticResource PortHeader}">Port 1B</Label>
@@ -132,7 +129,7 @@
             </Grid>
 
 
-            
+
             <Canvas x:Name="BarCanvas" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
 
@@ -142,10 +139,11 @@
             <Rectangle
                 x:Name="selectionBox"
                 Visibility="Collapsed"
-                Stroke="White"
-                StrokeThickness="1"
+                Stroke="Black"
+                StrokeThickness="5"
                 />
-            <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White"/>
+            <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White" />
+            <Button Content="Button" Canvas.Left="106" Canvas.Top="470" Width="75" Click="TestTimeCreation"/>
         </Canvas>
 
     </Grid>

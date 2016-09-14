@@ -105,6 +105,16 @@ namespace StarMeter
             }
         }
 
+        void TestTimeCreation(object sender, RoutedEventArgs e) 
+        {
+            Label l = new Label();
+            l.Content = "NEW LABEL";
+            Style s = FindResource("Timestamp") as Style;
+            l.Style = s;
+            TimeList.Children.Add(l);
+        }
+
+
 
         //This lets us know which image to change to.
         private bool is_up_arrow = true;
