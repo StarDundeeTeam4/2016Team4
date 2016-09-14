@@ -64,12 +64,5 @@ namespace StarMeter.Controllers
             return DateTime.ParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null);
         }
 
-        public string GetPacketType(string inputLine)
-        {
-            var packetType = char.IsDigit(inputLine[0]) 
-                ? "port number" 
-                : "packet";
-            return packetType;
-        }
     }
 }
