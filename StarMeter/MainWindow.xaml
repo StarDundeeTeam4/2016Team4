@@ -32,7 +32,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Background" Value="#2546fc"></Setter>
         </Style>
-        
+
         <Style TargetType="Button" x:Key="Error">
             <Setter Property="Margin" Value="0,0,0,10"></Setter>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -138,7 +138,7 @@
         <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch" Grid.Row="1">
 
 
-            
+
             <ScrollViewer>
 
                 <Grid Background="#FF171753">
@@ -166,12 +166,14 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource PortA}">
-                        <Button Click="OpenPopup" Style="{StaticResource Success}" Tag="3979d26e-1a51-47bc-aebb-ddb2a7387ec0">        <!-- tag should be the GUID of the packet -->
+                        <Button Click="OpenPopup" Style="{StaticResource Success}" Tag="3979d26e-1a51-47bc-aebb-ddb2a7387ec0">
+                            <!-- tag should be the GUID of the packet -->
                             <Label >
                                 <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
                             </Label>
                         </Button>
-                        <Button Click="OpenPopup" Style="{StaticResource Error}" Tag="74788c1e-7f47-4ffb-bf7f-7ef712cd27c9">       <!-- tag should be the GUID of the packet -->
+                        <Button Click="OpenPopup" Style="{StaticResource Error}" Tag="74788c1e-7f47-4ffb-bf7f-7ef712cd27c9">
+                            <!-- tag should be the GUID of the packet -->
                             <Label Foreground="White">
                                 <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
                             </Label>
@@ -212,15 +214,16 @@
                 Stroke="Black"
                 StrokeThickness="5"
                 />
-            <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White" />
-            <Label HorizontalAlignment="Center" Name="FileSelected" Content="No File Selected" Canvas.Left="10" Canvas.Top="63" Foreground="White" Width="Auto" Height="Auto" />
-            <Button Content="Add Test values" Canvas.Left="55" Canvas.Top="248" Width="91" Click="TestTimeCreation"/>
-            <Button Content="Select File" Canvas.Left="71" Canvas.Top="44" Width="75" Click="FileSelection"/>
+            <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="138" Canvas.Top="299" Foreground="White" />
+            <Label HorizontalAlignment="Center" Name="FileSelected" Content="No File Selected" Canvas.Left="88" Canvas.Top="191" Foreground="White" Width="Auto" Height="Auto" />
+            <Button Content="Add Test values" Canvas.Left="88" Canvas.Top="426" Width="91" Click="TestTimeCreation"/>
+            <Button Content="Select File" Canvas.Left="104" Canvas.Top="167" Width="75" Click="FileSelection"/>
 
 
 
 
         </Canvas>
+        <Image HorizontalAlignment="Left" Height="37" Margin="10,0,0,0" VerticalAlignment="Top" Width="244" Source="Resources/STAR Dundee.png" Grid.RowSpan="2"/>
 
     </Grid>
 
