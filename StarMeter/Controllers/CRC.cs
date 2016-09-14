@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 
 namespace StarMeter.Controllers
 {
@@ -70,6 +71,20 @@ namespace StarMeter.Controllers
             StringBuilder hex = new StringBuilder(2);
             hex.AppendFormat("0x{0:x2}", by);
             return hex.ToString();
+        }
+
+        /// <summary>
+        /// Checks whether the provided checksum byte is correct for the provied packet
+        /// </summary>
+        /// <param name="packet">The packet to validate</param>
+        /// <returns>Whether the provided checksum matches the calculated value</returns>
+        public static bool CheckCRCForPacket(byte[] packet)
+        {
+            byte[] packetBody = packet.Take(packet.Count() - 1).ToArray();
+            ushort crcToCheck = packet.Last();
+            ushort calculatedCrc = CRC.RMAP_CalculateCRC(packetBody);
+
+            return Equals(crcToCheck, calculatedCrc);
         }
     }
 }
