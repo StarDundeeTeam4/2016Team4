@@ -89,14 +89,22 @@ namespace StarMeter.Tests.Controllers
                 },
                 new Packet()
                 {
-                     DateRecieved = DateTime.ParseExact("08-09-2016 16:59:60.287", "dd-MM-yyyy HH:mm:ss.fff", null)
+                     DateRecieved = DateTime.ParseExact("08-09-2016 15:53:23.690", "dd-MM-yyyy HH:mm:ss.fff", null)
                 }
             };
             Assert.AreEqual(expected.Count, result.Count);
-            Assert.AreEqual(expected[1].Cargo.Length, result[1].Cargo.Length);
             Assert.AreEqual(expected[0].DateRecieved, result[0].DateRecieved);
             Assert.AreEqual(expected[0].IsError, result[0].IsError);
         }
+
+        [TestMethod]
+        public void FullFileParsed()
+        {
+            var parser = new Parser();
+            parser.ParseRecording("testIntegration.rec");
+            Assert.IsNotNull(parser.recording);
+        }
+
 
     }
 }
