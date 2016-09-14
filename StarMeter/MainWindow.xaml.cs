@@ -135,13 +135,13 @@ namespace StarMeter
         {
             OpenFileDialog ofd = new OpenFileDialog();
 
+            ofd.Filter = "Record Files (.rec)|*.rec";
             ofd.Multiselect = true;
 
             bool? confirmed = ofd.ShowDialog();
 
             if (confirmed == true) 
             {
-                // this is where we read the file
 
                 // display file name
                 string[] filename = ofd.FileNames;
@@ -165,6 +165,15 @@ namespace StarMeter
 
             }
 
+
+            //List<KeyValuePair<string, int>> MyValue = new List<KeyValuePair<string, int>>();
+            //MyValue.Add(new KeyValuePair<string, int>("Administration", 20));
+            //MyValue.Add(new KeyValuePair<string, int>("Management", 36));
+            //MyValue.Add(new KeyValuePair<string, int>("Development", 89));
+            //MyValue.Add(new KeyValuePair<string, int>("Support", 270));
+            //MyValue.Add(new KeyValuePair<string, int>("Sales", 140));
+
+            //LineChart1.DataContext = MyValue;
 
 
         }

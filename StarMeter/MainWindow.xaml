@@ -16,15 +16,28 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Foreground" Value="White"></Setter>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="50"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Background" Value="#FF6B6BE5"></Setter>
         </Style>
+        
+        <Style TargetType="Label" x:Key="Success">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#2546fc"></Setter>
+        </Style>
 
         <Style TargetType="StackPanel" x:Key="PortA">
-            <Setter Property="Background" Value="#FFFFFFFF"></Setter>
+            <Setter Property="Background" Value="#CCFFFFFF"></Setter>
         </Style>
         <Style TargetType="StackPanel" x:Key="PortB">
-            <Setter Property="Background" Value="#FFB8B6B9"></Setter>
+            <Setter Property="Background" Value="#CCE5E5E5"></Setter>
         </Style>
 
         <Style TargetType="Label" x:Key="PortHeader">
@@ -52,6 +65,7 @@
 
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="1.5*" Name="LabelPanel" />
             <RowDefinition Height="26*" />
             <RowDefinition Height="1*" Name="DataVisualisationPopup" />
         </Grid.RowDefinitions>
@@ -61,32 +75,61 @@
         </Grid.ColumnDefinitions>
 
         <!--<Rectangle Grid.Row="1" Grid.Column="1" Fill="#4C396FFF"></Rectangle> -->
-        <Button Grid.Row="1" Grid.Column="1"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
+        <Button Grid.Row="2" Grid.Column="1"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
         </Button>
 
-        <DVC:Chart Name="mcChart" Height="137"
+        <!--<DVC:Chart Name="testChart" Height="137"
                Background="Transparent"
                Foreground="White"
                Grid.Column="1"
                Grid.Row="1"
                VerticalAlignment="Top"
-              Canvas.Left="261" Canvas.Top="555" Margin="152.4,20.4,35.6,-136.6"/>
+              Canvas.Left="261" Canvas.Top="555" Margin="158.4,20.4,29.6,-136.6"/>-->
+
+        <DVC:Chart  Name="LineChart1" Title="Department" Width="450" Margin="33,309,533,358">
+            <DVC:LineSeries  DependentValuePath="Value" 
+            IndependentValuePath="Key" ItemsSource="{Binding}" 
+            IsSelectionEnabled="True"/>
+        </DVC:Chart>
+
+        <Grid Background="#FF171753" Grid.Row="0" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column ="1" Style="{StaticResource PortHeader}">Port 1A</Label>
+            <Label Grid.Row="0" Grid.Column ="2" Style="{StaticResource PortHeader}">Port 1B</Label>
+            <Label Grid.Row="0" Grid.Column ="3" Style="{StaticResource PortHeader}">Port 2A</Label>
+            <Label Grid.Row="0" Grid.Column ="4" Style="{StaticResource PortHeader}">Port 2B</Label>
+            <Label Grid.Row="0" Grid.Column ="5" Style="{StaticResource PortHeader}">Port 3A</Label>
+            <Label Grid.Row="0" Grid.Column ="6" Style="{StaticResource PortHeader}">Port 3B</Label>
+            <Label Grid.Row="0" Grid.Column ="7" Style="{StaticResource PortHeader}">Port 4A</Label>
+            <Label Grid.Row="0" Grid.Column ="8" Style="{StaticResource PortHeader}">Port 4B</Label>
+        </Grid>
+
+        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch" Grid.Row="1">
 
 
-        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch">
-
-
-
+            
             <ScrollViewer>
 
-                <Grid Background="#FF171753
-">
+                <Grid Background="#FF171753">
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
                         <RowDefinition Height="11*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
@@ -108,33 +151,34 @@
                         <Label Style="{StaticResource Timestamp}">00:05:200</Label>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" Grid.Column="1" Style="{StaticResource PortA}">
+                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource PortA}">
+                        <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
+                        <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
+                        <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
+                        <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="2" Style="{StaticResource PortB}">
+                    <StackPanel Grid.Row="0" Grid.Column="2" Style="{StaticResource PortB}">
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="3" Style="{StaticResource PortA}">
+                    <StackPanel Grid.Row="0" Grid.Column="3" Style="{StaticResource PortA}">
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="4" Style="{StaticResource PortB}">
+                    <StackPanel Grid.Row="0" Grid.Column="4" Style="{StaticResource PortB}">
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="5" Style="{StaticResource PortA}">
+                    <StackPanel Grid.Row="0" Grid.Column="5" Style="{StaticResource PortA}">
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="6" Style="{StaticResource PortB}">
+                    <StackPanel Grid.Row="0" Grid.Column="6" Style="{StaticResource PortB}">
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="7" Style="{StaticResource PortA}">
+                    <StackPanel Grid.Row="0" Grid.Column="7" Style="{StaticResource PortA}">
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Grid.Column="8" Style="{StaticResource PortB}">
+                    <StackPanel Grid.Row="0" Grid.Column="8" Style="{StaticResource PortB}">
                     </StackPanel>
-
-
-
-                    <Label Grid.Row="0" Grid.Column ="1" Style="{StaticResource PortHeader}">Port 1A</Label>
-                    <Label Grid.Row="0" Grid.Column ="2" Style="{StaticResource PortHeader}">Port 1B</Label>
-                    <Label Grid.Row="0" Grid.Column ="3" Style="{StaticResource PortHeader}">Port 2A</Label>
-                    <Label Grid.Row="0" Grid.Column ="4" Style="{StaticResource PortHeader}">Port 2B</Label>
-                    <Label Grid.Row="0" Grid.Column ="5" Style="{StaticResource PortHeader}">Port 3A</Label>
-                    <Label Grid.Row="0" Grid.Column ="6" Style="{StaticResource PortHeader}">Port 3B</Label>
-                    <Label Grid.Row="0" Grid.Column ="7" Style="{StaticResource PortHeader}">Port 4A</Label>
-                    <Label Grid.Row="0" Grid.Column ="8" Style="{StaticResource PortHeader}">Port 4B</Label>
 
                 </Grid>
 
