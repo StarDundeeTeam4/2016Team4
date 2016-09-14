@@ -179,6 +179,32 @@ namespace StarMeter
         }
 
 
+        void OpenPopup(object sender, RoutedEventArgs e) 
+        {
+            Button b = (Button)sender;
+
+            Brush br = b.Background;
+
+            string text = b.Tag.ToString();
+            Guid guid = new Guid(text);
+            GetPacketFromGUID(guid);        // needs to return a packet
+            
+            PacketPopup pp = new PacketPopup();
+
+            var host = new Window();
+            host.Content = pp;
+            pp.SetupElements(); // send the packet as a parameter
+            host.ShowDialog();
+
+        }
+
+        // function to get the Packet from the GUID provided
+        void GetPacketFromGUID(Guid guid) 
+        {
+            return;
+        }
+
+
         //This lets us know which image to change to.
         private bool is_up_arrow = true;
 

@@ -22,7 +22,7 @@
             <Setter Property="Background" Value="#FF6B6BE5"></Setter>
         </Style>
 
-        <Style TargetType="Label" x:Key="Success">
+        <Style TargetType="Button" x:Key="Success">
             <Setter Property="Margin" Value="0,0,0,10"></Setter>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Foreground" Value="Black"></Setter>
@@ -33,7 +33,7 @@
             <Setter Property="Background" Value="#2546fc"></Setter>
         </Style>
         
-        <Style TargetType="Label" x:Key="Error">
+        <Style TargetType="Button" x:Key="Error">
             <Setter Property="Margin" Value="0,0,0,10"></Setter>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Foreground" Value="White"></Setter>
@@ -42,6 +42,9 @@
             <Setter Property="Height" Value="50"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Background" Value="Red"></Setter>
+
+
+
         </Style>
 
         <Style TargetType="StackPanel" x:Key="PortA">
@@ -163,30 +166,16 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource PortA}">
-                        <Label Style="{StaticResource Success}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Error}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Success}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Success}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Success}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Error}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Success}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
-                        <Label Style="{StaticResource Success}">
-                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
-                        </Label>
+                        <Button Click="OpenPopup" Style="{StaticResource Success}" Tag="3979d26e-1a51-47bc-aebb-ddb2a7387ec0">        <!-- tag should be the GUID of the packet -->
+                            <Label >
+                                <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                            </Label>
+                        </Button>
+                        <Button Click="OpenPopup" Style="{StaticResource Error}" Tag="74788c1e-7f47-4ffb-bf7f-7ef712cd27c9">       <!-- tag should be the GUID of the packet -->
+                            <Label Foreground="White">
+                                <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                            </Label>
+                        </Button>
                     </StackPanel>
                     <StackPanel Grid.Row="0" Grid.Column="2" Style="{StaticResource PortB}">
                     </StackPanel>
