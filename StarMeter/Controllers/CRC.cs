@@ -55,7 +55,7 @@ namespace StarMeter.Controllers
             {
                 /* The value of the byte from the buffer is XORed with the current CRC value. */
                 /* The result is then used to lookup the new CRC value from the lookup table */
-                byte index = (byte) (crc ^ i);
+                byte index = (byte)(crc ^ bytes[i]);
                 crc = (ushort) ((crc >> 8) ^ RmapCrcTable[index]);
             }
             return crc;
@@ -80,7 +80,7 @@ namespace StarMeter.Controllers
         /// <returns>Whether the provided checksum matches the calculated value</returns>
         public static bool CheckCrcForPacket(byte[] packet)
         {
-            byte[] packetBody = packet.Take(packet.Length - 1).ToArray();
+            byte[] packetBody = packet.Take(packet.Count() - 1).ToArray();
             ushort crcToCheck = packet.Last();
             ushort calculatedCrc = RMAP_CalculateCRC(packetBody);
 
