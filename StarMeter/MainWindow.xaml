@@ -6,7 +6,7 @@
         xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         
-        Title="MainWindow" Height="600" Width="1000" Background="#00000000">
+        Title="MainWindow" Height="720" Width="1280" Background="#00000000">
 
 
     <Window.Resources>
@@ -21,8 +21,19 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Background" Value="#FF6B6BE5"></Setter>
         </Style>
-        
+
         <Style TargetType="Label" x:Key="Success">
+            <Setter Property="Margin" Value="0,0,0,10"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="Black"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#2546fc"></Setter>
+        </Style>
+        
+        <Style TargetType="Label" x:Key="Error">
             <Setter Property="Margin" Value="0,0,0,10"></Setter>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Foreground" Value="White"></Setter>
@@ -30,7 +41,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Background" Value="#2546fc"></Setter>
+            <Setter Property="Background" Value="Red"></Setter>
         </Style>
 
         <Style TargetType="StackPanel" x:Key="PortA">
@@ -155,7 +166,19 @@
                         <Label Style="{StaticResource Success}">
                             <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
                         </Label>
+                        <Label Style="{StaticResource Error}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
                         <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
+                        <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
+                        <Label Style="{StaticResource Success}">
+                            <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
+                        </Label>
+                        <Label Style="{StaticResource Error}">
                             <TextBlock>Protocol ID<LineBreak/>Other Data</TextBlock>
                         </Label>
                         <Label Style="{StaticResource Success}">

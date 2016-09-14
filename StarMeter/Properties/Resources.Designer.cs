@@ -83,6 +83,16 @@ namespace StarMeter.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap rounded {
+            get {
+                object obj = ResourceManager.GetObject("rounded", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap STAR_Dundee {
             get {
                 object obj = ResourceManager.GetObject("STAR_Dundee", resourceCulture);
