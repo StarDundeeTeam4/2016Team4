@@ -1,7 +1,11 @@
 ﻿<Window x:Class="StarMeter.MainWindow"
         
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
+
+        xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+        xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+        
         Title="MainWindow" Height="600" Width="1000" Background="#00000000">
 
 
@@ -63,77 +67,87 @@
             </Button.Background>
         </Button>
 
+        <DVC:Chart Name="mcChart" Height="137"
+               Background="Transparent"
+               Foreground="White"
+               Grid.Column="1"
+               Grid.Row="1"
+               VerticalAlignment="Top"
+              Canvas.Left="261" Canvas.Top="555" Margin="152.4,20.4,35.6,-136.6"/>
+
+
         <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch">
 
 
 
+            <ScrollViewer>
 
-            <Grid Background="#FF171753
+                <Grid Background="#FF171753
 ">
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="11*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.5*" Name="TimeLabels"/>
-                    <ColumnDefinition Width="*" Name="Port1A"/>
-                    <ColumnDefinition Width="*" Name="Port1B"/>
-                    <ColumnDefinition Width="*" Name="Port2A"/>
-                    <ColumnDefinition Width="*" Name="Port2B"/>
-                    <ColumnDefinition Width="*" Name="Port3A"/>
-                    <ColumnDefinition Width="*" Name="Port3B"/>
-                    <ColumnDefinition Width="*" Name="Port4A"/>
-                    <ColumnDefinition Width="*" Name="Port4B"/>
-                </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="11*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*" Name="TimeLabels"/>
+                        <ColumnDefinition Width="*" Name="Port1A"/>
+                        <ColumnDefinition Width="*" Name="Port1B"/>
+                        <ColumnDefinition Width="*" Name="Port2A"/>
+                        <ColumnDefinition Width="*" Name="Port2B"/>
+                        <ColumnDefinition Width="*" Name="Port3A"/>
+                        <ColumnDefinition Width="*" Name="Port3B"/>
+                        <ColumnDefinition Width="*" Name="Port4A"/>
+                        <ColumnDefinition Width="*" Name="Port4B"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="1" Background="#FF616161" Name="TimeList">
-                    <Label Style="{StaticResource Timestamp}">00:00:000</Label>
-                    <Label Style="{StaticResource Timestamp}">00:01:000</Label>
-                    <Label Style="{StaticResource Timestamp}">00:03:600</Label>
-                    <Label Style="{StaticResource Timestamp}">00:05:200</Label>
-                </StackPanel>
+                    <StackPanel Grid.Row="1" Background="#FF616161" Name="TimeList">
+                        <Label Style="{StaticResource Timestamp}">00:00:000</Label>
+                        <Label Style="{StaticResource Timestamp}">00:01:000</Label>
+                        <Label Style="{StaticResource Timestamp}">00:03:600</Label>
+                        <Label Style="{StaticResource Timestamp}">00:05:200</Label>
+                    </StackPanel>
 
-
-               <!-- <Border Style="{StaticResource PortBorder}" Grid.Row="2" Grid.Column="1"> -->
                     <StackPanel Grid.Row="1" Grid.Column="1" Style="{StaticResource PortA}">
                     </StackPanel>
-               <!-- </Border> -->
-
-                <StackPanel Grid.Row="1" Grid.Column="2" Style="{StaticResource PortB}">
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="3" Style="{StaticResource PortA}">
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="4" Style="{StaticResource PortB}">
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="5" Style="{StaticResource PortA}">
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="6" Style="{StaticResource PortB}">
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="7" Style="{StaticResource PortA}">
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="8" Style="{StaticResource PortB}">
-                </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="2" Style="{StaticResource PortB}">
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="3" Style="{StaticResource PortA}">
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="4" Style="{StaticResource PortB}">
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="5" Style="{StaticResource PortA}">
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="6" Style="{StaticResource PortB}">
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="7" Style="{StaticResource PortA}">
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="8" Style="{StaticResource PortB}">
+                    </StackPanel>
 
 
 
-                <Label Grid.Row="0" Grid.Column ="1" Style="{StaticResource PortHeader}">Port 1A</Label>
-                <Label Grid.Row="0" Grid.Column ="2" Style="{StaticResource PortHeader}">Port 1B</Label>
-                <Label Grid.Row="0" Grid.Column ="3" Style="{StaticResource PortHeader}">Port 2A</Label>
-                <Label Grid.Row="0" Grid.Column ="4" Style="{StaticResource PortHeader}">Port 2B</Label>
-                <Label Grid.Row="0" Grid.Column ="5" Style="{StaticResource PortHeader}">Port 3A</Label>
-                <Label Grid.Row="0" Grid.Column ="6" Style="{StaticResource PortHeader}">Port 3B</Label>
-                <Label Grid.Row="0" Grid.Column ="7" Style="{StaticResource PortHeader}">Port 4A</Label>
-                <Label Grid.Row="0" Grid.Column ="8" Style="{StaticResource PortHeader}">Port 4B</Label>
+                    <Label Grid.Row="0" Grid.Column ="1" Style="{StaticResource PortHeader}">Port 1A</Label>
+                    <Label Grid.Row="0" Grid.Column ="2" Style="{StaticResource PortHeader}">Port 1B</Label>
+                    <Label Grid.Row="0" Grid.Column ="3" Style="{StaticResource PortHeader}">Port 2A</Label>
+                    <Label Grid.Row="0" Grid.Column ="4" Style="{StaticResource PortHeader}">Port 2B</Label>
+                    <Label Grid.Row="0" Grid.Column ="5" Style="{StaticResource PortHeader}">Port 3A</Label>
+                    <Label Grid.Row="0" Grid.Column ="6" Style="{StaticResource PortHeader}">Port 3B</Label>
+                    <Label Grid.Row="0" Grid.Column ="7" Style="{StaticResource PortHeader}">Port 4A</Label>
+                    <Label Grid.Row="0" Grid.Column ="8" Style="{StaticResource PortHeader}">Port 4B</Label>
 
-            </Grid>
+                </Grid>
 
 
+            </ScrollViewer>
 
             <Canvas x:Name="BarCanvas" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
 
         <Canvas>
+            <Canvas.Background>
+                <ImageBrush/>
+            </Canvas.Background>
             <!-- This canvas is overlaid over the previous canvas and is used to 
                 place the rectangle that implements the drag selection box. -->
             <Rectangle
@@ -144,6 +158,10 @@
                 />
             <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White" />
             <Button Content="Button" Canvas.Left="106" Canvas.Top="470" Width="75" Click="TestTimeCreation"/>
+
+
+
+
         </Canvas>
 
     </Grid>

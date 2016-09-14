@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -112,7 +113,22 @@ namespace StarMeter
             Style s = FindResource("Timestamp") as Style;
             l.Style = s;
             TimeList.Children.Add(l);
+
+
+            for (int i = 0; i < 8; i++) 
+            {
+                Label lo = new Label();
+                lo.Content = "LOOP LABEL";
+                Style so = FindResource("Timestamp") as Style;
+                lo.Style = so;
+                TimeList.Children.Add(lo);
+                Thread.Sleep(100);
+            }
+
+
         }
+
+
 
 
 
@@ -145,7 +161,7 @@ namespace StarMeter
 
             if (t == null)
             {
-                t = new Timer();
+                t = new System.Timers.Timer();
                 t.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
                 t.Interval = 10;
                 t.Start();
@@ -191,7 +207,7 @@ namespace StarMeter
 
         }
 
-        Timer t = null;
+        System.Timers.Timer t = null;
         int count = 0;
 
         private void MoveSlider()
