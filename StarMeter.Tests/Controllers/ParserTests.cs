@@ -21,30 +21,6 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(result, new DateTime(2016, 09, 08, 14, 27, 53, 726));
         }
 
-        [TestMethod]
-        public void GivenAnIntGetPacketTypeShouldReturnPortNumberTest()
-        {
-            const string inputLine = "1";
-            var parser = new Parser();
-            const string expectedResult = "port number";
-
-            var actualResult = parser.GetPacketType(inputLine);
-
-
-            Assert.AreEqual(actualResult, expectedResult);
-        }
-
-        [TestMethod]
-        public void GivenACharGetPacketTypeShouldReturnPacketTest()
-        {
-            const string inputLine = "P";
-            var parser = new Parser();
-            const string expectedResult = "packet";
-
-            var actualResult = parser.GetPacketType(inputLine);
-
-            Assert.AreEqual(actualResult, expectedResult);
-        }
 
         //[TestMethod]
         //public void NoErrorOnePacketReturnsListWithOneElement()
