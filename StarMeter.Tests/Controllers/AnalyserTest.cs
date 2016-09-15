@@ -20,7 +20,7 @@ namespace StarMeter.Tests.Controllers
                     .Split(' ')
         };
 
-        public readonly Packet _packet2 = new Packet
+        private readonly Packet _packet2 = new Packet
         {
             IsError = true,
             PacketId = Guid.NewGuid(),
@@ -31,7 +31,7 @@ namespace StarMeter.Tests.Controllers
                     .Split(' ')
         };
 
-        public readonly Packet _packet3 = new Packet
+        private readonly Packet _packet3 = new Packet
         {
             IsError = false,
             PacketId = Guid.NewGuid(),
@@ -129,6 +129,24 @@ namespace StarMeter.Tests.Controllers
             const double expectedResult = 0.75;
 
             var actualResult = analyser.CalculatePacketRatePerSecond(packetDict);
+
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod]
+        public void CalculateDataRateTest()
+        {
+            var packetDict = new Dictionary<Guid, Packet>
+            {
+                {_packet1.PacketId, _packet1},
+                {_packet2.PacketId, _packet2},
+                {_packet3.PacketId, _packet3}
+            };
+            var analyser = new Analyser();
+
+            const double expectedResult = 191.25;
+
+            var actualResult = analyser.CalculateDataRateBytePerSecond(packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
