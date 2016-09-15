@@ -12,16 +12,15 @@ namespace StarMeter.Controllers
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
 
-        public void ParseFile()
+        public void ParseFile(string filePath)
         {
-            const string filePath = ""; 
             var r = new StreamReaderWrapper(filePath);
             PacketDict = ParsePackets(r);
         }
 
         public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)
         {
-            var line = "";
+            string line;
             r.ReadLine();
             var strPortNumber = r.ReadLine();
             var portNumber = int.Parse(strPortNumber);
@@ -108,6 +107,11 @@ namespace StarMeter.Controllers
         public static int GetProtocolId(string[] cargoParam, int logicalIndex)
         {
             return Convert.ToInt32(cargoParam[logicalIndex+1], 16);
+        }
+
+        public int GetSequenceNumber(string[] cargoParam, int logicalIndex)
+        {
+            return Convert.ToInt32(cargoParam[logicalIndex + 2], 16);
         }
     }
 }

@@ -208,7 +208,7 @@ namespace StarMeter.Tests.Controllers
             var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
 
             var addressArray = Parser.GetAddressArray(logicalIndex, cargoParam);
-            var expectedPathValues = new byte[]
+            var expectedPathValues = new[]
             {
                 (byte)Convert.ToInt32("00", 16),
                 (byte)Convert.ToInt32("04", 16),
@@ -227,7 +227,7 @@ namespace StarMeter.Tests.Controllers
             var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
 
             var physicalPathValues = Parser.GetAddressArray(logicalIndex, cargoParam);
-            var expectedPathValues = new byte[]
+            var expectedPathValues = new[]
             {
                 (byte)Convert.ToInt32("57", 16)
             };
@@ -260,6 +260,30 @@ namespace StarMeter.Tests.Controllers
             var expected = 1;
             var actual = Parser.GetProtocolId(cargoParam, logicalIndex);
             Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void GetSequenceNumberFromNonRmap()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"3f fa 0f 33 d2 6b ef 66 29 db 84 3f 1a d7 68 4a 10 e9 8e 01 b2 f3 e3 ed 70 71 81 0e 5c fe 25 7d 3c 1a e3 50 dd 2a 18 be aa c0 a1 84 7c 1d 4a 86 b4 f4 89 ba 88 71 6d 42 9a 7a d1 d8 cf 35 d5 6f 5e ca 8f 17 27 6a fd 22 47 90 3e 85 e9 86 02 81 5e 2c 40 82 71 f5 27 47 f4 32 56 43 9f 93 4f 43 1b ea 29 52".Split(' ');
+            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+            var sequenceNumber = parser.GetSequenceNumber(cargoParam, logicalIndex);
+            var expectedSequenceNumber = Convert.ToInt32("0f", 16);
+            Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
+        }
+
+        [TestMethod]
+        public void GetSequenceNumberFromNonRmap2()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"55 fa 00 3e 8a e4 49 2d f8 22 36 b6 b0 42 37 cc 66 7d b5 03 ed a4 4e 51 f1 04 28 16 e8 8c 85 5b 46 32 98 57 f0 92 98 38 f4 d8 12 20 77 e1 83 6d ef 9d 26 3d 92 b8 0b 31 0d 79 69 72 7a ea 35 f2 8c 39 f3 f5 0d 5e cd cf 8b fe e2 ef 4e 8f e0 1c 8d be d5 ff e1 0d 42 e2 f9 c1 72 b7 90 fb 09 5c 9c 25 e0 1d c8 8f 10 7b 25 5a 4d 2b 1c 96 76 62 a8 a7 69 50 c2 ed 1c ea 1c a4 ea ed 11 08 2a 20".Split(' ');
+            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+            var sequenceNumber = parser.GetSequenceNumber(cargoParam, logicalIndex);
+            var expectedSequenceNumber = 0;
+            Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
     }
 }
