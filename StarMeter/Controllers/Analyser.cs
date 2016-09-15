@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using StarMeter.Models;
 
 namespace StarMeter.Controllers
@@ -7,9 +8,9 @@ namespace StarMeter.Controllers
 
     public interface IAnalyser
     {
-        int TotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary);
-        int TotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary);
-        int TotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
+        int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary);
+        int CalculateTotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary);
+        int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
         int CalculateDataRate(Dictionary<Guid, Packet> packetDictionary);
         int CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary);
         int CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
@@ -18,22 +19,21 @@ namespace StarMeter.Controllers
     public class Analyser : IAnalyser
     {
 
-        public int TotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary)
+        public int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary)
         {
             //To Do
             return 0;
         }
 
-        public int TotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary)
+        public int CalculateTotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary)
         {
             var totalNoOfPackets = packetDictionary.Count;
             return totalNoOfPackets;
         }
 
-        public int TotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary)
+        public int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary)
         {
-            //To Do
-            return 0;
+            return packetDictionary.Values.Count(packet => packet.IsError);
         }
 
         public int CalculateDataRate(Dictionary<Guid, Packet> packetDictionary)
