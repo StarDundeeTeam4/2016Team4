@@ -236,6 +236,9 @@ namespace StarMeter
         }
 
 
+        //This will allow us to read the files or remove the files later.
+        List<String> selected_files = new List<String>();
+
         void FileSelection(object sender, RoutedEventArgs e) 
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -253,46 +256,61 @@ namespace StarMeter
                 
                 foreach (var s in filename)
                 {
-                    string[] split = s.Split('\\');
-                    string actualName = split[split.Length - 1];
+                    //If the user has not already selected this file.
+                    if(selected_files.Contains(s) == false)
+                    {
+                        selected_files.Add(s);
+                        string[] split = s.Split('\\');
+                        string actualName = split[split.Length - 1];
+                        var fileNameWithoutExtension = actualName.Substring(0, actualName.Length - 4);
 
-                    Grid g = new Grid();
-                    g.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                    g.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-                    g.Height = 30;
-                    g.Margin = new Thickness(0, 0, 0, 5);
-                    g.Background = Brushes.White;
-                    ColumnDefinition cd = new ColumnDefinition();
-                    ColumnDefinition cd2 = new ColumnDefinition();
-                    cd.Width = new GridLength(8, GridUnitType.Star);
-                    cd2.Width = new GridLength(1, GridUnitType.Star);
+                        Grid g = new Grid();
+                        g.Name = "grid" + fileNameWithoutExtension;
+                        g.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                        g.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                        g.Height = 30;
+                        g.Margin = new Thickness(0, 0, 0, 5);
+                        g.Background = Brushes.White;
+                        ColumnDefinition cd = new ColumnDefinition();
+                        ColumnDefinition cd2 = new ColumnDefinition();
+                        cd.Width = new GridLength(8, GridUnitType.Star);
+                        cd2.Width = new GridLength(1, GridUnitType.Star);
 
-                    g.ColumnDefinitions.Add(cd);
-                    g.ColumnDefinitions.Add(cd2);
+                        g.ColumnDefinitions.Add(cd);
+                        g.ColumnDefinitions.Add(cd2);
+
+                        //if actualName is "file.rec" then fileNameWithoutExtension would become "file"
+                        
+                        Label l = new Label();
+                        l.Name = "label" + fileNameWithoutExtension;
+                        l.Style = (Style)Application.Current.Resources["FileSelected"];
+                        l.Content = actualName;
+
+                        Button b = new Button();
+                        b.Name = fileNameWithoutExtension;
+                        b.Tag = s;
+                        b.Content = "X";
+                        b.Click += cancelUpload;
+                        b.Background = Brushes.Red;
+                        b.Foreground = Brushes.White;
+                        b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+                        b.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
+                        b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                        b.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
 
 
-                    Label l = new Label();
-                    l.Style = (Style)Application.Current.Resources["FileSelected"];
-                    l.Content = actualName;
 
-                    Button b = new Button();
-                    b.Content = "X";
-                    b.Background = Brushes.Red;
-                    b.Foreground = Brushes.White;
-                    b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-                    b.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
-                    b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                    b.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                        Grid.SetColumn(l, 0);
+                        Grid.SetColumn(b, 1);
 
-
-
-                    Grid.SetColumn(l, 0);
-                    Grid.SetColumn(b, 1);
-
-                    g.Children.Add(l);
-                    g.Children.Add(b);
-                    SelectedFiles.Children.Add(g);
-
+                        g.Children.Add(l);
+                        g.Children.Add(b);
+                        SelectedFiles.Children.Add(g);
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("You have already added this file.");
+                    }
 
                 }
                 
@@ -311,6 +329,35 @@ namespace StarMeter
 
         }
 
+        void cancelUpload(object sender, RoutedEventArgs e)
+        {
+            var button = ((Button)sender);
+            var name = button.Name;
+            
+            var filename = (button.Tag).ToString();
+
+            selected_files.Remove(filename);
+            String label_name = "label" + name;
+            var label = this.FindName(label_name);
+
+            Grid grid = new Grid();
+
+            RegisterName("grid" + name, grid);
+
+
+            
+            removeFile(grid);
+        }
+
+        void removeFile(Grid grid)
+        {
+            foreach(UIElement child in grid.Children)
+            {
+                grid.Children.Remove(child);
+            }
+
+            SelectedFiles.Children.Remove(grid);
+        }
 
         void OpenPopup(object sender, RoutedEventArgs e) 
         {
@@ -328,7 +375,7 @@ namespace StarMeter
             host.Content = pp;
             host.Width = 500;
             host.Height = 500;
-            pp.SetupElements(); // send the packet as a parameter
+            pp.SetupElements(br); // send the packet as a parameter
             host.ShowDialog();
 
         }

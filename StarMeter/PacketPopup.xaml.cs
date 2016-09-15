@@ -25,7 +25,7 @@ namespace StarMeter
             InitializeComponent();
         }
 
-        public void SetupElements() 
+        public void SetupElements(Brush br) 
         {
             TestLabel.Content = "This is where some content goes";
             TestLabel.Foreground = Brushes.White;
