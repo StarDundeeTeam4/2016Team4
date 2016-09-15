@@ -9,14 +9,31 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class AnalyserTest
     {
+        static readonly byte[] ExampleCargo =
+        {
+            0x00, 0xfe, 0xfa, 0x00, 0x17, 0x50, 0xb8, 0xf6, 0xca, 0xd3, 0x9e, 0x3c,
+            0x52, 0x74, 0x51, 0x9f, 0xef, 0x80, 0xba, 0xf6, 0x75, 0x92, 0xde, 0xc3, 0xaa, 0x62, 0x5f, 0xaa, 0xf0, 0xde,
+            0x46, 0x28, 0x24, 0x7c, 0xff, 0x81, 0xc5, 0xce, 0xa5, 0xfa, 0x59, 0x57, 0x81, 0x49, 0x0c, 0x9d, 0xcd, 0x4a,
+            0x9b, 0x7f, 0xbd, 0xf3, 0x70, 0xc9, 0xc0, 0x8a, 0x0f, 0x06, 0x03, 0x15, 0xb0, 0x95, 0x36, 0x13, 0x2d, 0xff,
+            0x94, 0x69, 0x1f, 0x88, 0x1d, 0x9f, 0x44, 0x04, 0x26, 0x4c, 0x25, 0xec, 0x14, 0xcf, 0xf5, 0xb1, 0x65, 0x40,
+            0xbb, 0x50, 0xf0, 0xa7, 0xb4, 0x27, 0x6d, 0x6b, 0xf2, 0x07, 0x37, 0x0d, 0x4a, 0x8a, 0x51, 0x15, 0x6d, 0xa7,
+            0xa7, 0x4d, 0x55, 0x83, 0x97, 0x2e, 0xe3, 0x8a, 0xb0, 0x98, 0xc6, 0xbf, 0xba, 0xc6, 0x9e, 0x50, 0xf6, 0x80,
+            0x61, 0x6e, 0xa7, 0x92, 0xfe, 0x5b, 0xd0, 0x7e, 0x41, 0xc5, 0x40, 0x6e, 0xf7, 0x52, 0xcc, 0x6c, 0x52, 0x7c,
+            0xdc, 0xd5, 0x8f, 0x9f, 0x29, 0x0b, 0xd5, 0x50, 0xc4, 0x6b, 0x61, 0xf1, 0x5b, 0x7f, 0xe0, 0x82, 0xb8, 0x74,
+            0x1c, 0xba, 0x8a, 0xce, 0xdb, 0x57, 0x68, 0x5a, 0x04, 0xb2, 0x13, 0x64, 0x04, 0x96, 0xfb, 0x2b, 0x70, 0x52,
+            0x05, 0x92, 0xec, 0x0d, 0x8c, 0x18, 0x4b, 0x5a, 0xa6, 0x0a, 0xf8, 0x0d, 0xa8, 0xf8, 0x94, 0x4c, 0xec, 0x65,
+            0xe0, 0xe9, 0xd1, 0xc2, 0xde, 0xef, 0x04, 0x9e, 0x33, 0x7a, 0xfe, 0x17, 0xd0, 0xcc, 0xce, 0x94, 0xd1, 0x9e,
+            0x19, 0xb6, 0xa5, 0xb4, 0x5f, 0x8b, 0x70, 0xb4, 0x7f, 0x05, 0xad, 0x38, 0x7e, 0xab, 0x18, 0x22, 0x84, 0x8f,
+            0xcb, 0x30, 0x27, 0x80, 0xa7, 0xd0, 0xec, 0x80, 0xf5, 0x35, 0x0b, 0x79, 0x4d, 0xaa, 0x73, 0x2b, 0xb7, 0x26,
+            0x0e, 0x69, 0x11, 0x21, 0x46, 0x85, 0xb1, 0xa7, 0xc8
+        };
+        
         private readonly Packet _packet1 = new Packet
         {
             IsError = false,
             PacketId = Guid.NewGuid(),
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-            Cargo =
-                @"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8"
-                    .Split(' ')
+            Cargo = ExampleCargo,
         };
 
         public readonly Packet _packet2 = new Packet
@@ -24,9 +41,7 @@ namespace StarMeter.Tests.Controllers
             IsError = true,
             PacketId = Guid.NewGuid(),
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:52.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-            Cargo =
-                @"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8"
-                    .Split(' ')
+            Cargo = ExampleCargo,
         };
 
         public readonly Packet _packet3 = new Packet
@@ -34,9 +49,7 @@ namespace StarMeter.Tests.Controllers
             IsError = false,
             PacketId = Guid.NewGuid(),
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:54.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-            Cargo =
-                @"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8"
-                    .Split(' ')
+            Cargo = ExampleCargo,
         };
 
         [TestMethod]
