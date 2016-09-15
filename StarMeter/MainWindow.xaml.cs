@@ -42,8 +42,8 @@ namespace StarMeter
         {
             // Capture and track the mouse.
             mouseDown = true;
-            mouseDownPos = e.GetPosition(theGrid);
-            theGrid.CaptureMouse();
+            mouseDownPos = e.GetPosition(MainGrid);
+            MainGrid.CaptureMouse();
 
             // Initial placement of the drag selection box.         
             Canvas.SetLeft(selectionBox, mouseDownPos.X);
@@ -59,12 +59,12 @@ namespace StarMeter
         {
             // Release the mouse capture and stop tracking it.
             mouseDown = false;
-            theGrid.ReleaseMouseCapture();
+            MainGrid.ReleaseMouseCapture();
 
             // Hide the drag selection box.
             selectionBox.Visibility = Visibility.Collapsed;
 
-            Point mouseUpPos = e.GetPosition(theGrid);
+            Point mouseUpPos = e.GetPosition(MainGrid);
             Size s = new Size(selectionBox.Width, selectionBox.Height);
 
             SizeLabelTest.Content = s.ToString();
@@ -83,7 +83,7 @@ namespace StarMeter
             {
                 // When the mouse is held down, reposition the drag selection box.
 
-                Point mousePos = e.GetPosition(theGrid);
+                Point mousePos = e.GetPosition(MainGrid);
 
                 if (mouseDownPos.X < mousePos.X)
                 {

@@ -48,5 +48,26 @@
             <Setter Property="Background" Value="Red"></Setter>             
         </Style>
 
+        <Style TargetType="StackPanel" x:Key="PortA">
+            <Setter Property="Background" Value="#CCFFFFFF"></Setter>
+        </Style>
+        <Style TargetType="StackPanel" x:Key="PortB">
+            <Setter Property="Background" Value="#CCE5E5E5"></Setter>
+        </Style>
+
+        <Style TargetType="Label" x:Key="PortHeader">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Height" Value="Auto"/>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="Background" Value="Transparent"></Setter>
+        </Style>
+
+        <Style TargetType="Border" x:Key="PortBorder">
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="Black" />
+        </Style>
+
+
     </Application.Resources>
 </Application>
