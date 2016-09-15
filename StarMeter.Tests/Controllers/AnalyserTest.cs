@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StarMeter.Controllers;
 using StarMeter.Models;
@@ -76,6 +73,25 @@ namespace StarMeter.Tests.Controllers
             var actualResult = analyser.CalculateTotalNoOfErrorPackets(packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod]
+        public void CalculateErrorRateTest()
+        {
+            var packetDict = new Dictionary<Guid, Packet>
+            {
+                {_packet1.PacketId, _packet1},
+                {_packet2.PacketId, _packet2},
+                {_packet3.PacketId, _packet3}
+            };
+            var analyser = new Analyser();
+
+            const double expectedResult = 0.33;
+
+            var actualResult = analyser.CalculateErrorRate(packetDict);
+
+            Assert.AreEqual(expectedResult, Math.Round(actualResult,2));
+
         }
     }
 }

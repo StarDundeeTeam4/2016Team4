@@ -13,7 +13,7 @@ namespace StarMeter.Controllers
         int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
         int CalculateDataRate(Dictionary<Guid, Packet> packetDictionary);
         int CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary);
-        int CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
+        double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
     }
 
     public class Analyser : IAnalyser
@@ -48,10 +48,13 @@ namespace StarMeter.Controllers
             return 0;
         }
 
-        public int CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary)
+        public double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary)
         {
-            //To Do
-            return 0;
+            var noOfErrorPackets = CalculateTotalNoOfErrorPackets(packetDictionary);
+            var noOfPackets = CalculateTotalNoOfPackets(packetDictionary);
+
+            var errorRate = noOfErrorPackets / (double)noOfPackets;
+            return errorRate;
         }
     }
 }
