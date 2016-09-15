@@ -203,7 +203,7 @@ namespace StarMeter.View
             }
 
             b.SetResourceReference(Control.StyleProperty, sty);
-
+            return b;
 
         }
 
