@@ -21,8 +21,15 @@ namespace StarMeter.Controllers
 
         public int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary)
         {
-            //To Do
-            return 0;
+            var totalNoOfDataChars = 0;
+            foreach (var packet in packetDictionary.Values)
+            {
+                var packetAddressLength = packet.Address.Length;
+                var packetCargoLength = packet.Cargo.Length;
+                var packetDataChars = packetAddressLength + packetCargoLength;
+                totalNoOfDataChars += packetDataChars;
+            }
+            return totalNoOfDataChars;
         }
 
         public int CalculateTotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary)
