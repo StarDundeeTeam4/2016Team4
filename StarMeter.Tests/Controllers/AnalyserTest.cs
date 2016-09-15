@@ -9,7 +9,7 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class AnalyserTest
     {
-        private readonly Packet _packet1 = new Packet
+        private static readonly Packet Packet1 = new Packet
         {
             IsError = false,
             PacketId = Guid.NewGuid(),
@@ -20,7 +20,7 @@ namespace StarMeter.Tests.Controllers
                     .Split(' ')
         };
 
-        private readonly Packet _packet2 = new Packet
+        private static readonly Packet Packet2 = new Packet
         {
             IsError = true,
             PacketId = Guid.NewGuid(),
@@ -31,7 +31,7 @@ namespace StarMeter.Tests.Controllers
                     .Split(' ')
         };
 
-        private readonly Packet _packet3 = new Packet
+        private static readonly Packet Packet3 = new Packet
         {
             IsError = false,
             PacketId = Guid.NewGuid(),
@@ -42,20 +42,20 @@ namespace StarMeter.Tests.Controllers
                     .Split(' ')
         };
 
+        private readonly Dictionary<Guid,Packet> _packetDict = new Dictionary<Guid, Packet>
+            {
+                {Packet1.PacketId, Packet1},
+                {Packet2.PacketId, Packet2},
+                {Packet3.PacketId, Packet3}
+            };
+
+        private readonly Analyser _analyser = new Analyser();
+
         [TestMethod]
         public void CalculateTotalNoOfDataCharsTest()
         {
-            var packetDict = new Dictionary<Guid, Packet>
-            {
-                {_packet1.PacketId, _packet1},
-                {_packet2.PacketId, _packet2},
-                {_packet3.PacketId, _packet3}
-            };
-            var analyser = new Analyser();
-
             const int expectedResult = 765;
-
-            var actualResult = analyser.CalculateTotalNoOfDataChars(packetDict);
+            var actualResult = _analyser.CalculateTotalNoOfDataChars(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -63,17 +63,8 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculateTotalNumberOfPacketsTest()
         {
-            var packetDict = new Dictionary<Guid, Packet>
-            {
-                {_packet1.PacketId, _packet1},
-                {_packet2.PacketId, _packet2},
-                {_packet3.PacketId, _packet3}
-            };
-            var analyser = new Analyser();
-
             const int expectedResult = 3;
-
-            var actualResult = analyser.CalculateTotalNoOfPackets(packetDict);
+            var actualResult = _analyser.CalculateTotalNoOfPackets(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -81,17 +72,8 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculateTotalNumberOfErrorPacketsTest()
         {
-            var packetDict = new Dictionary<Guid, Packet>
-            {
-                {_packet1.PacketId, _packet1},
-                {_packet2.PacketId, _packet2},
-                {_packet3.PacketId, _packet3}
-            };
-            var analyser = new Analyser();
-
             const int expectedResult = 1;
-
-            var actualResult = analyser.CalculateTotalNoOfErrorPackets(packetDict);
+            var actualResult = _analyser.CalculateTotalNoOfErrorPackets(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -99,17 +81,8 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculateErrorRateTest()
         {
-            var packetDict = new Dictionary<Guid, Packet>
-            {
-                {_packet1.PacketId, _packet1},
-                {_packet2.PacketId, _packet2},
-                {_packet3.PacketId, _packet3}
-            };
-            var analyser = new Analyser();
-
             const double expectedResult = 0.33;
-
-            var actualResult = analyser.CalculateErrorRate(packetDict);
+            var actualResult = _analyser.CalculateErrorRate(_packetDict);
 
             Assert.AreEqual(expectedResult, Math.Round(actualResult,2));
         }
@@ -118,17 +91,8 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculatePacketRateTest()
         {
-            var packetDict = new Dictionary<Guid, Packet>
-            {
-                {_packet1.PacketId, _packet1},
-                {_packet2.PacketId, _packet2},
-                {_packet3.PacketId, _packet3}
-            };
-            var analyser = new Analyser();
-
             const double expectedResult = 0.75;
-
-            var actualResult = analyser.CalculatePacketRatePerSecond(packetDict);
+            var actualResult = _analyser.CalculatePacketRatePerSecond(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
@@ -136,17 +100,8 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculateDataRateTest()
         {
-            var packetDict = new Dictionary<Guid, Packet>
-            {
-                {_packet1.PacketId, _packet1},
-                {_packet2.PacketId, _packet2},
-                {_packet3.PacketId, _packet3}
-            };
-            var analyser = new Analyser();
-
             const double expectedResult = 191.25;
-
-            var actualResult = analyser.CalculateDataRateBytePerSecond(packetDict);
+            var actualResult = _analyser.CalculateDataRateBytePerSecond(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
