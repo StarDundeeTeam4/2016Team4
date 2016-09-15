@@ -61,6 +61,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controllers\Analyser.cs" />
     <Compile Include="Controllers\CRC.cs" />
     <Compile Include="Controllers\Parser.cs" />
     <Compile Include="Controllers\StreamReaderWrapper.cs" />

@@ -4,7 +4,18 @@ using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-    public class Analyser
+
+    public interface IAnalyser
+    {
+        int TotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary);
+        int TotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary);
+        int TotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
+        int CalculateDataRate(Dictionary<Guid, Packet> packetDictionary);
+        int CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary);
+        int CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
+    }
+
+    public class Analyser : IAnalyser
     {
 
         public int TotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary)
