@@ -26,8 +26,8 @@ namespace StarMeter.Controllers
 
         public int TotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary)
         {
-            //To Do
-            return 0;
+            var totalNoOfPackets = packetDictionary.Count;
+            return totalNoOfPackets;
         }
 
         public int TotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary)
