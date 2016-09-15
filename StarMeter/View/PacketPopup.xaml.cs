@@ -60,7 +60,21 @@ namespace StarMeter.View
 
 
             TimeLabel.Content = p.DateRecieved.ToString();
-            ProtocolLabel.Content = p.GetProtocolID();
+
+            var protocol_id = p.GetProtocolID();
+
+            if (protocol_id == 1)
+            {
+                ProtocolLabel.Content = ("Protocol: " + (protocol_id).ToString() + " (RMAP)");
+            }
+            else
+            {
+                ProtocolLabel.Content = ("Protocol: " + (protocol_id).ToString());
+            }
+            
+            
+            
+
 
             // SequenceNumberLabel.Content = ???;
 
