@@ -11,8 +11,8 @@ namespace StarMeter.Controllers
         int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary);
         int CalculateTotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary);
         int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
-        int CalculateDataRate(Dictionary<Guid, Packet> packetDictionary);
-        int CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary);
+        double CalculateDataRate(Dictionary<Guid, Packet> packetDictionary);
+        double CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary);
         double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
     }
 
@@ -36,16 +36,23 @@ namespace StarMeter.Controllers
             return packetDictionary.Values.Count(packet => packet.IsError);
         }
 
-        public int CalculateDataRate(Dictionary<Guid, Packet> packetDictionary)
+        public double CalculateDataRate(Dictionary<Guid, Packet> packetDictionary)
         {
             //To Do
             return 0;
         }
 
-        public int CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary)
+        public double CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary)
         {
-            //To Do
-            return 0;
+            var sortedPackets = from pair in packetDictionary orderby pair.Value.DateRecieved ascending select pair;
+
+            var timeTaken = sortedPackets.Last().Value.DateRecieved - sortedPackets.First().Value.DateRecieved;
+            var timeTakenInSeconds = TimeSpan.Parse(timeTaken.ToString()).TotalSeconds;
+
+            var totalPackets = CalculateTotalNoOfPackets(packetDictionary);
+
+            var packetsPerSecond = totalPackets / timeTakenInSeconds;
+            return packetsPerSecond;
         }
 
         public double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary)
