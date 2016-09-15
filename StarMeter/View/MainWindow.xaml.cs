@@ -2,29 +2,22 @@
 using StarMeter.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
-namespace StarMeter
+namespace StarMeter.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
 
         private StackPanel[] _portStacks = new StackPanel[8];
@@ -84,19 +77,19 @@ namespace StarMeter
         //    lblSpace.Content = "I like space";
         //}
 
-        bool mouseDown = false; // Set to 'true' when mouse is held down.
-        Point mouseDownPos; // The point where the mouse button was clicked down.
+        private bool _mouseDown; // Set to 'true' when mouse is held down.
+        private Point _mouseDownPos; // The point where the mouse button was clicked down.
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // Capture and track the mouse.
-            mouseDown = true;
-            mouseDownPos = e.GetPosition(MainGrid);
+            _mouseDown = true;
+            _mouseDownPos = e.GetPosition(MainGrid);
             MainGrid.CaptureMouse();
 
             // Initial placement of the drag selection box.         
-            Canvas.SetLeft(selectionBox, mouseDownPos.X);
-            Canvas.SetTop(selectionBox, mouseDownPos.Y);
+            Canvas.SetLeft(selectionBox, _mouseDownPos.X);
+            Canvas.SetTop(selectionBox, _mouseDownPos.Y);
             selectionBox.Width = 0;
             selectionBox.Height = 0;
 
@@ -107,14 +100,13 @@ namespace StarMeter
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             // Release the mouse capture and stop tracking it.
-            mouseDown = false;
+            _mouseDown = false;
             MainGrid.ReleaseMouseCapture();
 
             // Hide the drag selection box.
             selectionBox.Visibility = Visibility.Collapsed;
 
-            Point mouseUpPos = e.GetPosition(MainGrid);
-            Size s = new Size(selectionBox.Width, selectionBox.Height);
+            var s = new Size(selectionBox.Width, selectionBox.Height);
 
             SizeLabelTest.Content = s.ToString();
 
@@ -128,40 +120,32 @@ namespace StarMeter
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mouseDown)
+            if (!_mouseDown) return;
+            // When the mouse is held down, reposition the drag selection box.
+
+            var mousePos = e.GetPosition(MainGrid);
+
+            if (_mouseDownPos.X < mousePos.X)
             {
-                // When the mouse is held down, reposition the drag selection box.
-
-                Point mousePos = e.GetPosition(MainGrid);
-
-                if (mouseDownPos.X < mousePos.X)
-                {
-                    Canvas.SetLeft(selectionBox, mouseDownPos.X);
-                    selectionBox.Width = mousePos.X - mouseDownPos.X;
-                }
-                else
-                {
-                    Canvas.SetLeft(selectionBox, mousePos.X);
-                    selectionBox.Width = mouseDownPos.X - mousePos.X;
-                }
-
-                if (mouseDownPos.Y < mousePos.Y)
-                {
-                    Canvas.SetTop(selectionBox, mouseDownPos.Y);
-                    selectionBox.Height = mousePos.Y - mouseDownPos.Y;
-                }
-                else
-                {
-                    Canvas.SetTop(selectionBox, mousePos.Y);
-                    selectionBox.Height = mouseDownPos.Y - mousePos.Y;
-                }
+                Canvas.SetLeft(selectionBox, _mouseDownPos.X);
+                selectionBox.Width = mousePos.X - _mouseDownPos.X;
             }
-        }
+            else
+            {
+                Canvas.SetLeft(selectionBox, mousePos.X);
+                selectionBox.Width = _mouseDownPos.X - mousePos.X;
+            }
 
-
-        void ScrollBackToBottom() 
-        {
-            PacketScroller.ScrollToBottom();
+            if (_mouseDownPos.Y < mousePos.Y)
+            {
+                Canvas.SetTop(selectionBox, _mouseDownPos.Y);
+                selectionBox.Height = mousePos.Y - _mouseDownPos.Y;
+            }
+            else
+            {
+                Canvas.SetTop(selectionBox, mousePos.Y);
+                selectionBox.Height = _mouseDownPos.Y - mousePos.Y;
+            }
         }
 
 
@@ -220,10 +204,8 @@ namespace StarMeter
 
             b.SetResourceReference(Control.StyleProperty, sty);
 
-            return b;
 
         }
-
 
         StackPanel GetPanelToUse(int portNum) 
         {
@@ -264,44 +246,52 @@ namespace StarMeter
             
             RatesLineChart.Series.Clear();
 
-            List<KeyValuePair<string, int>> valueList = new List<KeyValuePair<string, int>>();
+            var valueList = new List<KeyValuePair<string, int>>
+            {
+                new KeyValuePair<string, int>("00:00:00:000", 4),
+                new KeyValuePair<string, int>("00:00:01:000", 1),
+                new KeyValuePair<string, int>("00:00:04:102", 42),
+                new KeyValuePair<string, int>("00:00:14:000", 21),
+                new KeyValuePair<string, int>("00:00:41:000", 41),
+                new KeyValuePair<string, int>("00:01:12:050", 24),
+                new KeyValuePair<string, int>("00:01:17:000", 17),
+                new KeyValuePair<string, int>("00:01:60:100", 19)
+            };
 
-            valueList.Add(new KeyValuePair<string, int>("00:00:00:000", 4));
-            valueList.Add(new KeyValuePair<string, int>("00:00:01:000", 1));
-            valueList.Add(new KeyValuePair<string, int>("00:00:04:102", 42));
-            valueList.Add(new KeyValuePair<string, int>("00:00:14:000", 21));
-            valueList.Add(new KeyValuePair<string, int>("00:00:41:000", 41));
-            valueList.Add(new KeyValuePair<string, int>("00:01:12:050", 24));
-            valueList.Add(new KeyValuePair<string, int>("00:01:17:000", 17));
-            valueList.Add(new KeyValuePair<string, int>("00:01:60:100", 19));
 
-            LineSeries lineSeries1 = new LineSeries();
-            lineSeries1.Title = "Data Rate";
-            lineSeries1.Foreground = Brushes.White;
-            lineSeries1.DependentValuePath = "Value";
-            lineSeries1.IndependentValuePath = "Key";
-            lineSeries1.ItemsSource = valueList;
+            var lineSeries1 = new LineSeries
+            {
+                Title = "Data Rate",
+                Foreground = Brushes.White,
+                DependentValuePath = "Value",
+                IndependentValuePath = "Key",
+                ItemsSource = valueList
+            };
             RatesLineChart.Series.Add(lineSeries1);
 
 
 
-            List<KeyValuePair<string, int>> valueList2 = new List<KeyValuePair<string, int>>();
+            var valueList2 = new List<KeyValuePair<string, int>>
+            {
+                new KeyValuePair<string, int>("00:00:00:000", 8),
+                new KeyValuePair<string, int>("00:00:01:000", 2),
+                new KeyValuePair<string, int>("00:00:04:102", 42),
+                new KeyValuePair<string, int>("00:00:14:000", 23),
+                new KeyValuePair<string, int>("00:00:41:000", 19),
+                new KeyValuePair<string, int>("00:01:12:050", 25),
+                new KeyValuePair<string, int>("00:01:17:000", 18),
+                new KeyValuePair<string, int>("00:01:60:100", 19)
+            };
 
-            valueList2.Add(new KeyValuePair<string, int>("00:00:00:000", 8));
-            valueList2.Add(new KeyValuePair<string, int>("00:00:01:000", 2));
-            valueList2.Add(new KeyValuePair<string, int>("00:00:04:102", 42));
-            valueList2.Add(new KeyValuePair<string, int>("00:00:14:000", 23));
-            valueList2.Add(new KeyValuePair<string, int>("00:00:41:000", 19));
-            valueList2.Add(new KeyValuePair<string, int>("00:01:12:050", 25));
-            valueList2.Add(new KeyValuePair<string, int>("00:01:17:000", 18));
-            valueList2.Add(new KeyValuePair<string, int>("00:01:60:100", 19));
 
-            LineSeries lineSeries2 = new LineSeries();
-            lineSeries2.Foreground = Brushes.White;
-            lineSeries2.Title = "Error Rate";
-            lineSeries2.DependentValuePath = "Value";
-            lineSeries2.IndependentValuePath = "Key";
-            lineSeries2.ItemsSource = valueList2;
+            LineSeries lineSeries2 = new LineSeries
+            {
+                Foreground = Brushes.White,
+                Title = "Error Rate",
+                DependentValuePath = "Value",
+                IndependentValuePath = "Key",
+                ItemsSource = valueList2
+            };
             RatesLineChart.Series.Add(lineSeries2);
 
             //ScrollBackToBottom();
@@ -310,118 +300,114 @@ namespace StarMeter
 
 
         //This will allow us to read the files or remove the files later.
-        List<String> selected_files = new List<String>();
-        List<Grid> fileGrids = new List<Grid>();
+        readonly List<String> _selectedFiles = new List<String>();
+        readonly List<Grid> _fileGrids = new List<Grid>();
 
-        void FileSelection(object sender, RoutedEventArgs e) 
+        private void FileSelection(object sender, RoutedEventArgs e) 
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-
-            ofd.Filter = "Record Files (.rec)|*.rec";
-            ofd.Multiselect = true;
-
-            bool? confirmed = ofd.ShowDialog();
-
-            if (confirmed == true) 
+            var ofd = new OpenFileDialog
             {
+                Filter = "Record Files (.rec)|*.rec",
+                Multiselect = true
+            };
 
-                // display file name
-                string[] filename = ofd.FileNames;
+
+            var confirmed = ofd.ShowDialog();
+
+            if (confirmed != true) return;
+            // display file name
+            string[] filename = ofd.FileNames;
                 
-                foreach (var s in filename)
+            foreach (var s in filename)
+            {
+                //If the user has not already selected this file.
+                if(_selectedFiles.Contains(s) == false)
                 {
-                    //If the user has not already selected this file.
-                    if(selected_files.Contains(s) == false)
+                    _selectedFiles.Add(s);
+                    string[] split = s.Split('\\');
+                    string actualName = split[split.Length - 1];
+                    var fileNameWithoutExtension = actualName.Substring(0, actualName.Length - 4);
+
+                    var g = new Grid
                     {
-                        selected_files.Add(s);
-                        string[] split = s.Split('\\');
-                        string actualName = split[split.Length - 1];
-                        var fileNameWithoutExtension = actualName.Substring(0, actualName.Length - 4);
+                        Name = "grid" + fileNameWithoutExtension,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        Height = 30,
+                        Margin = new Thickness(0, 0, 0, 5),
+                        Background = Brushes.White
+                    };
+                    var cd = new ColumnDefinition();
+                    var cd2 = new ColumnDefinition();
+                    cd.Width = new GridLength(8, GridUnitType.Star);
+                    cd2.Width = new GridLength(1, GridUnitType.Star);
 
-                        Grid g = new Grid();
-                        g.Name = "grid" + fileNameWithoutExtension;
-                        g.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                        g.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-                        g.Height = 30;
-                        g.Margin = new Thickness(0, 0, 0, 5);
-                        g.Background = Brushes.White;
-                        ColumnDefinition cd = new ColumnDefinition();
-                        ColumnDefinition cd2 = new ColumnDefinition();
-                        cd.Width = new GridLength(8, GridUnitType.Star);
-                        cd2.Width = new GridLength(1, GridUnitType.Star);
+                    g.ColumnDefinitions.Add(cd);
+                    g.ColumnDefinitions.Add(cd2);
 
-                        g.ColumnDefinitions.Add(cd);
-                        g.ColumnDefinitions.Add(cd2);
+                    //if actualName is "file.rec" then fileNameWithoutExtension would become "file"
 
-                        //if actualName is "file.rec" then fileNameWithoutExtension would become "file"
-                        
-                        Label l = new Label();
-                        l.Name = "label" + fileNameWithoutExtension;
-                        l.Style = (Style)Application.Current.Resources["FileSelected"];
-                        l.Content = actualName;
-
-                        Button b = new Button();
-                        b.Name = fileNameWithoutExtension;
-
-                        int count = selected_files.Count - 1;
-
-                        b.Tag = count.ToString();
-                        b.Content = "X";
-                        b.Click += cancelUpload;
-                        b.Background = Brushes.Red;
-                        b.Foreground = Brushes.White;
-                        b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-                        b.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
-                        b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                        b.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-                        b.Name = "RemoveButton";
-
-
-                        Grid.SetColumn(l, 0);
-                        Grid.SetColumn(b, 1);
-
-                        g.Children.Add(l);
-                        g.Children.Add(b);
-                        SelectedFiles.Children.Add(g);
-                        fileGrids.Add(g);
-
-
-
-                    }
-                    else
+                    var l = new Label
                     {
-                        System.Windows.MessageBox.Show("You have already added this file.");
-                    }
+                        Name = "label" + fileNameWithoutExtension,
+                        Style = (Style) Application.Current.Resources["FileSelected"],
+                        Content = actualName
+                    };
+
+                    var b = new Button {Name = fileNameWithoutExtension};
+
+                    var myCount = _selectedFiles.Count - 1;
+
+                    b.Tag = myCount.ToString();
+                    b.Content = "X";
+                    b.Click += CancelUpload;
+                    b.Background = Brushes.Red;
+                    b.Foreground = Brushes.White;
+                    b.HorizontalContentAlignment = HorizontalAlignment.Center;
+                    b.VerticalContentAlignment = VerticalAlignment.Center;
+                    b.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    b.VerticalAlignment = VerticalAlignment.Stretch;
+                    b.Name = "RemoveButton";
+
+                    Grid.SetColumn(l, 0);
+                    Grid.SetColumn(b, 1);
+
+                    g.Children.Add(l);
+                    g.Children.Add(b);
+                    SelectedFiles.Children.Add(g);
+                    _fileGrids.Add(g);
 
                 }
-                
-            }
+                else
+                {
+                    MessageBox.Show("You have already added this file.");
+                }
 
+            }
         }
 
-        void cancelUpload(object sender, RoutedEventArgs e)
+        void CancelUpload(object sender, RoutedEventArgs e)
         {
 
-            Button b = (Button)sender;
-            string tag = b.Tag.ToString();
-            int id = int.Parse(tag);
+            var b = (Button)sender;
+            var tag = b.Tag.ToString();
+            var id = int.Parse(tag);
 
             SelectedFiles.Children.RemoveAt(id);
-            selected_files.RemoveAt(id);
-            fileGrids.RemoveAt(id);
+            _selectedFiles.RemoveAt(id);
+            _fileGrids.RemoveAt(id);
 
-            for (int i = id; i < fileGrids.Count; i++) 
+            for (var i = id; i < _fileGrids.Count; i++) 
             {
-                var dfdsf = fileGrids[i].FindName("RemoveButton");
                 // http://stackoverflow.com/questions/14825232/what-is-a-smarter-way-to-get-a-child-control-in-xaml
-                var btn = (Button)fileGrids[i].Children.OfType<Button>().Single(f => f.Name == "RemoveButton");
+                var btn = _fileGrids[i].Children.OfType<Button>().Single(f => f.Name == "RemoveButton");
                 btn.Tag = i;
             }
 
             
         }
 
-        void removeFile(Grid grid)
+        void RemoveFile(Panel grid)
         {
             foreach(UIElement child in grid.Children)
             {
@@ -431,15 +417,15 @@ namespace StarMeter
             SelectedFiles.Children.Remove(grid);
         }
 
-        void OpenPopup(object sender, RoutedEventArgs e) 
+        public void OpenPopup(object sender, RoutedEventArgs e) 
         {
-            Button b = (Button)sender;
+            var b = (Button)sender;
 
-            Brush br = b.Background;
+            var br = b.Background;
 
-            string text = b.Tag.ToString();
-            Guid guid = new Guid(text);
-            GetPacketFromGUID(guid);        // needs to return a packet
+            var text = b.Tag.ToString();
+            var guid = new Guid(text);
+            GetPacketFromGuid(guid);        // needs to return a packet
             
             PacketPopup pp = new PacketPopup();
 
@@ -466,49 +452,44 @@ namespace StarMeter
             }
 
             return null;
-
         }
 
         // function to get the Packet from the GUID provided
-        void GetPacketFromGUID(Guid guid) 
+        static void GetPacketFromGuid(Guid guid) 
         {
-            return;
         }
 
 
         //This lets us know which image to change to.
-        private bool is_up_arrow = true;
+        private bool _isUpArrow = true;
 
         private void ShowDataVisPopup(object sender, RoutedEventArgs e)
         {
 
             Console.WriteLine("CLEEK");
-            //t = new Timer();
-            //t.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
-            //t.Interval = 10;
-            //t.Start();
-            int height = 0;
-            ImageBrush image = null;
 
-            if (is_up_arrow == true)
+            ImageBrush image;
+
+            if (_isUpArrow)
             {
-                //height = 10;
                 DataVisButton.VerticalAlignment = VerticalAlignment.Top;
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/down-arrow.png")));
             }
             else
             {
                 //height = 1;
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")));
-                image.Stretch = Stretch.UniformToFill;
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")))
+                {
+                    Stretch = Stretch.UniformToFill
+                };
             }
 
-            if (t == null)
+            if (_t == null)
             {
-                t = new System.Timers.Timer();
-                t.Elapsed += new ElapsedEventHandler(TimerEventProcessor);
-                t.Interval = 10;
-                t.Start();
+                _t = new System.Timers.Timer();
+                _t.Elapsed += TimerEventProcessor;
+                _t.Interval = 10;
+                _t.Start();
             }
 
             DataVisButton.Background = image;
@@ -519,78 +500,77 @@ namespace StarMeter
 
 
         // This is the method to run when the timer is raised.
-        private void TimerEventProcessor(Object myObject,EventArgs myEventArgs)
+        private void TimerEventProcessor(object myObject,EventArgs myEventArgs)
         {
 
             // Restarts the timer and increments the counter.
-            if (is_up_arrow)
+            if (_isUpArrow)
             {
-                count += 1;
+                _count += 1;
             }
             else 
             {
-                count -= 1;
+                _count -= 1;
             }
 
-            if ((count > 10 && is_up_arrow) || (count < 2 && !is_up_arrow))
+            if ((_count > 10 && _isUpArrow) || (_count < 2 && !_isUpArrow))
             {
-                t.Stop();
+                _t.Stop();
 
                 DataVisualisationPopup.Dispatcher.Invoke(new UpdateSlider(FixStretch));
-                
-                Console.WriteLine("STOP");
-                is_up_arrow = !is_up_arrow;
-                t = null;
+
+                _isUpArrow = !_isUpArrow;
+                _t = null;
             }
 
-
-            Console.WriteLine(count);
             DataVisualisationPopup.Dispatcher.Invoke(new UpdateSlider(MoveSlider));
 
 
 
         }
 
-        System.Timers.Timer t = null;
-        int count = 0;
+        System.Timers.Timer _t;
+        int _count;
 
         private void MoveSlider()
         {
-            DataVisualisationPopup.Height = new GridLength(count, GridUnitType.Star); ;
+            DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star); ;
         }
 
         private void FixStretch()
         {
-            if (!is_up_arrow)
+            if (!_isUpArrow)
             {
                 DataVisButton.VerticalAlignment = VerticalAlignment.Stretch;
             }
 
         }
 
-        Style GetErrorStyle(double val)
+        static Style GetErrorStyle(double val)
         {
 
-            Style style = new Style { TargetType = typeof(Button) };
+            var style = new Style { TargetType = typeof(Button) };
             style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
             style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
             style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
             style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(ForegroundProperty, Brushes.White));
-            style.Setters.Add(new Setter(Button.BackgroundProperty, Brushes.Red));
-            style.Setters.Add(new Setter(Button.HeightProperty, val));
+            style.Setters.Add(new Setter(BackgroundProperty, Brushes.Red));
+            style.Setters.Add(new Setter(HeightProperty, val));
 
             return style;
         }
-        Style GetSuccessStyle(double val) 
+
+        private static Style GetSuccessStyle(double val) 
         {
 
-            Style style = new Style { TargetType = typeof(Button) };
+            var style = new Style { TargetType = typeof(Button) };
             style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
             style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
             style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
             style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+
 
             var converter = new System.Windows.Media.BrushConverter();
 
@@ -599,10 +579,11 @@ namespace StarMeter
 
             return style;
         }
-        Style GetTimeStyle(double val)
+
+        public Style GetTimeStyle(double val)
         {
 
-            Style style = new Style { TargetType = typeof(Label) };
+            var style = new Style { TargetType = typeof(Label) };
             style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
             style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
             style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
