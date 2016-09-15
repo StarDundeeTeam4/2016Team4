@@ -6,7 +6,7 @@ namespace StarMeter.Models
     {
         public Guid     PacketId     { get; set; }
         public string   TypeOfPacket { get; private set; }
-        public string[]   Cargo        { get; set; }
+        public byte[]   Cargo        { get; set; }
         public byte[]   Address      { get; private set; }
         public DateTime DateRecieved { get; set; }
         public bool     IsError      { get; set; }
@@ -20,9 +20,9 @@ namespace StarMeter.Models
 
         }
 
-        public Packet(string type, string[] cargo, byte[] address, DateTime date, int port)
+        public Packet(string type, byte[] cargo, byte[] address, DateTime date, int port)
         {
-            PacketId = new Guid();
+            PacketId = Guid.NewGuid();
             TypeOfPacket = type;
             Cargo = cargo;
             Address = address;
@@ -30,9 +30,9 @@ namespace StarMeter.Models
             PortNumber = port;
         }
 
-        public Packet(string type, string[] cargo, byte[] address, DateTime date, int port, string errorType)
+        public Packet(string type, byte[] cargo, byte[] address, DateTime date, int port, string errorType)
         {
-            PacketId = new Guid();
+            PacketId = Guid.NewGuid();
             TypeOfPacket = type;
             Cargo = cargo;
             Address = address;
