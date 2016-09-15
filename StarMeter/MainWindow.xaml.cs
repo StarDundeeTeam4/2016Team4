@@ -241,6 +241,7 @@ namespace StarMeter
 
         //This will allow us to read the files or remove the files later.
         List<String> selected_files = new List<String>();
+        List<Grid> fileGrids = new List<Grid>();
 
         void FileSelection(object sender, RoutedEventArgs e) 
         {
@@ -291,7 +292,10 @@ namespace StarMeter
 
                         Button b = new Button();
                         b.Name = fileNameWithoutExtension;
-                        b.Tag = s;
+
+                        int count = selected_files.Count - 1;
+
+                        b.Tag = count.ToString();
                         b.Content = "X";
                         b.Click += cancelUpload;
                         b.Background = Brushes.Red;
@@ -300,7 +304,7 @@ namespace StarMeter
                         b.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
                         b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
                         b.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-
+                        b.Name = "RemoveButton";
 
 
                         Grid.SetColumn(l, 0);
@@ -309,6 +313,10 @@ namespace StarMeter
                         g.Children.Add(l);
                         g.Children.Add(b);
                         SelectedFiles.Children.Add(g);
+                        fileGrids.Add(g);
+
+
+
                     }
                     else
                     {
@@ -319,40 +327,27 @@ namespace StarMeter
                 
             }
 
-
-            //List<KeyValuePair<string, int>> MyValue = new List<KeyValuePair<string, int>>();
-            //MyValue.Add(new KeyValuePair<string, int>("Administration", 20));
-            //MyValue.Add(new KeyValuePair<string, int>("Management", 36));
-            //MyValue.Add(new KeyValuePair<string, int>("Development", 89));
-            //MyValue.Add(new KeyValuePair<string, int>("Support", 270));
-            //MyValue.Add(new KeyValuePair<string, int>("Sales", 140));
-
-            //LineChart1.DataContext = MyValue;
-
-
         }
 
         void cancelUpload(object sender, RoutedEventArgs e)
         {
-            if(1 > 2)
+
+            Button b = (Button)sender;
+            string tag = b.Tag.ToString();
+            int id = int.Parse(tag);
+
+            SelectedFiles.Children.RemoveAt(id);
+            selected_files.RemoveAt(id);
+            fileGrids.RemoveAt(id);
+
+            for (int i = id; i < fileGrids.Count; i++) 
             {
-                var button = ((Button)sender);
-                var name = button.Name;
-
-                var filename = (button.Tag).ToString();
-
-                selected_files.Remove(filename);
-                String label_name = "label" + name;
-                var label = this.FindName(label_name);
-
-                Grid grid = new Grid();
-
-                RegisterName("grid" + name, grid);
-
-
-
-                removeFile(grid);
+                var dfdsf = fileGrids[i].FindName("RemoveButton");
+                // http://stackoverflow.com/questions/14825232/what-is-a-smarter-way-to-get-a-child-control-in-xaml
+                var btn = (Button)fileGrids[i].Children.OfType<Button>().Single(f => f.Name == "RemoveButton");
+                btn.Tag = i;
             }
+
             
         }
 
