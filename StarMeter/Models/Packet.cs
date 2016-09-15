@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StarMeter.Controllers;
+using System;
 
 namespace StarMeter.Models
 {
@@ -11,7 +12,7 @@ namespace StarMeter.Models
         public DateTime DateRecieved { get; set; }
         public bool     IsError      { get; set; }
         public string   ErrorType    { get; private set; }
-        public int      PortNumber   { get; set; }
+        public int PortNumber { get; set; }
         public Guid     PrevPacket   { get; set; }
         public Guid     NextPacket   { get; set; }
 
@@ -40,6 +41,16 @@ namespace StarMeter.Models
             PortNumber = port;
             IsError = true;
             ErrorType = errorType;
+        }
+
+        public int GetProtocolID()
+        {
+            Parser parse = new Parser();
+
+            int logInd = parse.GetLogicalAddressIndex(Cargo);
+
+            return parse.GetProtocolId(Cargo, logInd);
+            
         }
     }
 }

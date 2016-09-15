@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StarMeter.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace StarMeter
             InitializeComponent();
         }
 
-        public void SetupElements(Brush br) 
+        public void SetupElements(Brush br, Packet p) 
         {
 
             this.Width = 500;
@@ -36,8 +37,8 @@ namespace StarMeter
             BitmapImage logo = new BitmapImage();
             logo.BeginInit();
 
-            // change this to check the Packet error type - Pass a Packet object
-            if (br.Equals(Brushes.Red))
+
+            if (p.IsError)
             {
                 Image finalImage = new Image();
                 finalImage.Width = 80;
@@ -50,13 +51,21 @@ namespace StarMeter
             }
             else
             {
-                IconBG.Background = Brushes.Blue;
+                var converter = new System.Windows.Media.BrushConverter();
+                IconBG.Background = (Brush)converter.ConvertFromString("#6699ff");
+
                 logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
                 logo.EndInit();
 
                 lblErrorMsg.Content = "SUCCESS";
             }
             ErrorIcon.Source = logo;    // ,,,,, chameleon
+
+
+            TimeLabel.Content = p.DateRecieved.ToString();
+            ProtocolLabel.Content = p.GetProtocolID();
+
+            // SequenceNumberLabel.Content = ???;
 
         }
 
