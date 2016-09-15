@@ -68,5 +68,41 @@ namespace StarMeter.Controllers
             return DateTime.ParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null);
         }
 
+        public int GetLogicalAddressIndex(string[] cargoParam)
+        {
+            int index = 0, i = 0;
+            foreach (var hexString in cargoParam)
+            {
+                var hexValue = Convert.ToInt32(hexString, 16);
+                if (hexValue >= 32)
+                {
+                    index = i;
+                    break;
+                }
+                i++;
+            }
+            return index;
+        }
+
+        public byte[] GetAddressArray(int logicalIndex, string[] cargoParam)
+        {
+            var byteList = new List<byte>();
+            for (var i = 0; i <= logicalIndex; i++)
+            {
+                byteList.Add((byte)Convert.ToInt32(cargoParam[i], 16));
+            }
+
+            return byteList.ToArray();
+        }
+
+        public byte GetCrc(string[] cargoParam)
+        {
+            return (byte)Convert.ToInt32(cargoParam[cargoParam.Length - 1], 16);
+        }
+
+        public int GetProtocolId(string[] cargoParam, int logicalIndex)
+        {
+            return Convert.ToInt32(cargoParam[logicalIndex+1], 16);
+        }
     }
 }
