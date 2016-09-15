@@ -1,0 +1,116 @@
+diff a/StarMeter/MainWindow.xaml b/StarMeter/MainWindow.xaml	(rejected hunks)
+@@ -4,6 +4,17 @@
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         Title="MainWindow" Height="600" Width="1000" Background="#00000000">
+ 
++    
++    <Window.Resources>
++        
++        <Style TargetType="Label" x:Key="Timestamp">
++            <Setter Property="Margin" Value="0,0,0,10"></Setter>
++            <Setter Property="Foreground" Value="Black"></Setter>
++            <Setter Property="Background" Value="White"></Setter>
++        </Style>
++        
++    </Window.Resources>
++    
+     <Grid
+         x:Name="theGrid"
+         MouseDown="Grid_MouseDown"
+@@ -15,14 +26,13 @@
+ 
+         <Grid.RowDefinitions>
+             <RowDefinition Height="6*" />
+-            <RowDefinition Height="*" />
++            <RowDefinition Height="0" Name="DataVisualisationPopup" />
+         </Grid.RowDefinitions>
+         <Grid.ColumnDefinitions>
+-            <ColumnDefinition Width="*" />
+-            <ColumnDefinition Width="2*" />
++            <ColumnDefinition Width="3*" />
++            <ColumnDefinition Width="10*" />
+         </Grid.ColumnDefinitions>
+ 
+-
+         <Grid.Background>
+             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                 <GradientStop Color="Black" Offset="1"/>
+@@ -30,45 +40,37 @@
+             </LinearGradientBrush>
+         </Grid.Background>
+ 
+-
+         <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="#0CFFFFFF">
+             <Grid.RowDefinitions>
+                 <RowDefinition Height="*" />
+-                <RowDefinition Height="*" />
+-                <RowDefinition Height="*" />
+-                <RowDefinition Height="3*" />
++                <RowDefinition Height="8*" />
+             </Grid.RowDefinitions>
+ 
+-            <Grid Grid.Row="3">
++            <Grid Grid.Row="1">
++
+                 <Grid.ColumnDefinitions>
+-                    <ColumnDefinition Width="*" />
+-                    <ColumnDefinition Width="16*" />
+-                    <ColumnDefinition Width= "*" />
++                    <ColumnDefinition Width="1.5*" Name="TimeLabels"/>
++                    <ColumnDefinition Width="*" Name="Port1A"/>
++                    <ColumnDefinition Width="*" Name="Port1B"/>
++                    <ColumnDefinition Width="*" Name="Port2A"/>
++                    <ColumnDefinition Width="*" Name="Port2B"/>
++                    <ColumnDefinition Width="*" Name="Port3A"/>
++                    <ColumnDefinition Width="*" Name="Port3B"/>
++                    <ColumnDefinition Width="*" Name="Port4A"/>
++                    <ColumnDefinition Width="*" Name="Port4B"/>
+                 </Grid.ColumnDefinitions>
+-
+-                <Grid Grid.Column="1" Background="#FFC61414">
+-                    <Grid.ColumnDefinitions>
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                        <ColumnDefinition Width="*" />
+-                    </Grid.ColumnDefinitions>
+-                </Grid>
+-
+-
++                
++                <StackPanel>
++                    <Label Style="{StaticResource Timestamp}">Here is a label</Label>
++                    <Label Style="{StaticResource Timestamp}">Here is a label</Label>
++                </StackPanel>
++                
+             </Grid>
+             
+-            <Canvas x:Name="BarCanvas" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+-
+-               
+-                <Label Grid.Row ="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="22" Foreground="White" Margin="-10,0,9.8,0">A heading</Label>
+ 
+-            </Canvas>
++            <Canvas x:Name="BarCanvas" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+         </Grid>
++        
+         <Canvas>
+             <!-- This canvas is overlaid over the previous canvas and is used to 
+                 place the rectangle that implements the drag selection box. -->
+@@ -78,9 +80,10 @@
+                 Stroke="White"
+                 StrokeThickness="1"
+                 />
+-            <Label Name="SizeLabelTest" Content="Label" Canvas.Left="125" Canvas.Top="190" Foreground="White"/>
++            <Label HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Canvas.Left="88" Canvas.Top="150" Foreground="White"/>
+         </Canvas>
+     </Grid>
+ 
+-
++    
+ </Window>
++
