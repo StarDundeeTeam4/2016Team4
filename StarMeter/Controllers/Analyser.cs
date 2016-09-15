@@ -12,7 +12,7 @@ namespace StarMeter.Controllers
         int CalculateTotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary);
         int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
         double CalculateDataRate(Dictionary<Guid, Packet> packetDictionary);
-        double CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary);
+        double CalculatePacketRatePerSecond(Dictionary<Guid, Packet> packetDictionary);
         double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
     }
 
@@ -42,7 +42,7 @@ namespace StarMeter.Controllers
             return 0;
         }
 
-        public double CalculatePacketRate(Dictionary<Guid, Packet> packetDictionary)
+        public double CalculatePacketRatePerSecond(Dictionary<Guid, Packet> packetDictionary)
         {
             var sortedPackets = from pair in packetDictionary orderby pair.Value.DateRecieved ascending select pair;
 

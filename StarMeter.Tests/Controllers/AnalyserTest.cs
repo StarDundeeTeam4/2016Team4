@@ -107,7 +107,7 @@ namespace StarMeter.Tests.Controllers
 
             const double expectedResult = 0.75;
 
-            var actualResult = analyser.CalculatePacketRate(packetDict);
+            var actualResult = analyser.CalculatePacketRatePerSecond(packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
         }
