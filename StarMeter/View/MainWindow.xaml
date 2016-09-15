@@ -6,7 +6,7 @@
         xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         
-        Title="Packet Tracker" Height="720" Width="1280" Background="#00000000" Icon="Resources/STAR Dundee.png">
+        Title="Packet Tracker" Height="720" Width="1280" Background="#00000000" Icon="/Resources/STAR Dundee.png">
 
 
     <Window.Resources>
