@@ -142,6 +142,7 @@ namespace StarMeter
                 var b = new Button();
                 b.Click += OpenPopup;
 
+
                 var lab = new Label();
                 lab.Content = "NEW PACKET\nNew Data";
 
@@ -151,6 +152,8 @@ namespace StarMeter
                 if (inte > 8)
                 {
                     sty = "Error";
+                    var err = new Label();
+                    err.Content = "PAR";
                 }
                 else
                 {
@@ -311,6 +314,8 @@ namespace StarMeter
 
         }
 
+        
+
 
         void OpenPopup(object sender, RoutedEventArgs e) 
         {
@@ -323,13 +328,9 @@ namespace StarMeter
             GetPacketFromGUID(guid);        // needs to return a packet
             
             PacketPopup pp = new PacketPopup();
-
-            var host = new Window();
-            host.Content = pp;
-            host.Width = 500;
-            host.Height = 500;
-            pp.SetupElements(); // send the packet as a parameter
-            host.ShowDialog();
+            
+            pp.SetupElements(br); // send the packet as a parameter
+            pp.ShowDialog();
 
         }
 

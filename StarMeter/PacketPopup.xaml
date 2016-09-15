@@ -1,14 +1,52 @@
-﻿<Page x:Class="StarMeter.PacketPopup"
+﻿<Window x:Class="StarMeter.PacketPopup"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="400"
-	Title="PacketPopup">
+	Title="Packet Info">
 
-    <Grid Background="#FF7EFF69" Name="BackgroundColour">
-        <Label x:Name="TestLabel" Content="STARTING" HorizontalAlignment="Left" Margin="175,149,0,0" VerticalAlignment="Top"/>
+    <Grid Name="BackgroundColour" Background="#FFDDDDDD">
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="15*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Success" x:Name="lblErrorMsg" Grid.Row="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Red" Foreground="White" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic"></Label>
+
+            <Grid Grid.Column="1" Background="Red" Name="IconBG">
+                <Image Name="ErrorIcon" HorizontalAlignment="Right" Grid.Column="0" Source="pack://application:,,,/Resources/Error.png"></Image>
+            </Grid>
+
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.2*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="6*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="TimeLabel" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontStyle="Italic"/>
+            <Label x:Name="ProtocolLabel" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Protocol: 215 (RMAP)" VerticalContentAlignment="Center" FontStyle="Italic"/>
+            <Label x:Name="SequenceNumberLabel" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Seq. Num: 3" VerticalContentAlignment="Center" FontStyle="Italic"/>
+
+        </Grid>
 
     </Grid>
-</Page>
+</Window>

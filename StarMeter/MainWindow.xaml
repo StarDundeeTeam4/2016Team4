@@ -6,7 +6,7 @@
         xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         
-        Title="MainWindow" Height="720" Width="1280" Background="#00000000">
+        Title="Packet Tracker" Height="720" Width="1280" Background="#00000000" Icon="Resources/STAR Dundee.png">
 
 
     <Window.Resources>
@@ -37,17 +37,25 @@
             </Button.Background>
         </Button>
 
-        <Grid Grid.Row="2"
+        
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
         MouseDown="Grid_MouseDown"
         MouseUp="Grid_MouseUp"
         MouseMove="Grid_MouseMove">
-
-            <!-- Chart for displaying the data rates, assigned to the bottom row -->
-            <DVC:Chart VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="0,0,-977.4,-176" BorderBrush="{x:Null}" Foreground="White">
-                <DVC:LineSeries  DependentValuePath="Value" 
-                IndependentValuePath="Key" ItemsSource="{Binding}"            
-                IsSelectionEnabled="True"/>
-            </DVC:Chart>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid IsHitTestVisible="false">
+            
+                <!-- Chart for displaying the data rates, assigned to the bottom row -->
+                <DVC:Chart VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
+                    <DVC:LineSeries  DependentValuePath="Value" 
+                    IndependentValuePath="Key" ItemsSource="{Binding}"            
+                    IsSelectionEnabled="True"/>
+                </DVC:Chart>
+            </Grid>
 
         </Grid>
 
