@@ -334,22 +334,26 @@ namespace StarMeter
 
         void cancelUpload(object sender, RoutedEventArgs e)
         {
-            var button = ((Button)sender);
-            var name = button.Name;
+            if(1 > 2)
+            {
+                var button = ((Button)sender);
+                var name = button.Name;
+
+                var filename = (button.Tag).ToString();
+
+                selected_files.Remove(filename);
+                String label_name = "label" + name;
+                var label = this.FindName(label_name);
+
+                Grid grid = new Grid();
+
+                RegisterName("grid" + name, grid);
+
+
+
+                removeFile(grid);
+            }
             
-            var filename = (button.Tag).ToString();
-
-            selected_files.Remove(filename);
-            String label_name = "label" + name;
-            var label = this.FindName(label_name);
-
-            Grid grid = new Grid();
-
-            RegisterName("grid" + name, grid);
-
-
-            
-            removeFile(grid);
         }
 
         void removeFile(Grid grid)
