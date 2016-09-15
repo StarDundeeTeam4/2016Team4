@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace StarMeter
+﻿namespace StarMeter
 {
     /// <summary>
     /// Interaction logic for App.xaml
