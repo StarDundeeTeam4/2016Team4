@@ -204,7 +204,7 @@ namespace StarMeter.Tests.Controllers
             var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
 
             var addressArray = parser.GetAddressArray(logicalIndex, cargoParam);
-            var expectedPathValues = new byte[]
+            var expectedPathValues = new[]
             {
                 (byte)Convert.ToInt32("00", 16),
                 (byte)Convert.ToInt32("04", 16),
@@ -223,7 +223,7 @@ namespace StarMeter.Tests.Controllers
             var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
 
             var physicalPathValues = parser.GetAddressArray(logicalIndex, cargoParam);
-            var expectedPathValues = new byte[]
+            var expectedPathValues = new[]
             {
                 (byte)Convert.ToInt32("57", 16)
             };
