@@ -104,5 +104,10 @@ namespace StarMeter.Controllers
         {
             return Convert.ToInt32(cargoParam[logicalIndex+1], 16);
         }
+
+        public int GetSequenceNumber(string[] cargoParam, int logicalIndex)
+        {
+            return Convert.ToInt32(cargoParam[logicalIndex + 2], 16);
+        }
     }
 }
