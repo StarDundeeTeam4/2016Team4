@@ -168,7 +168,7 @@ namespace StarMeter
                 lab2.Content = "NEW PACKET\nMore Data";
 
                 b2.Tag = "f622066e-f9f5-4529-93b1-d1d50146cc1d";
-                b2.Content = lab;
+                b2.Content = lab2;
 
                 if (inte > 5)
                 {

@@ -82,12 +82,9 @@
 
         <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
 
-
             <ScrollViewer Name="PacketScroller" IsDeferredScrollingEnabled="true">
 
-
-
-                <Grid Background="#FF171753" Name="PacketGrid" IsHitTestVisible="False">
+                <Grid Background="#FF171753" Name="PacketGrid">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="11*"/>
@@ -106,13 +103,10 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Container for the time elements -->
-                    <StackPanel Grid.Row="1" Background="#FF616161" Name="TimeList">
-                        <Label Style="{DynamicResource Timestamp}">00:00:000</Label>
-                        <Label Style="{DynamicResource Timestamp}">00:01:000</Label>
-                    </StackPanel>
+                    <StackPanel Grid.Row="1" Background="#FF616161" Name="TimeList"/>
 
                     <!-- Containers for port info -->
-                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{DynamicResource PortA}" Name="Port1AHolder" IsHitTestVisible="False">
+                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{DynamicResource PortA}" Name="Port1AHolder">
                     </StackPanel>
                     <StackPanel Grid.Row="0" Grid.Column="2" Style="{DynamicResource PortB}" Name="Port1BHolder">
                     </StackPanel>
