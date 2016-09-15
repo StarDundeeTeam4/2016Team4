@@ -151,9 +151,6 @@ namespace StarMeter.View
 
                 Port1AHolder.Children.Add(b);
                 Port1BHolder.Children.Add(b2);
-
-
-
             }
 
 
