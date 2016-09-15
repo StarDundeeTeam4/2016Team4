@@ -168,14 +168,94 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
         }
 
-        //[TestMethod]
-        //public void FullFileParsed()
-        //{
-        //    var parser = new Parser();
-        //    parser.ParseRecording("testIntegration.rec");
-        //    Assert.IsNotNull(parser.recording);
-        //}
+        [TestMethod]
+        public void PassingCargoWithAddressinFirstByteReturnsIndex()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"57 01 4c 20 2d ff fa 00 00 02 00 00 00 00 08 12".Split(' ');
+            var expected = 0;
+
+            var actual = parser.GetLogicalAddressIndex(cargoParam);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void PassingCargoWithAddressInThirdByteReturnsIndex()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"01 00 fe fa 4b e7 5d b0 07 bd 57 83 82 ac ac 66 79 2e 35 d7 3d db 80 41 5e 98 2d d1 29 0b 98 85 6f 52 b9 86 88 f4 48 b7 98 17 24 8e 11 f4 f5 23 79 89 10 86 6e 8d 9c 56 e7 a9 f3 8f bc e5 4b a4 69 61 96 ce 0f 45 a7 a3 bb fa 95 ea eb 9b 64 ae 4e a6 e2 91 cc f8 d0 63 c6 f8 42 f3 9f 12 49 25 7b 67 ce 45 46 c2 c1 9b f9 ce 74 40 18 87 41 30 7f ef 73 9f 5f 02 64 91 84 eb e2 a5 d9 78 d7 31 2d cc 29 94 37 54 e0 c8 d8 fc 87 37 a1 a2 d4 d0 95 ca 8b 59 30 94 9f 07 a8 ec 9a 4c 72 01 40 f0 08 f8 6f 63 ea e1 4a 52 e2 ea 97 78 8d d2 64 b7 17 a1 f1 67 46 97 ca ee ba 62 34 90 73 94 ca 89 93 53 68 59 65 52 48 60 9f 01 6b aa e4 01 3b 0c 8d db 6e 70 a9 f1 2d 6d 42 b5 76 1b e3 18 bf 25 56 46 dc 1f b2 90 22 1a 96 a9 cd 76 af 16 9f f8 80 e0 ca 1c 62 8c 10 ad c9 4c 29 92 ca 77 65 eb".Split(' ');
+            var expected = 2;
+
+            var actual = parser.GetLogicalAddressIndex(cargoParam);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void GetPhysicalPathPortIndexesFromAddress()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"00 04 fe fa 4b e7 5d b0 07 bd 57 83 82 ac ac 66 79 2e 35 d7 3d db 80 41 5e 98 2d d1 29 0b 98 85 6f 52 b9 86 88 f4 48 b7 98 17 24 8e 11 f4 f5 23 79 89 10 86 6e 8d 9c 56 e7 a9 f3 8f bc e5 4b a4 69 61 96 ce 0f 45 a7 a3 bb fa 95 ea eb 9b 64 ae 4e a6 e2 91 cc f8 d0 63 c6 f8 42 f3 9f 12 49 25 7b 67 ce 45 46 c2 c1 9b f9 ce 74 40 18 87 41 30 7f ef 73 9f 5f 02 64 91 84 eb e2 a5 d9 78 d7 31 2d cc 29 94 37 54 e0 c8 d8 fc 87 37 a1 a2 d4 d0 95 ca 8b 59 30 94 9f 07 a8 ec 9a 4c 72 01 40 f0 08 f8 6f 63 ea e1 4a 52 e2 ea 97 78 8d d2 64 b7 17 a1 f1 67 46 97 ca ee ba 62 34 90 73 94 ca 89 93 53 68 59 65 52 48 60 9f 01 6b aa e4 01 3b 0c 8d db 6e 70 a9 f1 2d 6d 42 b5 76 1b e3 18 bf 25 56 46 dc 1f b2 90 22 1a 96 a9 cd 76 af 16 9f f8 80 e0 ca 1c 62 8c 10 ad c9 4c 29 92 ca 77 65 eb".Split(' ');
+
+            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+
+            var addressArray = parser.GetAddressArray(logicalIndex, cargoParam);
+            var expectedPathValues = new byte[]
+            {
+                (byte)Convert.ToInt32("00", 16),
+                (byte)Convert.ToInt32("04", 16),
+                (byte)Convert.ToInt32("fe", 16)
+            };
+            Assert.AreEqual(expectedPathValues[1], addressArray[1]);
+        }
+
+        [TestMethod]
+        public void GetLogicalAddress()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
+
+            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+
+            var physicalPathValues = parser.GetAddressArray(logicalIndex, cargoParam);
+            var expectedPathValues = new byte[]
+            {
+                (byte)Convert.ToInt32("57", 16)
+            };
+            Assert.AreEqual(expectedPathValues[0], physicalPathValues[0]);
+        }
+
+        [TestMethod]
+        public void GetCrcFromCargo()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
 
 
+            var expected = (byte)Convert.ToInt32("3e", 16);
+
+            var actual = parser.GetCrc(cargoParam);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void GetProtocolIdFromCargo()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
+            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+
+            var expected = 1;
+            var actual = parser.GetProtocolId(cargoParam, logicalIndex);
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
