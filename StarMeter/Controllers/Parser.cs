@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using StarMeter.Interfaces;
 using StarMeter.Models;
@@ -38,7 +40,10 @@ namespace StarMeter.Controllers
                 var packetType = r.ReadLine();
                 if (IsPType(packetType))
                 {
-                    packet.Cargo = r.ReadLine().Split(' ');
+                    //read cargo line and convert to byte array
+                    string[] hex = r.ReadLine().Split(' ');
+                    packet.Cargo = hex.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
+
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }
@@ -53,7 +58,7 @@ namespace StarMeter.Controllers
             return PacketDict;
         }
 
-        protected static bool IsPType(string packetType)
+        private static bool IsPType(string packetType)
         {
             return string.CompareOrdinal(packetType, "P") == 0;
         }
@@ -63,7 +68,7 @@ namespace StarMeter.Controllers
             return new byte[1];
         }
 
-        public DateTime ParseDateTime(string stringDateTime)
+        public static DateTime ParseDateTime(string stringDateTime)
         {
             return DateTime.ParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null);
         }
@@ -84,7 +89,7 @@ namespace StarMeter.Controllers
             return index;
         }
 
-        public byte[] GetAddressArray(int logicalIndex, string[] cargoParam)
+        public static byte[] GetAddressArray(int logicalIndex, string[] cargoParam)
         {
             var byteList = new List<byte>();
             for (var i = 0; i <= logicalIndex; i++)
@@ -95,12 +100,12 @@ namespace StarMeter.Controllers
             return byteList.ToArray();
         }
 
-        public byte GetCrc(string[] cargoParam)
+        public static byte GetCrc(string[] cargoParam)
         {
             return (byte)Convert.ToInt32(cargoParam[cargoParam.Length - 1], 16);
         }
 
-        public int GetProtocolId(string[] cargoParam, int logicalIndex)
+        public static int GetProtocolId(string[] cargoParam, int logicalIndex)
         {
             return Convert.ToInt32(cargoParam[logicalIndex+1], 16);
         }
