@@ -20,12 +20,17 @@ namespace StarMeter.View
     {
         private readonly Controller controller = new Controller();
 
-        private readonly StackPanel[] _portStacks = new StackPanel[8];
+        private StackPanel[] _portStacks = new StackPanel[8];
+
+
+
+        
 
         public MainWindow()
         {
             InitializeComponent();
 
+            // initialise the stack array
             _portStacks[0] = Port1AHolder;
             _portStacks[1] = Port1BHolder;
             _portStacks[2] = Port2AHolder;
@@ -37,14 +42,12 @@ namespace StarMeter.View
 
         }
 
-        //public void ActionName(object sender, RoutedEventArgs e) 
-        //{
-        //    lblSpace.Content = "I like space";
-        //}
+        // needed for drawing rectangle - for zooming
+        private bool _mouseDown; 
+        private Point _mouseDownPos;
 
-        private bool _mouseDown; // Set to 'true' when mouse is held down.
-        private Point _mouseDownPos; // The point where the mouse button was clicked down.
-
+        // TODO - Find reference to this stuff
+        #region Drag Rectangle Methods 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // Capture and track the mouse.
@@ -112,18 +115,22 @@ namespace StarMeter.View
                 selectionBox.Height = _mouseDownPos.Y - mousePos.Y;
             }
         }
+        #endregion
 
 
         private Button GetPacketButton(Packet p) 
         {
+            // create a label for the time
+            # region Time label
             Label l = new Label();
             l.Content = "00:00:00.000";
             l.SetResourceReference(Control.StyleProperty, "Timestamp");
 
             TimeList.Children.Add(l);
-            
-            Random r = new Random(DateTime.Now.Millisecond);
-            
+            #endregion
+
+
+            #region Create Button for the packet
             string sty = "";
             
             var b = new Button();
@@ -133,7 +140,7 @@ namespace StarMeter.View
 
             try
             {
-                lab.Content = p.Cargo[18];
+                lab.Content = p.Cargo[0];
             }
             catch (Exception e) 
             {
@@ -153,14 +160,14 @@ namespace StarMeter.View
 
             try
             {
-                //if (p.IsError)
-                //{
-                //    sty = "Error";
-                //}
-                //else
-                //{
+                if (p.IsError)
+                {
+                    sty = "Error";
+                }
+                else
+                {
                     sty = "Success";
-                //}
+                }
             }
             catch (Exception) 
             {
@@ -169,9 +176,11 @@ namespace StarMeter.View
 
             b.SetResourceReference(Control.StyleProperty, sty);
             return b;
+            #endregion
 
         }
 
+        // work out which panel to assign the packet to
         StackPanel GetPanelToUse(int portNum) 
         {
             return _portStacks[portNum];
@@ -195,18 +204,25 @@ namespace StarMeter.View
             sp.Children.Add(b);
         }
 
+        //This function will remove all packets from the screen which are being displayed.
+        void RemoveAllPackets()
+        {
+            for (int i = 0; i < 8; i++ )
+            {
+                var childElements = _portStacks[i].Children;
 
+                while (childElements.Count > 0)
+                {
+                    childElements.Remove((UIElement)childElements[0]);
+                }
+            }
 
-        // TEMP
+        }
+        #region TEMP
         Packet[] packets = new Packet[3];
 
         private void TestTimeCreation(object sender, RoutedEventArgs e) 
         {
-
-            packets[0] = controller._packet1;
-            packets[1] = controller._packet2;
-            packets[2] = controller._packet3;
-
             AddPacketCollection(packets);
 
 
@@ -264,10 +280,8 @@ namespace StarMeter.View
             //ScrollBackToBottom();
 
         }
-        ////////////////////////////
-
-
-
+        #endregion
+        
 
         //This will allow us to read the files or remove the files later.
         private readonly List<Grid> _fileGrids = new List<Grid>();
@@ -276,6 +290,7 @@ namespace StarMeter.View
         {
             var ofd = new OpenFileDialog
             {
+                // only allow .rec files
                 Filter = "Record Files (.rec)|*.rec",
                 Multiselect = true
             };
@@ -283,6 +298,7 @@ namespace StarMeter.View
             bool? confirmed = ofd.ShowDialog();
 
             if (confirmed != true) return;
+
             // display file name
             controller.AddFileNames(ofd.FileNames);
                 
@@ -339,11 +355,10 @@ namespace StarMeter.View
 
         void CancelUpload(object sender, RoutedEventArgs e)
         {
-
-            Button b   = (Button)sender;
-            string tag = b.Tag.ToString(); //fileName
-
-            int id = controller.RemoveFile(tag);
+            // remove the object from the list
+            var b = (Button)sender;
+            var tag = b.Tag.ToString();
+            var id = int.Parse(tag);
 
             SelectedFiles.Children.RemoveAt(id);
             _fileGrids.RemoveAt(id);
@@ -367,30 +382,60 @@ namespace StarMeter.View
 
             var text = b.Tag.ToString();
             var guid = new Guid(text);
-            controller.GetPacketFromGuid(guid);        // needs to return a packet
             
             PacketPopup pp = new PacketPopup();
-
 
             Packet p = controller.FindPacket(guid);
 
             if (p != null)
             {
-
-                pp.SetupElements(br, p); // send the packet as a parameter
+                pp.SetupElements(br, p); // send the packet as a parameter, along with the colour to make the header
                 pp.ShowDialog();
             }
             
         }
 
+		
+        void SearchForAddress(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+
+            var search = addressSearch.Text;
+
+            for (int i = 0; i < packets.Length; i++)
+            {
+                string address = "";
+                if (packets[i] != null)
+                {
+                    for (int j = 0; j < packets[i].Address.Length; i++)
+                    {
+                        address += packets[i].Address[j] + ".";
+                    }
+                }
+            }
+        }
+
+        Packet FindPacket(Guid guid) 
+        {
+
+            // TODO: change this to be a lookup from dictionary
+
+            foreach (var p in packets) 
+            {
+                if (guid.Equals(p.PacketId)) 
+                {
+                    return p;
+                }
+            }
+
+            return null;
+        }
+        
         //This lets us know which image to change to.
         private bool _isUpArrow = true;
 
         private void ShowDataVisPopup(object sender, RoutedEventArgs e)
         {
-
-            Console.WriteLine("CLEEK");
-
             ImageBrush image;
 
             if (_isUpArrow)
@@ -400,7 +445,6 @@ namespace StarMeter.View
             }
             else
             {
-                //height = 1;
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")))
                 {
                     Stretch = Stretch.UniformToFill
@@ -418,10 +462,8 @@ namespace StarMeter.View
             DataVisButton.Background = image;
         }
 
-
         public delegate void UpdateSlider();
-
-
+        
         // This is the method to run when the timer is raised.
         private void TimerEventProcessor(object myObject,EventArgs myEventArgs)
         {
@@ -452,11 +494,17 @@ namespace StarMeter.View
         System.Timers.Timer _t;
         int _count;
 
+        /// <summary>
+        /// set the height of the packet buttons
+        /// </summary>
         private void MoveSlider()
         {
             DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star); ;
         }
 
+        /// <summary>
+        /// Fixes the button at the bottom - else it looks silly
+        /// </summary>
         private void FixStretch()
         {
             if (!_isUpArrow)
@@ -466,6 +514,11 @@ namespace StarMeter.View
 
         }
 
+        /// <summary>
+        /// Get the style for an error
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         static Style GetErrorStyle(double val)
         {
 
@@ -481,6 +534,11 @@ namespace StarMeter.View
             return style;
         }
 
+        /// <summary>
+        /// get the style for a successful packet
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         private static Style GetSuccessStyle(double val) 
         {
 
@@ -500,6 +558,11 @@ namespace StarMeter.View
             return style;
         }
 
+        /// <summary>
+        /// Get the style for a timestamp
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         public Style GetTimeStyle(double val)
         {
 
@@ -520,12 +583,140 @@ namespace StarMeter.View
             return style;
         }
 
-
+        /// <summary>
+        /// change the height of the objects - xzoom in and out
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Application.Current.Resources["Success"] = GetSuccessStyle(HeightScroller.Value);
             Application.Current.Resources["Error"] = GetErrorStyle(HeightScroller.Value);
             Application.Current.Resources["Timestamp"] = GetTimeStyle(HeightScroller.Value);            
+        }
+
+
+        //The following code hides or shows each port depending on if the filter checkbox has been checked or not.
+        #region Hide and Show Ports
+
+        void DisplayPort1A(object sender, RoutedEventArgs e)
+        {
+            Port1A.Width = new GridLength(1, GridUnitType.Star);
+            Port1AHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort1A(object sender, RoutedEventArgs e)
+        {
+            Port1A.Width = new GridLength(0, GridUnitType.Star);
+            Port1AHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+        void DisplayPort1B(object sender, RoutedEventArgs e)
+        {
+            Port1B.Width = new GridLength(1, GridUnitType.Star);
+            Port1BHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort1B(object sender, RoutedEventArgs e)
+        {
+            Port1B.Width = new GridLength(0, GridUnitType.Star);
+            Port1BHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+        
+
+        void DisplayPort2A(object sender, RoutedEventArgs e)
+        {
+            Port2A.Width = new GridLength(1, GridUnitType.Star);
+            Port2AHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort2A(object sender, RoutedEventArgs e)
+        {
+            Port2A.Width = new GridLength(0, GridUnitType.Star);
+            Port2AHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+        void DisplayPort2B(object sender, RoutedEventArgs e)
+        {
+            Port2B.Width = new GridLength(1, GridUnitType.Star);
+            Port2BHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort2B(object sender, RoutedEventArgs e)
+        {
+            Port2B.Width = new GridLength(0, GridUnitType.Star);
+            Port2BHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+
+
+        void DisplayPort3A(object sender, RoutedEventArgs e)
+        {
+            Port3A.Width = new GridLength(1, GridUnitType.Star);
+            Port3AHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort3A(object sender, RoutedEventArgs e)
+        {
+            Port3A.Width = new GridLength(0, GridUnitType.Star);
+            Port3AHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+        void DisplayPort3B(object sender, RoutedEventArgs e)
+        {
+            Port3B.Width = new GridLength(1, GridUnitType.Star);
+            Port3BHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort3B(object sender, RoutedEventArgs e)
+        {
+            Port3B.Width = new GridLength(0, GridUnitType.Star);
+            Port3BHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+
+
+        void DisplayPort4A(object sender, RoutedEventArgs e)
+        {
+            Port4A.Width = new GridLength(1, GridUnitType.Star);
+            Port4AHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort4A(object sender, RoutedEventArgs e)
+        {
+            Port4A.Width = new GridLength(0, GridUnitType.Star);
+            Port4AHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+
+        void DisplayPort4B(object sender, RoutedEventArgs e)
+        {
+            Port4B.Width = new GridLength(1, GridUnitType.Star);
+            Port4BHeader.Width = new GridLength(1, GridUnitType.Star);
+        }
+        void HidePort4B(object sender, RoutedEventArgs e)
+        {
+            Port4B.Width = new GridLength(0, GridUnitType.Star);
+            Port4BHeader.Width = new GridLength(0, GridUnitType.Star);
+        }
+
+
+        void SelectAllPorts(object sender, RoutedEventArgs e)
+        {
+            Check1A.IsChecked = true;
+            Check1B.IsChecked = true;
+            Check2A.IsChecked = true;
+            Check2B.IsChecked = true;
+            Check3A.IsChecked = true;
+            Check3B.IsChecked = true;
+            Check4A.IsChecked = true;
+            Check4B.IsChecked = true;
+        }
+        void DeselectAllPorts(object sender, RoutedEventArgs e)
+        {
+            Check1A.IsChecked = false;
+            Check1B.IsChecked = false;
+            Check2A.IsChecked = false;
+            Check2B.IsChecked = false;
+            Check3A.IsChecked = false;
+            Check3B.IsChecked = false;
+            Check4A.IsChecked = false;
+            Check4B.IsChecked = false;
+        }
+
+        #endregion
+
+        private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
+        {
+            Packet[] packets = controller.ParsePackets();
+            AddPacketCollection(packets);
         }
 
     }
