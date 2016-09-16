@@ -190,7 +190,7 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
-            <Button Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White">
+            <Button Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click">
                 <Button.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF125402" Offset="1"/>

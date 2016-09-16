@@ -12,10 +12,11 @@ namespace StarMeter.Controllers
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
 
-        public void ParseFile(string filePath)
+        public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
             var r = new StreamReaderWrapper(filePath);
             PacketDict = ParsePackets(r);
+            return PacketDict;
         }
 
         public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)

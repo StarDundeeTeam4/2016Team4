@@ -12,6 +12,7 @@ using System.Windows.Input;
 ﻿using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using StarMeter.Controllers;
 
 namespace StarMeter.View
 {
@@ -35,20 +36,35 @@ namespace StarMeter.View
 
 
             var converter = new System.Windows.Media.BrushConverter();
-            IconBG.Background = (Brush)converter.ConvertFromString("#6699ff");
 
-            logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
-            logo.EndInit();
 
-            lblErrorMsg.Content = "SUCCESS";
-           
+            if (!p.IsError)
+            {
+                logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
+                logo.EndInit();
+                
+                lblErrorMsg.Content = "SUCCESS";
+            }
+            else
+            {
 
+                logo.UriSource = new Uri("pack://application:,,,/Resources/Error.png");
+                logo.EndInit();
+
+                lblErrorMsg.Content = "ERROR";
+            }
+
+
+            IconBG.Background = br;
             ErrorIcon.Source = logo;   
             
             TimeLabel.Content = p.DateRecieved.ToString();
 
+            
+            // get protocol id
+            //int protocol_id = Parser.GetProtocolId(p.Cargo.ToString(), 0);
 
-            var protocol_id = 1;
+            int protocol_id = 1;
 
             if (protocol_id == 1)
             {
@@ -61,14 +77,22 @@ namespace StarMeter.View
 
             var addressArray = p.Address;
             var finalAddressString = "";
-            if (addressArray.Length > 1)
+
+            if (addressArray != null)
             {
-                finalAddressString += "Physical Path: ";
-                for (var i = 0; i < addressArray.Length - 1; i++)
-                    finalAddressString +=  Convert.ToInt32(addressArray[i]) + "  ";
+                if (addressArray.Length > 1)
+                {
+                    finalAddressString += "Physical Path: ";
+                    for (var i = 0; i < addressArray.Length - 1; i++)
+                        finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
+                }
+                else
+                    finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]).ToString();
             }
-            else
-                finalAddressString = "Logical Address: "+Convert.ToInt32(addressArray[0]).ToString();
+            else 
+            {
+                finalAddressString = "No Address";
+            }
 
             AddressLabel.Content = finalAddressString;
 
@@ -78,12 +102,17 @@ namespace StarMeter.View
         {
             var b = (Button)sender;
             var br = b.Background;
-                             
-            CargoView cv = new CargoView();
-            cv.SetupElements(br, _p); 
-            cv.Show();
 
-            
+            if (_p.Cargo != null)
+            {
+                CargoView cv = new CargoView();
+                cv.SetupElements(br, _p);
+                cv.ShowDialog();
+            }
+            else 
+            {
+                MessageBox.Show("No Cargo");
+            }
         }
 
         private void ExitButtonEvent(Object sender, RoutedEventArgs e)

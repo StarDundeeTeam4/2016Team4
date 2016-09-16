@@ -24,43 +24,7 @@ namespace StarMeter.View
 
 
 
-        // temp packets to use
-
-        #region Temp Packets
-        public readonly Packet _packet1 = new Packet
-        {
-
-            PortNumber = 3,
-            IsError = false,
-            PacketId = Guid.NewGuid(),
-            DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-            Cargo =
-               ( @"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8"
-                    .Split(' ')
-        };
-
-        public readonly Packet _packet2 = new Packet
-        {
-            IsError = true,
-            PacketId = Guid.NewGuid(),
-            DateRecieved = DateTime.ParseExact("08-09-2016 15:12:52.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-            Cargo =
-                @"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8"
-                    .Split(' ')
-        };
-
-        public readonly Packet _packet3 = new Packet
-        {
-            PortNumber = 4,
-            IsError = false,
-            PacketId = Guid.NewGuid(),
-            DateRecieved = DateTime.ParseExact("08-09-2016 15:12:54.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-            Cargo =
-                @"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8"
-                    .Split(' ')
-        };
-        #endregion
-
+        
 
         public MainWindow()
         {
@@ -176,7 +140,7 @@ namespace StarMeter.View
 
             try
             {
-                lab.Content = p.Cargo[18];
+                lab.Content = p.Cargo[0];
             }
             catch (Exception e) 
             {
@@ -196,14 +160,14 @@ namespace StarMeter.View
 
             try
             {
-                //if (p.IsError)
-                //{
-                //    sty = "Error";
-                //}
-                //else
-                //{
+                if (p.IsError)
+                {
+                    sty = "Error";
+                }
+                else
+                {
                     sty = "Success";
-                //}
+                }
             }
             catch (Exception) 
             {
@@ -259,11 +223,6 @@ namespace StarMeter.View
 
         private void TestTimeCreation(object sender, RoutedEventArgs e) 
         {
-
-            packets[0] = controller._packet1;
-            packets[1] = controller._packet2;
-            packets[2] = controller._packet3;
-
             AddPacketCollection(packets);
 
 
@@ -443,12 +402,15 @@ namespace StarMeter.View
 
             var search = addressSearch.Text;
 
-            for(int i = 0; i < packets.Length; i++)
+            for (int i = 0; i < packets.Length; i++)
             {
                 string address = "";
-                for(int j = 0; j < packets[i].Address.Length; i++)
+                if (packets[i] != null)
                 {
-                    address += packets[i].Address[j] + ".";
+                    for (int j = 0; j < packets[i].Address.Length; i++)
+                    {
+                        address += packets[i].Address[j] + ".";
+                    }
                 }
             }
         }
@@ -500,10 +462,8 @@ namespace StarMeter.View
             DataVisButton.Background = image;
         }
 
-
         public delegate void UpdateSlider();
-
-
+        
         // This is the method to run when the timer is raised.
         private void TimerEventProcessor(object myObject,EventArgs myEventArgs)
         {
@@ -752,6 +712,12 @@ namespace StarMeter.View
         }
 
         #endregion
+
+        private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
+        {
+            Packet[] packets = controller.ParsePackets();
+            AddPacketCollection(packets);
+        }
 
     }
 
