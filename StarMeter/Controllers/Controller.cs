@@ -28,7 +28,7 @@ namespace StarMeter.Controllers
 
         private readonly Packet[] packets = new Packet[3];
 
-        private readonly List<string> filePaths = new List<string>();
+        public readonly List<string> filePaths = new List<string>();
 
         public readonly Packet _packet1 = new Packet
         {
@@ -75,10 +75,6 @@ namespace StarMeter.Controllers
         {
         }
 
-        /// <summary>
-        /// Adds new file names to upload
-        /// </summary>
-        /// <param name="newFileNames"></param>
         public void AddFileNames(string[] newFileNames)
         {
             foreach (string fileName in newFileNames)

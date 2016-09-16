@@ -101,6 +101,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Controllers\AnalyserTest.cs" />
+    <Compile Include="Controllers\ControllerTests.cs" />
     <Compile Include="Controllers\ParserTests.cs" />
     <Compile Include="Controllers\CRCTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
