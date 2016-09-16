@@ -48,15 +48,17 @@
             <Image  Grid.Row="4" Grid.Column="0"  Source="/StarMeter;component/Resources/left chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
             <Image  Grid.Row="4" Grid.Column="3"  Source="/StarMeter;component/Resources/right chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
 
-            
+
             <Label x:Name="TimeLabel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic"/>
             <Label x:Name="ProtocolLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Protocol: 215 (RMAP)" VerticalContentAlignment="Center" FontStyle="Italic"/>
             <Label x:Name="SequenceNumberLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Seq. Num: 3" VerticalContentAlignment="Center" FontStyle="Italic"/>
+            <Label x:Name="AddressLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Seq. Num: 3" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" Margin="9.8,4.8,29.6,17.8"/>
 
 
         </Grid>
 
         <Button Grid.Row="2" Content="OK" Background="#FF2BB702" Foreground="White" FontFamily="Calibri" FontSize="20"/>
+        <Button Grid.Row="1" Content="View Cargo" Background="#FF8C8C8C" Foreground="White" FontFamily="Calibri" FontSize="20" Margin="0,166.8,-0.4,10.2" Click="ViewCargo"/>
 
     </Grid>
 </Window>

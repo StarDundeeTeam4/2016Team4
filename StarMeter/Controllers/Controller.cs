@@ -69,12 +69,7 @@ namespace StarMeter.Controllers
 
             return null;
         }
-
-        // function to get the Packet from the GUID provided
-        public void GetPacketFromGuid(Guid guid)
-        {
-        }
-
+        
         public void AddFileNames(string[] newFileNames)
         {
             foreach (string fileName in newFileNames)
@@ -100,5 +95,13 @@ namespace StarMeter.Controllers
             }
             return index;
         }
+
+        public Controller() 
+        {
+            packets[0] = _packet1;
+            packets[1] = _packet2;
+            packets[2] = _packet3;
+        }
+    
     }
 }

@@ -27,11 +27,10 @@ namespace StarMeter
 
         public void SetupElements(Brush brush, Packet p)
         {
-
-
-            foreach (string cargoByte in p.Cargo)// byte
+            
+            foreach (byte cargoByte in p.Cargo)// byte
             {
-              //  MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + "  ";
+                MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + "  ";
             }
             CargoData = MainCargoContent.Text;
         }
