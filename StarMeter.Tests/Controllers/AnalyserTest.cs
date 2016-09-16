@@ -35,6 +35,7 @@ namespace StarMeter.Tests.Controllers
             PacketId = Guid.NewGuid(),
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
+            IsError = true,
             Address = ExampleAddress,
         };
 
@@ -81,23 +82,23 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expectedResult, actualResult);
         }
 
-        //[TestMethod]
-        //public void CalculateTotalNumberOfErrorPacketsTest()
-        //{
-        //    const int expectedResult = 1;
-        //    var actualResult = _analyser.CalculateTotalNoOfErrorPackets(_packetDict);
+        [TestMethod]
+        public void CalculateTotalNumberOfErrorPacketsTest()
+        {
+            const int expectedResult = 1;
+            var actualResult = _analyser.CalculateTotalNoOfErrorPackets(_packetDict);
 
-        //    Assert.AreEqual(expectedResult, actualResult);
-        //}
+            Assert.AreEqual(expectedResult, actualResult);
+        }
 
-        //[TestMethod]
-        //public void CalculateErrorRateTest()
-        //{
-        //    const double expectedResult = 0.33;
-        //    var actualResult = _analyser.CalculateErrorRate(_packetDict);
+        [TestMethod]
+        public void CalculateErrorRateTest()
+        {
+            const double expectedResult = 0.33;
+            var actualResult = _analyser.CalculateErrorRate(_packetDict);
 
-        //    Assert.AreEqual(expectedResult, Math.Round(actualResult,2));
-        //}
+            Assert.AreEqual(expectedResult, Math.Round(actualResult, 2));
+        }
 
 
         [TestMethod]
