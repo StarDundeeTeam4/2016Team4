@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="400"
-	Title="Packet Info">
+	Title="Packet Info" WindowStyle="ToolWindow">
 
     <Grid Name="BackgroundColour" Background="#FFDDDDDD">
 
@@ -52,11 +52,12 @@
             <Label x:Name="TimeLabel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic"/>
             <Label x:Name="ProtocolLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Protocol: 215 (RMAP)" VerticalContentAlignment="Center" FontStyle="Italic"/>
             <Label x:Name="SequenceNumberLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Seq. Num: 3" VerticalContentAlignment="Center" FontStyle="Italic"/>
-
-
+            <Label x:Name="AddressLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" VerticalContentAlignment="Center" FontStyle="Italic"/>
+            <Button x:Name="CargoViewer" Grid.Row="5" Grid.Column="1" Content="View Cargo" Background="#FF73A7F1" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ViewCargo"/>
+            
         </Grid>
 
-        <Button Grid.Row="2" Content="OK" Background="#FF2BB702" Foreground="White" FontFamily="Calibri" FontSize="20"/>
+        <Button Grid.Row="2" Content="OK" Background="#FF2BB702" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent"/>
 
     </Grid>
 </Window>
