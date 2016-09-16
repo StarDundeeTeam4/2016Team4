@@ -94,6 +94,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Models\rmapPacket.cs" />
     <Compile Include="View\PacketPopup.xaml.cs">
       <DependentUpon>PacketPopup.xaml</DependentUpon>
     </Compile>
