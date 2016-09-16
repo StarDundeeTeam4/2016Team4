@@ -10,10 +10,10 @@ namespace StarMeter.Controllers
     {
         int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary);
         int CalculateTotalNoOfPackets(Dictionary<Guid, Packet> packetDictionary);
-        int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
+        //int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary);
         double CalculateDataRateBytePerSecond(Dictionary<Guid, Packet> packetDictionary);
         double CalculatePacketRatePerSecond(Dictionary<Guid, Packet> packetDictionary);
-        double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
+        //double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary);
     }
 
     public class Analyser : IAnalyser
@@ -38,10 +38,10 @@ namespace StarMeter.Controllers
             return totalNoOfPackets;
         }
 
-        public int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary)
-        {
-            return packetDictionary.Values.Count(packet => packet.IsError);
-        }
+        //public int CalculateTotalNoOfErrorPackets(Dictionary<Guid, Packet> packetDictionary)
+        //{
+        //    return packetDictionary.Values.Count(packet => packet.IsError);
+        //}
 
         public double CalculateDataRateBytePerSecond(Dictionary<Guid, Packet> packetDictionary)
         {
@@ -69,13 +69,13 @@ namespace StarMeter.Controllers
             return packetsPerSecond;
         }
 
-        public double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary)
-        {
-            var noOfErrorPackets = CalculateTotalNoOfErrorPackets(packetDictionary);
-            var noOfPackets = CalculateTotalNoOfPackets(packetDictionary);
+        //public double CalculateErrorRate(Dictionary<Guid, Packet> packetDictionary)
+        //{
+        //    //var noOfErrorPackets = CalculateTotalNoOfErrorPackets(packetDictionary);
+        //    var noOfPackets = CalculateTotalNoOfPackets(packetDictionary);
 
-            var errorRate = noOfErrorPackets / (double)noOfPackets;
-            return errorRate;
-        }
+        //    var errorRate = noOfErrorPackets / (double)noOfPackets;
+        //    return errorRate;
+        //}
     }
 }
