@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-    class Controller
+    public class Controller
     {
-        private static readonly byte[] ExampleAddress = { 0x00, 0xfe };
-
         static readonly byte[] ExampleCargo =
         {
             0x00, 0xfe, 0xfa, 0x00, 0x17, 0x50, 0xb8, 0xf6, 0xca, 0xd3, 0x9e, 0x3c,
@@ -30,7 +26,9 @@ namespace StarMeter.Controllers
             0x0e, 0x69, 0x11, 0x21, 0x46, 0x85, 0xb1, 0xa7, 0xc8
         };
 
-        Packet[] packets = new Packet[3];
+        private readonly Packet[] packets = new Packet[3];
+
+        private readonly List<string> filePaths = new List<string>();
 
         public readonly Packet _packet1 = new Packet
         {
@@ -75,6 +73,36 @@ namespace StarMeter.Controllers
         // function to get the Packet from the GUID provided
         public void GetPacketFromGuid(Guid guid)
         {
+        }
+
+        /// <summary>
+        /// Adds new file names to upload
+        /// </summary>
+        /// <param name="newFileNames"></param>
+        public void AddFileNames(string[] newFileNames)
+        {
+            foreach (string fileName in newFileNames)
+            {
+                if (!filePaths.Contains(fileName))
+                {
+                    filePaths.Add(fileName);
+                }
+            }
+        }
+
+        public string[] GetFileNames()
+        {
+            return filePaths.Select(filePath => filePath.Split('\\').Last()).ToArray();
+        }
+
+        public int RemoveFile(string fileName)
+        {
+            int index = filePaths.FindIndex(x => x.EndsWith(fileName));
+            if (index >= 0)
+            {
+                filePaths.RemoveAt(index);
+            }
+            return index;
         }
     }
 }

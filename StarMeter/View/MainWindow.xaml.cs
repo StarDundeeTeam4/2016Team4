@@ -2,8 +2,6 @@
 using StarMeter.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
@@ -20,9 +18,9 @@ namespace StarMeter.View
     /// </summary>
     public partial class MainWindow
     {
-        private Controller controller = new Controller();
+        private readonly Controller controller = new Controller();
 
-        private StackPanel[] _portStacks = new StackPanel[8];
+        private readonly StackPanel[] _portStacks = new StackPanel[8];
 
         public MainWindow()
         {
@@ -116,7 +114,7 @@ namespace StarMeter.View
         }
 
 
-        Button GetPacketButton(Packet p) 
+        private Button GetPacketButton(Packet p) 
         {
             Label l = new Label();
             l.Content = "00:00:00.000";
@@ -146,7 +144,7 @@ namespace StarMeter.View
             {
                 b.Tag = p.PacketId;
             }
-            catch (Exception e) 
+            catch (Exception) 
             {
                 b.Tag = "";
             }
@@ -188,7 +186,7 @@ namespace StarMeter.View
             }
         }
 
-        void AddPacket(Packet p) 
+        private void AddPacket(Packet p) 
         {
             Button b = GetPacketButton(p);
 
@@ -202,7 +200,7 @@ namespace StarMeter.View
         // TEMP
         Packet[] packets = new Packet[3];
 
-        void TestTimeCreation(object sender, RoutedEventArgs e) 
+        private void TestTimeCreation(object sender, RoutedEventArgs e) 
         {
 
             packets[0] = controller._packet1;
@@ -272,8 +270,7 @@ namespace StarMeter.View
 
 
         //This will allow us to read the files or remove the files later.
-        readonly List<String> _selectedFiles = new List<String>();
-        readonly List<Grid> _fileGrids = new List<Grid>();
+        private readonly List<Grid> _fileGrids = new List<Grid>();
 
         private void FileSelection(object sender, RoutedEventArgs e) 
         {
@@ -283,77 +280,59 @@ namespace StarMeter.View
                 Multiselect = true
             };
 
-
-            var confirmed = ofd.ShowDialog();
+            bool? confirmed = ofd.ShowDialog();
 
             if (confirmed != true) return;
             // display file name
-            string[] filename = ofd.FileNames;
+            controller.AddFileNames(ofd.FileNames);
                 
-            foreach (var s in filename)
+            foreach (string fileName in controller.GetFileNames())
             {
-                //If the user has not already selected this file.
-                if(_selectedFiles.Contains(s) == false)
+                string actualName = fileName.Split('.')[0];
+                var g = new Grid
                 {
-                    _selectedFiles.Add(s);
-                    string[] split = s.Split('\\');
-                    string actualName = split[split.Length - 1];
-                    var fileNameWithoutExtension = actualName.Substring(0, actualName.Length - 4);
+                    Name = "grid_" + actualName, //remove file extension for name
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    Height = 30,
+                    Margin = new Thickness(0, 0, 0, 5),
+                    Background = Brushes.White
+                };
+                var cd = new ColumnDefinition();
+                var cd2 = new ColumnDefinition();
+                cd.Width = new GridLength(8, GridUnitType.Star);
+                cd2.Width = new GridLength(1, GridUnitType.Star);
 
-                    var g = new Grid
-                    {
-                        Name = "grid" + fileNameWithoutExtension,
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        VerticalAlignment = VerticalAlignment.Stretch,
-                        Height = 30,
-                        Margin = new Thickness(0, 0, 0, 5),
-                        Background = Brushes.White
-                    };
-                    var cd = new ColumnDefinition();
-                    var cd2 = new ColumnDefinition();
-                    cd.Width = new GridLength(8, GridUnitType.Star);
-                    cd2.Width = new GridLength(1, GridUnitType.Star);
+                g.ColumnDefinitions.Add(cd);
+                g.ColumnDefinitions.Add(cd2);
 
-                    g.ColumnDefinitions.Add(cd);
-                    g.ColumnDefinitions.Add(cd2);
-
-                    //if actualName is "file.rec" then fileNameWithoutExtension would become "file"
-
-                    var l = new Label
-                    {
-                        Name = "label" + fileNameWithoutExtension,
-                        Style = (Style) Application.Current.Resources["FileSelected"],
-                        Content = actualName
-                    };
-
-                    var b = new Button {Name = fileNameWithoutExtension};
-
-                    var myCount = _selectedFiles.Count - 1;
-
-                    b.Tag = myCount.ToString();
-                    b.Content = "X";
-                    b.Click += CancelUpload;
-                    b.Background = Brushes.Red;
-                    b.Foreground = Brushes.White;
-                    b.HorizontalContentAlignment = HorizontalAlignment.Center;
-                    b.VerticalContentAlignment = VerticalAlignment.Center;
-                    b.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    b.VerticalAlignment = VerticalAlignment.Stretch;
-                    b.Name = "RemoveButton";
-
-                    Grid.SetColumn(l, 0);
-                    Grid.SetColumn(b, 1);
-
-                    g.Children.Add(l);
-                    g.Children.Add(b);
-                    SelectedFiles.Children.Add(g);
-                    _fileGrids.Add(g);
-
-                }
-                else
+                Label l = new Label
                 {
-                    MessageBox.Show("You have already added this file.");
-                }
+                    Name = "label_" + actualName,
+                    Style = (Style) Application.Current.Resources["FileSelected"],
+                    Content = fileName
+                };
+
+                var b = new Button { Name = actualName };
+
+                b.Tag = fileName;
+                b.Content = "X";
+                b.Click += CancelUpload;
+                b.Background = Brushes.Red;
+                b.Foreground = Brushes.White;
+                b.HorizontalContentAlignment = HorizontalAlignment.Center;
+                b.VerticalContentAlignment = VerticalAlignment.Center;
+                b.HorizontalAlignment = HorizontalAlignment.Stretch;
+                b.VerticalAlignment = VerticalAlignment.Stretch;
+                b.Name = "RemoveButton";
+
+                Grid.SetColumn(l, 0);
+                Grid.SetColumn(b, 1);
+
+                g.Children.Add(l);
+                g.Children.Add(b);
+                SelectedFiles.Children.Add(g);
+                _fileGrids.Add(g);
 
             }
         }
@@ -361,25 +340,16 @@ namespace StarMeter.View
         void CancelUpload(object sender, RoutedEventArgs e)
         {
 
-            var b = (Button)sender;
-            var tag = b.Tag.ToString();
-            var id = int.Parse(tag);
+            Button b   = (Button)sender;
+            string tag = b.Tag.ToString(); //fileName
+
+            int id = controller.RemoveFile(tag);
 
             SelectedFiles.Children.RemoveAt(id);
-            _selectedFiles.RemoveAt(id);
             _fileGrids.RemoveAt(id);
-
-            for (var i = id; i < _fileGrids.Count; i++) 
-            {
-                // http://stackoverflow.com/questions/14825232/what-is-a-smarter-way-to-get-a-child-control-in-xaml
-                var btn = _fileGrids[i].Children.OfType<Button>().Single(f => f.Name == "RemoveButton");
-                btn.Tag = i;
-            }
-
-            
         }
 
-        void RemoveFile(Panel grid)
+        private void RemoveFile(Panel grid)
         {
             foreach(UIElement child in grid.Children)
             {
