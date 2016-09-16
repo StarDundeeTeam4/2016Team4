@@ -35,6 +35,7 @@ namespace StarMeter.Tests.Controllers
             PacketId = Guid.NewGuid(),
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
+            IsError = true,
             Address = ExampleAddress,
         };
 
