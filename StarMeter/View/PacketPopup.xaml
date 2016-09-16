@@ -32,7 +32,7 @@
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.2*" />
+                <RowDefinition Height="0.5*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -46,8 +46,8 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Image  Grid.Row="4" Grid.Column="0"  Source="/StarMeter;component/Resources/left chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
-            <Image  Grid.Row="4" Grid.Column="3"  Source="/StarMeter;component/Resources/right chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
+            <Image  Grid.Row="0" Grid.Column="0"  Source="/StarMeter;component/Resources/left chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
+            <Image  Grid.Row="0" Grid.Column="3"  Source="/StarMeter;component/Resources/right chevron.png" HorizontalAlignment="Right" Margin="0"></Image>
 
 
             <Label x:Name="TimeLabel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic"/>
@@ -55,11 +55,11 @@
             <Label x:Name="SequenceNumberLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic"/>
             <Label x:Name="AddressLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2"/>
 
-            <Button Grid.Row="6" Grid.Column="1" Content="View Cargo" Background="#FF8C8C8C" Foreground="Black" FontFamily="Calibri" FontSize="20" Click="ViewCargo"/>
+            <Button Grid.Row="5" Grid.Column="1" Content="View Cargo" Background="#FF636363" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ViewCargo" Margin="0,10,0,10"/>
 
         </Grid>
 
-        <Button Grid.Row="2" Content="OK" Background="#FF2BB702" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent"/>
+        <Button Grid.Row="2" Content="OK" Background="#FF525252" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent"/>
 
     </Grid>
 </Window>

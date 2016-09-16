@@ -10,7 +10,7 @@ namespace StarMeter.Controllers
 {
     public class Parser
     {
-        public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
+        public static Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {

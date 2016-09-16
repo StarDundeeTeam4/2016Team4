@@ -12,13 +12,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*" Name="LabelPanel" />
             <RowDefinition Height="2*" Name="DataVisualisationPopup" />
-            <RowDefinition Height="0.5*" Name="ExitButtonRow"></RowDefinition>
+            <RowDefinition Height="40" Name="ExitButtonRow"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label x:Name="Label" Grid.Row="0" Content="Cargo View" Width="291" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" ></Label>
+        <Label x:Name="Label" Grid.Row="0" Content="Cargo View" Width="291" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" />
         <Label x:Name="CargoContent" Grid.Row="1"  >
             <TextBlock x:Name="MainCargoContent" TextWrapping="Wrap" Text="{Binding Path=CargoData}"></TextBlock>
         </Label>
-        <Button x:Name="ExitButton" Grid.Row="2" Content="Exit" Background="Red" Click="ExitButtonEvent"/>
+        <Button x:Name="ExitButton" Grid.Row="2" Content="Exit" Background="Red" Click="ExitButtonEvent" Foreground="White"/>
     </Grid>
 </Window>

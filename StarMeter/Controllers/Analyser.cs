@@ -24,10 +24,13 @@ namespace StarMeter.Controllers
             var totalNoOfDataChars = 0;
             foreach (var packet in packetDictionary.Values)
             {
-                var packetAddressLength = packet.Address.Length;
-                var packetCargoLength = packet.Cargo.Length;
-                var packetDataChars = packetAddressLength + packetCargoLength;
-                totalNoOfDataChars += packetDataChars;
+                if (packet.Address != null)
+                {
+                    var packetAddressLength = packet.Address.Length;
+                    var packetCargoLength = packet.Cargo.Length;
+                    var packetDataChars = packetAddressLength + packetCargoLength;
+                    totalNoOfDataChars += packetDataChars;
+                }
             }
             return totalNoOfDataChars;
         }
