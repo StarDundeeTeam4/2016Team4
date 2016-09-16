@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StarMeter.Controllers;
+using System;
 
 namespace StarMeter.Models
 {
