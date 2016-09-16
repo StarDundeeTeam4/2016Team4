@@ -37,17 +37,17 @@ namespace StarMeter.View
             logo.BeginInit();
 
 
-            if (p.IsError)
-            {
+            //if (p.IsError)
+            //{
 
-                logo.UriSource = new Uri("pack://application:,,,/Resources/Error.png");
-                IconBG.Background = Brushes.Red;
-                logo.EndInit();
+            //    logo.UriSource = new Uri("pack://application:,,,/Resources/Error.png");
+            //    IconBG.Background = Brushes.Red;
+            //    logo.EndInit();
                
-                lblErrorMsg.Content = "ERROR: " + p.ErrorType;
-            }
-            else
-            {
+            //    lblErrorMsg.Content = "ERROR: " + p.ErrorType;
+            //}
+            //else
+            //{
                 var converter = new System.Windows.Media.BrushConverter();
                 IconBG.Background = (Brush)converter.ConvertFromString("#6699ff");
 
@@ -55,14 +55,14 @@ namespace StarMeter.View
                 logo.EndInit();
 
                 lblErrorMsg.Content = "SUCCESS";
-            }
+            //}
 
             ErrorIcon.Source = logo;   
             
             TimeLabel.Content = p.DateRecieved.ToString();
 
 
-            var protocol_id = p.GetProtocolID();
+            var protocol_id = 1;//p.GetProtocolID();
 
             if (protocol_id == 1)
             {

@@ -86,10 +86,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="View\CargoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -98,9 +94,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="View\CargoView.xaml.cs">
-      <DependentUpon>CargoView.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Models\rmapPacket.cs" />
     <Compile Include="View\PacketPopup.xaml.cs">
       <DependentUpon>PacketPopup.xaml</DependentUpon>
     </Compile>
@@ -145,7 +140,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="View\App.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\down-arrow.png" />
