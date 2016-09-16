@@ -1,7 +1,7 @@
 ﻿using StarMeter.Controllers;
 using System;
 
-public enum ErrorTypes : int
+public enum ErrorTypes
 {
     DataError,
     Disconnect,
