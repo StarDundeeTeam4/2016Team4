@@ -6,7 +6,7 @@
         xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         
-        Title="Packet Tracker" Height="720" Width="1280" Background="#00000000" Icon="/Resources/STAR Dundee.png">
+        Title="Packet Tracker" WindowState="Maximized" Height="750" MinHeight="480" Width="1280" MinWidth="720" Background="#00000000" Icon="/Resources/STAR Dundee.png">
 
 
     <Window.Resources>
@@ -37,18 +37,18 @@
             </Button.Background>
         </Button>
 
-        
+
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
         MouseDown="Grid_MouseDown"
         MouseUp="Grid_MouseUp"
         MouseMove="Grid_MouseMove">
-            
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <Grid IsHitTestVisible="false">
-            
+
                 <!-- Chart for displaying the data rates, assigned to the bottom row -->
                 <DVC:Chart VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
                     <DVC:LineSeries  DependentValuePath="Value" 
@@ -65,15 +65,15 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="*"  Name="Port1AHeader"/>
+                <ColumnDefinition Width="*"  Name="Port1BHeader"/>
+                <ColumnDefinition Width="*"  Name="Port2AHeader"/>
+                <ColumnDefinition Width="*"  Name="Port2BHeader"/>
+                <ColumnDefinition Width="*"  Name="Port3AHeader"/>
+                <ColumnDefinition Width="*"  Name="Port3BHeader"/>
+                <ColumnDefinition Width="*"  Name="Port4AHeader"/>
+                <ColumnDefinition Width="*"  Name="Port4BHeader"/>
                 <ColumnDefinition Width="18" />
                 <!-- Adjust to align with the scroll bar -->
             </Grid.ColumnDefinitions>
@@ -99,7 +99,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- 1 column per port and 1 for the time -->
-                        <ColumnDefinition Width="1.5*" Name="TimeLabels"/>
+                        <ColumnDefinition Width="160" Name="TimeLabels"/>
                         <ColumnDefinition Width="*" Name="Port1A"/>
                         <ColumnDefinition Width="*" Name="Port1B"/>
                         <ColumnDefinition Width="*" Name="Port2A"/>
@@ -158,7 +158,7 @@
         </Canvas>
 
         <!-- Logo -->
-        <Image HorizontalAlignment="Left" Height="37" Margin="10,0,0,0" VerticalAlignment="Top" Width="244" Source="Resources/STAR Dundee.png" Grid.RowSpan="2"/>
+        <Image HorizontalAlignment="Left" Height="37" Margin="10,0,0,0" VerticalAlignment="Top" Width="244" Source="/StarMeter;component/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="1"/>
 
 
@@ -180,7 +180,7 @@
             </ScrollViewer>
 
             <!-- TEMP to display the size of the rectangle -->
-            <Label Grid.Row="4" HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Foreground="White" />
+            <Label Grid.Row="4" HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Foreground="White" VerticalAlignment="Top" />
             <Button Name="CmdTestData" Grid.Row="4" HorizontalAlignment="Right" Content="Add Test values" Width="91" Click="TestTimeCreation" Height="24" Margin="0,383.6,-0.4,-0.4" Grid.RowSpan="2" VerticalAlignment="Top"/>
             <Button Name="CmdSelectFile" Grid.Row="1" HorizontalAlignment="Left" Content="Select File" Width="150" Click="FileSelection">
                 <Button.Background>
@@ -199,8 +199,79 @@
                 </Button.Background>
             </Button>
 
-        </Grid>
+            <Grid Grid.Row="4">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.55*"/>
+                    <RowDefinition Height="0.6*"/>
+                    <RowDefinition Height="1.6*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+                
+                <Grid Grid.Row="2" Margin="40, 15, 40, 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
+
+                    <CheckBox Name="Check1A" Grid.Row="0" Grid.Column="0" Checked="DisplayPort1A" Unchecked="HidePort1A" Content="Port 1A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check1B" Grid.Row="0" Grid.Column="1" Checked="DisplayPort1B" Unchecked="HidePort1B" Content="Port 1B" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check2A" Grid.Row="1" Grid.Column="0" Checked="DisplayPort2A" Unchecked="HidePort2A" Content="Port 2A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check2B" Grid.Row="1" Grid.Column="1" Checked="DisplayPort2B" Unchecked="HidePort2B" Content="Port 2B" HorizontalAlignment="Left"  VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check3A" Grid.Row="2" Grid.Column="0" Checked="DisplayPort3A" Unchecked="HidePort3A" Content="Port 3A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check3B" Grid.Row="2" Grid.Column="1" Checked="DisplayPort3B" Unchecked="HidePort3B" Content="Port 3B" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check4A" Grid.Row="3" Grid.Column="0" Checked="DisplayPort4A" Unchecked="HidePort4A" Content="Port 4A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check4B" Grid.Row="3" Grid.Column="1" Checked="DisplayPort4B" Unchecked="HidePort4B" Content="Port 4B" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+
+                </Grid>
+            
+                <Grid Grid.Row="1" Margin="0, 15, 0, 8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="Display Port Info For" Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
+                    <Button Grid.Row="0" Grid.Column="1" Click="SelectAllPorts" Margin="0, 0, 5, 0">Select All</Button>
+                    <Button Grid.Row="0" Grid.Column="2" Click="DeselectAllPorts" Margin="5, 0, 5, 0">Deselect All</Button>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="3*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1.5*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <Label Grid.Column="0" Grid.Row="0" x:Name="SizeLabelTest_Copy1" Content="Address To Search:" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <TextBox x:Name="addressSearch" Height="23"  Grid.Row="0" Margin="0,0,5,0" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                        <Button Grid.Row="0" Grid.ColumnSpan="2" Click="SearchForAddress" Margin="91,50,98.6,-35.6" Content="Search for address"></Button>
+                    </Grid>
+
+                    
+                </Grid>
+            </Grid>
+
+            <CheckBox Content="Display errors only" HorizontalAlignment="Left" Margin="10,25.6,0,0" Grid.Row="4" VerticalAlignment="Top" Foreground="White"/>
+            
+            
+
+            
+        </Grid>
+        
+        
     </Grid>
 
 </Window>
