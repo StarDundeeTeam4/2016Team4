@@ -44,11 +44,11 @@ namespace StarMeter.Controllers
                     packet.Cargo = hex.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
                     var endingState = r.ReadLine();
-                    packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
+                    //packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }
                 else
                 {
-                    packet.IsError = true;
+                    //packet.IsError = true;
                     r.ReadLine();
                 }
                 PacketDict.Add(packetId, packet);
