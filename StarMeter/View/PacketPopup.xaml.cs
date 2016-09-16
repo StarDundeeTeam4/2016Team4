@@ -44,7 +44,7 @@ namespace StarMeter.View
                 IconBG.Background = Brushes.Red;
                 logo.EndInit();
                
-                lblErrorMsg.Content = "ERROR: " + "error type";
+                lblErrorMsg.Content = "ERROR: " + p.ErrorType;
             }
             else
             {
@@ -56,12 +56,11 @@ namespace StarMeter.View
 
                 lblErrorMsg.Content = "SUCCESS";
             }
-            ErrorIcon.Source = logo;    // ,,,,, chameleon
 
-
+            ErrorIcon.Source = logo;   
+            
             TimeLabel.Content = p.DateRecieved.ToString();
-            ProtocolLabel.Content = p.GetProtocolID();
-
+            ProtocolLabel.Content = "Protocol: " + p.GetProtocolID();            
             // SequenceNumberLabel.Content = ???;
 
         }

@@ -140,7 +140,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\down-arrow.png" />
   </ItemGroup>
@@ -161,6 +160,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\left chevron.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\right chevron.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

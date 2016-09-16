@@ -22,8 +22,9 @@ namespace StarMeter.View
 
         private StackPanel[] _portStacks = new StackPanel[8];
 
-        private readonly Packet _packet1 = new Packet
+        public readonly Packet _packet1 = new Packet
         {
+            
             PortNumber = 3,
             IsError = false,
             PacketId = Guid.NewGuid(),
@@ -231,6 +232,8 @@ namespace StarMeter.View
         }
 
 
+
+        // TEMP
         Packet[] packets = new Packet[3];
 
         void TestTimeCreation(object sender, RoutedEventArgs e) 
@@ -297,6 +300,9 @@ namespace StarMeter.View
             //ScrollBackToBottom();
 
         }
+        ////////////////////////////
+
+
 
 
         //This will allow us to read the files or remove the files later.
