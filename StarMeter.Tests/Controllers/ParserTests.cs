@@ -60,7 +60,7 @@ namespace StarMeter.Tests.Controllers
             var packetId = Guid.NewGuid();
             var packet1 = new Packet
             {
-                //IsError = false,
+                IsError = false,
                 PacketId = packetId,
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
                 Cargo = ExampleCargo,
@@ -73,7 +73,7 @@ namespace StarMeter.Tests.Controllers
 
 
             Assert.AreEqual(expected[packetId].Cargo.Length, comparativePacket.Cargo.Length);
-            //Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
+            Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
         }
 
         [TestMethod]
@@ -106,14 +106,14 @@ namespace StarMeter.Tests.Controllers
 
             var packet1 = new Packet
             {
-                //IsError = false,
+                IsError = false,
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
                 Cargo = ExampleCargo,
             };
             var packet2 = new Packet
             {
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:53:23.690", "dd-MM-yyyy HH:mm:ss.fff", null),
-                //IsError = true
+                IsError = true
             };
             var packetId = Guid.NewGuid();
             expected.Add(packetId, packet1);
@@ -125,7 +125,7 @@ namespace StarMeter.Tests.Controllers
 
             Assert.AreEqual(expected.Count, result.Count);
             Assert.AreEqual(expected[packetId].DateRecieved, comparativePacket.DateRecieved);
-            //Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
+            Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
         }
          
         [TestMethod]
@@ -154,7 +154,7 @@ namespace StarMeter.Tests.Controllers
             var expected = new Dictionary<Guid, Packet>();
             var packet1 = new Packet
             {
-                //IsError = true,
+                IsError = true,
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:12:55.051", "dd-MM-yyyy HH:mm:ss.fff", null),
                 Cargo = ExampleCargo,
             };
@@ -169,7 +169,7 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expected[packetId].Cargo.Length, comparativePacket.Cargo.Length);
             Assert.AreEqual(expected[packetId].Cargo[2], comparativePacket.Cargo[2]);
             Assert.AreEqual(expected[packetId].DateRecieved, comparativePacket.DateRecieved);
-            //Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
+            Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
         }
 
         [TestMethod]

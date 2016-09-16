@@ -81,23 +81,23 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expectedResult, actualResult);
         }
 
-        //[TestMethod]
-        //public void CalculateTotalNumberOfErrorPacketsTest()
-        //{
-        //    const int expectedResult = 1;
-        //    var actualResult = _analyser.CalculateTotalNoOfErrorPackets(_packetDict);
+        [TestMethod]
+        public void CalculateTotalNumberOfErrorPacketsTest()
+        {
+            const int expectedResult = 1;
+            var actualResult = _analyser.CalculateTotalNoOfErrorPackets(_packetDict);
 
-        //    Assert.AreEqual(expectedResult, actualResult);
-        //}
+            Assert.AreEqual(expectedResult, actualResult);
+        }
 
-        //[TestMethod]
-        //public void CalculateErrorRateTest()
-        //{
-        //    const double expectedResult = 0.33;
-        //    var actualResult = _analyser.CalculateErrorRate(_packetDict);
+        [TestMethod]
+        public void CalculateErrorRateTest()
+        {
+            const double expectedResult = 0.33;
+            var actualResult = _analyser.CalculateErrorRate(_packetDict);
 
-        //    Assert.AreEqual(expectedResult, Math.Round(actualResult,2));
-        //}
+            Assert.AreEqual(expectedResult, Math.Round(actualResult, 2));
+        }
 
 
         [TestMethod]
