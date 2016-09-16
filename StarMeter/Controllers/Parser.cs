@@ -20,7 +20,7 @@ namespace StarMeter.Controllers
 
         public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)
         {
-            var line = "";
+            string line;
             r.ReadLine();
             var strPortNumber = r.ReadLine();
             var portNumber = int.Parse(strPortNumber);
@@ -102,6 +102,11 @@ namespace StarMeter.Controllers
         public int GetProtocolId(string[] cargoParam, int logicalIndex)
         {
             return Convert.ToInt32(cargoParam[logicalIndex+1], 16);
+        }
+
+        public int GetSequenceNumber(string[] cargoParam, int logicalIndex)
+        {
+            return Convert.ToInt32(cargoParam[logicalIndex + 2], 16);
         }
     }
 }
