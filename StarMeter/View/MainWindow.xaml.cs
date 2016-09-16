@@ -48,6 +48,11 @@ namespace StarMeter.View
             PortNumber = 3,
             //IsError = false,
             PacketId = Guid.NewGuid(),
+            Address = new byte[]
+            {
+                1,
+                254
+            },
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
         };
@@ -56,6 +61,10 @@ namespace StarMeter.View
         {
             //IsError = true,
             PacketId = Guid.NewGuid(),
+            Address = new byte[]
+            {
+                65
+            },
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:52.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
         };
@@ -64,6 +73,13 @@ namespace StarMeter.View
         {
             PortNumber = 4,
             //IsError = false,
+            Address = new byte[]
+            {
+                1,
+                4,
+                6,
+                254
+            },
             PacketId = Guid.NewGuid(),
             DateRecieved = DateTime.ParseExact("08-09-2016 15:12:54.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,

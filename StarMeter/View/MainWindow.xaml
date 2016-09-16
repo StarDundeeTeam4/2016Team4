@@ -158,7 +158,7 @@
         </Canvas>
 
         <!-- Logo -->
-        <Image HorizontalAlignment="Left" Height="37" Margin="10,0,0,0" VerticalAlignment="Top" Width="244" Source="Resources/STAR Dundee.png" Grid.RowSpan="2"/>
+        <Image HorizontalAlignment="Left" Height="37" Margin="10,0,0,0" VerticalAlignment="Top" Width="244" Source="/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="1"/>
 
 
