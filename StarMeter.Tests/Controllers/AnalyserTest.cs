@@ -66,7 +66,7 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculateTotalNoOfDataCharsTest()
         {
-            const int expectedResult = 765;
+            const int expectedResult = 771;
             var actualResult = _analyser.CalculateTotalNoOfDataChars(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
@@ -112,7 +112,7 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void CalculateDataRateTest()
         {
-            const double expectedResult = 191.25;
+            const double expectedResult = 192.75;
             var actualResult = _analyser.CalculateDataRateBytePerSecond(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
