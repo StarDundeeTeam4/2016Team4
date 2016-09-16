@@ -223,9 +223,8 @@ namespace StarMeter.View
 
         private void TestTimeCreation(object sender, RoutedEventArgs e) 
         {
-            AddPacketCollection(packets);
-
-
+            //AddPacketCollection(packets);
+            
             
             RatesLineChart.Series.Clear();
 
@@ -279,6 +278,10 @@ namespace StarMeter.View
 
             //ScrollBackToBottom();
 
+
+            Statisticspage sp = new Statisticspage();
+            sp.Show();
+
         }
         #endregion
         
@@ -300,9 +303,9 @@ namespace StarMeter.View
             if (confirmed != true) return;
 
             // display file name
-            controller.AddFileNames(ofd.FileNames);
+            List<string> filesAdded = controller.AddFileNames(ofd.FileNames);
                 
-            foreach (string fileName in controller.GetFileNames())
+            foreach (string fileName in filesAdded)
             {
                 string actualName = fileName.Split('.')[0];
                 var g = new Grid
@@ -394,7 +397,6 @@ namespace StarMeter.View
             }
             
         }
-
 		
         void SearchForAddress(object sender, RoutedEventArgs e)
         {
@@ -716,6 +718,35 @@ namespace StarMeter.View
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
             Packet[] packets = controller.ParsePackets();
+            AddPacketCollection(packets);
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            foreach (var packs in Parser.PacketDict) 
+            {
+                Packet p = (Packet)packs.Value;
+                if (p.IsError) 
+                {
+                    AddPacket(p);
+                }
+            }
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+
+            Packet[] packets = new Packet[Parser.PacketDict.Count];
+
+            int count = 0;
+            foreach (var p in Parser.PacketDict) 
+            {
+                packets[count] = (Packet)p.Value;
+                count++;
+            }
+
             AddPacketCollection(packets);
         }
 

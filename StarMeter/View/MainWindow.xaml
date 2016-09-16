@@ -173,14 +173,14 @@
                 <RowDefinition Height="1.5*" />
             </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="2" Background="#33E5E5E5">
+            <ScrollViewer Grid.Row="2" Background="#33E5E5E5" VerticalScrollBarVisibility="Auto">
                 <StackPanel Name="SelectedFiles">
 
                 </StackPanel>
             </ScrollViewer>
 
             <!-- TEMP to display the size of the rectangle -->
-            <Label Grid.Row="4" HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Foreground="White" VerticalAlignment="Top" />
+            <Label Grid.Row="4" HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Foreground="White" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
             <Button Name="CmdTestData" Grid.Row="4" HorizontalAlignment="Right" Content="Add Test values" Width="91" Click="TestTimeCreation" Height="24" Margin="0,383.6,-0.4,-0.4" Grid.RowSpan="2" VerticalAlignment="Top"/>
             <Button Name="CmdSelectFile" Grid.Row="1" HorizontalAlignment="Left" Content="Select File" Width="150" Click="FileSelection">
                 <Button.Background>
@@ -232,7 +232,7 @@
 
                 </Grid>
             
-                <Grid Grid.Row="1" Margin="0, 15, 0, 8">
+                <Grid Grid.Row="1" Margin="0, 7, 0, 9">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1.5*" />
                         <ColumnDefinition Width="*" />
@@ -264,7 +264,7 @@
                 </Grid>
             </Grid>
 
-            <CheckBox Content="Display errors only" HorizontalAlignment="Left" Margin="10,25.6,0,0" Grid.Row="4" VerticalAlignment="Top" Foreground="White"/>
+            <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" HorizontalAlignment="Left" Margin="10,25.6,0,0" Grid.Row="4" VerticalAlignment="Top" Foreground="White"/>
             
             
 

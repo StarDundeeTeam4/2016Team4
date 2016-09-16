@@ -24,15 +24,21 @@ namespace StarMeter.Controllers
             return null;
         }
         
-        public void AddFileNames(string[] newFileNames)
+        public List<string> AddFileNames(string[] newFileNames)
         {
+            List<string> filesAdded = new List<string>();       
+
             foreach (string fileName in newFileNames)
             {
                 if (!filePaths.Contains(fileName))
                 {
                     filePaths.Add(fileName);
+                    filesAdded.Add(fileName.Split('\\').Last());
                 }
             }
+
+            return filesAdded;
+
         }
 
         public string[] GetFileNames()
