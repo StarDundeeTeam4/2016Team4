@@ -355,10 +355,10 @@ namespace StarMeter.View
 
         void CancelUpload(object sender, RoutedEventArgs e)
         {
-            // remove the object from the list
-            var b = (Button)sender;
-            var tag = b.Tag.ToString();
-            var id = int.Parse(tag);
+            Button b = (Button)sender;
+            string tag = b.Tag.ToString(); //fileName
+
+            int id = controller.RemoveFile(tag);
 
             SelectedFiles.Children.RemoveAt(id);
             _fileGrids.RemoveAt(id);
