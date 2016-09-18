@@ -10,7 +10,7 @@ namespace StarMeter.Controllers
 {
     public class Parser
     {
-        public static Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
+        public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -21,6 +21,7 @@ namespace StarMeter.Controllers
 
         public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)
         {
+            PacketDict.Clear();
             string line;
             r.ReadLine();
             var strPortNumber = r.ReadLine();

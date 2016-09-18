@@ -13,13 +13,18 @@
         <DVC:Chart Canvas.Top="0" Canvas.Left="0" Name="mcChart" 
            Width="300" Height="300"
            Background="Transparent">
-            <DVC:Chart.Series>
+            <DVC:Chart.Series >
                 <DVC:PieSeries Title="Experience" 
-            IndependentValueBinding="{Binding Path=Key}"
-            DependentValueBinding="{Binding Path=Value}">
+                    IndependentValueBinding="{Binding Path=Key}"
+                    DependentValueBinding="{Binding Path=Value}">
                 </DVC:PieSeries>
+
+
             </DVC:Chart.Series>
+            
         </DVC:Chart>
+        
+        
         <Button Click="Button_Click" Content="Button" HorizontalAlignment="Left" Height="35" Margin="120,100,0,0" VerticalAlignment="Top" Width="187"/>
 
 

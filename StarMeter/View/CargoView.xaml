@@ -4,19 +4,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d" 
-        Title="CargoView" WindowStyle="ToolWindow"
-          Width="Auto" Height="Auto" SizeToContent="WidthAndHeight" MaxWidth="600">
+        Title="View the Cargo of the Packet" WindowStyle="ToolWindow"
+          Width="Auto" Height="Auto" SizeToContent="WidthAndHeight" MaxWidth="600" ResizeMode="NoResize">
 
-    <Grid Name="BackgroundColour" Background="#FFDDDDDD">
-
+    <Grid Name="BackgroundColour">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#FF161A2E" Offset="1"/>
+                <GradientStop Color="#FF2C597B" Offset="0.535"/>
+                <GradientStop Color="#FF181730"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*" Name="LabelPanel" />
             <RowDefinition Height="2*" Name="DataVisualisationPopup" />
             <RowDefinition Height="40" Name="ExitButtonRow"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label x:Name="Label" Grid.Row="0" Content="Cargo View" Width="291" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" />
-        <Label x:Name="CargoContent" Grid.Row="1"  >
+        <Label x:Name="Label" Grid.Row="0" Content="Cargo View" Width="291" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Foreground="White" />
+        <Label x:Name="CargoContent" Grid.Row="1" Foreground="White"  >
             <TextBlock x:Name="MainCargoContent" TextWrapping="Wrap" Text="{Binding Path=CargoData}"></TextBlock>
         </Label>
         <Button x:Name="ExitButton" Grid.Row="2" Content="Exit" Background="Red" Click="ExitButtonEvent" Foreground="White"/>

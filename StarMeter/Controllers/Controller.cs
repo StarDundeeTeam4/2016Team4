@@ -58,6 +58,9 @@ namespace StarMeter.Controllers
 
         public Packet[] ParsePackets() 
         {
+
+            packets.Clear();
+
             Parser parser = new Parser();
                         
             foreach (var file in filePaths) 

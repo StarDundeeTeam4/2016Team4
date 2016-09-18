@@ -2,14 +2,24 @@
 using StarMeter.Models;
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls.DataVisualization.Charting;
+using StarMeter.Controllers;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.DataVisualization;
 using System.Windows.Controls.DataVisualization.Charting;
+using System.Windows.Controls.DataVisualization.Charting.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Threading;
 
-using StarMeter.Controllers;
 
 namespace StarMeter.View
 {
@@ -140,7 +150,7 @@ namespace StarMeter.View
 
             try
             {
-                lab.Content = p.Cargo[0];
+                lab.Content = p.DateRecieved.TimeOfDay;
             }
             catch (Exception e) 
             {
@@ -221,60 +231,82 @@ namespace StarMeter.View
         #region TEMP
         Packet[] packets = new Packet[3];
 
+        void CreateDataRateGraph(Packet[] packets) 
+        {
+            RatesLineChart.Series.Clear();
+            RatesLineChart.DataContext = null;
+
+            Analyser a = new Analyser();
+            var values = a.GetDataForLineChart(packets);
+
+
+            if (!(bool)ChkErrorsOnly.IsChecked)
+            {
+                var lineSeries1 = new LineSeries
+                {
+                    Title = "Data Rate",
+                    Foreground = Brushes.White,
+                    DependentValuePath = "Value",
+                    IndependentValuePath = "Key",
+                    ItemsSource = values[0]
+                };
+                RatesLineChart.Series.Add(lineSeries1);
+            }
+
+            var lineSeriesError = new LineSeries
+            {
+                Title = "Error Rate",
+                Foreground = Brushes.Black,
+                DependentValuePath = "Value",
+                IndependentValuePath = "Key",
+                ItemsSource = values[1]
+            };
+            RatesLineChart.Series.Add(lineSeriesError);
+
+            RatesLineChart.DataContext = values;
+
+
+            Legend legend = ObjectFinder.FindChild<Legend>(RatesLineChart, "Legend");
+            if (legend != null)
+            {
+                legend.Foreground = new SolidColorBrush(Colors.White);
+                legend.Background = new SolidColorBrush(Colors.Transparent);
+                legend.BorderBrush = new SolidColorBrush(Colors.Transparent);
+            }
+
+
+            System.Windows.Controls.DataVisualization.ResourceDictionaryCollection lineSeriesPalette = new System.Windows.Controls.DataVisualization.ResourceDictionaryCollection();
+
+            Brush currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
+            Brush currentBrush2 = new SolidColorBrush(Color.FromRgb(200, 20, 20)); //Red
+
+
+            System.Windows.ResourceDictionary pieDataPointStyles2 = new ResourceDictionary();
+            Style stylePie2 = new Style(typeof(LineDataPoint));
+            stylePie2.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush2));
+            pieDataPointStyles2.Add("DataPointStyle", stylePie2);
+
+            if (!(bool)ChkErrorsOnly.IsChecked)
+            {
+                System.Windows.ResourceDictionary pieDataPointStyles = new ResourceDictionary();
+                Style stylePie = new Style(typeof(LineDataPoint));
+                stylePie.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush));
+                pieDataPointStyles.Add("DataPointStyle", stylePie);
+                lineSeriesPalette.Add(pieDataPointStyles);
+            }
+
+            lineSeriesPalette.Add(pieDataPointStyles2);
+
+            RatesLineChart.Palette = lineSeriesPalette;
+
+
+        }
+
         private void TestTimeCreation(object sender, RoutedEventArgs e) 
         {
             //AddPacketCollection(packets);
-            
-            
-            RatesLineChart.Series.Clear();
 
-            var valueList = new List<KeyValuePair<string, int>>
-            {
-                new KeyValuePair<string, int>("00:00:00:000", 4),
-                new KeyValuePair<string, int>("00:00:01:000", 1),
-                new KeyValuePair<string, int>("00:00:04:102", 42),
-                new KeyValuePair<string, int>("00:00:14:000", 21),
-                new KeyValuePair<string, int>("00:00:41:000", 41),
-                new KeyValuePair<string, int>("00:01:12:050", 24),
-                new KeyValuePair<string, int>("00:01:17:000", 17),
-                new KeyValuePair<string, int>("00:01:60:100", 19)
-            };
-
-
-            var lineSeries1 = new LineSeries
-            {
-                Title = "Data Rate",
-                Foreground = Brushes.White,
-                DependentValuePath = "Value",
-                IndependentValuePath = "Key",
-                ItemsSource = valueList
-            };
-            RatesLineChart.Series.Add(lineSeries1);
-
-
-
-            var valueList2 = new List<KeyValuePair<string, int>>
-            {
-                new KeyValuePair<string, int>("00:00:00:000", 8),
-                new KeyValuePair<string, int>("00:00:01:000", 2),
-                new KeyValuePair<string, int>("00:00:04:102", 42),
-                new KeyValuePair<string, int>("00:00:14:000", 23),
-                new KeyValuePair<string, int>("00:00:41:000", 19),
-                new KeyValuePair<string, int>("00:01:12:050", 25),
-                new KeyValuePair<string, int>("00:01:17:000", 18),
-                new KeyValuePair<string, int>("00:01:60:100", 19)
-            };
-
-
-            LineSeries lineSeries2 = new LineSeries
-            {
-                Foreground = Brushes.White,
-                Title = "Error Rate",
-                DependentValuePath = "Value",
-                IndependentValuePath = "Key",
-                ItemsSource = valueList2
-            };
-            RatesLineChart.Series.Add(lineSeries2);
+            //CreateDataRateGraph();         
 
             //ScrollBackToBottom();
 
@@ -717,38 +749,131 @@ namespace StarMeter.View
 
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
+
+            RemoveAllPackets();
+
             Packet[] packets = controller.ParsePackets();
             AddPacketCollection(packets);
+
+            CreateChart();
+            CreateDataRateGraph(packets);
+            //GraphPanel.Width = new GridLength(3, GridUnitType.Star);
+
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-            foreach (var packs in Parser.PacketDict) 
+            foreach (var packs in controller.packets) 
             {
-                Packet p = (Packet)packs.Value;
+                Packet p = (Packet)packs;
                 if (p.IsError) 
                 {
                     AddPacket(p);
                 }
             }
+
+          
+            CreateDataRateGraph(controller.packets.ToArray());
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
 
-            Packet[] packets = new Packet[Parser.PacketDict.Count];
+            
+            Packet[] packets = new Packet[controller.packets.Count];
 
             int count = 0;
-            foreach (var p in Parser.PacketDict) 
+            foreach (var p in controller.packets) 
             {
-                packets[count] = (Packet)p.Value;
+                packets[count] = (Packet)p;
                 count++;
             }
 
             AddPacketCollection(packets);
+            CreateDataRateGraph(packets);
         }
+
+        private void CreateChart() 
+        {
+            Analyser a = new Analyser();
+            double errRate = a.CalculateErrorRateFromArray(controller.packets.ToArray());
+            
+            
+            Style style = new Style(typeof(Chart));
+            Setter st1 = new Setter(Chart.BackgroundProperty,
+                                        new SolidColorBrush(Colors.Transparent));
+            Setter st4 = new Setter(Chart.ForegroundProperty,
+                                        new SolidColorBrush(Colors.White));
+            Setter st2 = new Setter(Chart.BorderBrushProperty,
+                                        new SolidColorBrush(Colors.White));
+            Setter st3 = new Setter(Chart.BorderThicknessProperty, new Thickness(0));
+
+            style.Setters.Add(st1);
+            style.Setters.Add(st2);
+            style.Setters.Add(st3);
+            style.Setters.Add(st4);
+
+            mcChart.Style = style;
+            
+            EdgePanel ep = ObjectFinder.FindChild<EdgePanel>(mcChart, "ChartArea");
+            if (ep != null)
+            {
+                var grid = ep.Children.OfType<Grid>().FirstOrDefault();
+                if (grid != null)
+                {
+                    grid.Background = new SolidColorBrush(Colors.Transparent);
+                }
+
+                var border = ep.Children.OfType<Border>().FirstOrDefault();
+                if (border != null)
+                {
+                    border.BorderBrush = new SolidColorBrush(Colors.Transparent);
+                }
+            }
+            
+            Legend legend = ObjectFinder.FindChild<Legend>(mcChart, "Legend");
+            if (legend != null)
+            {
+                legend.Foreground = new SolidColorBrush(Colors.White);
+                legend.Background = new SolidColorBrush(Colors.Transparent);
+                legend.BorderBrush = new SolidColorBrush(Colors.Transparent);
+            }
+
+            
+            System.Windows.Controls.DataVisualization.ResourceDictionaryCollection pieSeriesPalette = new System.Windows.Controls.DataVisualization.ResourceDictionaryCollection();
+
+            Brush currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
+            Brush currentBrush2 = new SolidColorBrush(Color.FromRgb(200, 20, 20)); //Red
+
+            System.Windows.ResourceDictionary pieDataPointStyles = new ResourceDictionary();
+            Style stylePie = new Style(typeof(PieDataPoint));
+            stylePie.Setters.Add(new Setter(PieDataPoint.BackgroundProperty, currentBrush));
+            pieDataPointStyles.Add("DataPointStyle", stylePie);
+
+            System.Windows.ResourceDictionary pieDataPointStyles2 = new ResourceDictionary();
+            Style stylePie2 = new Style(typeof(PieDataPoint));
+            stylePie2.Setters.Add(new Setter(PieDataPoint.BackgroundProperty, currentBrush2));
+            pieDataPointStyles2.Add("DataPointStyle", stylePie2);
+
+            pieSeriesPalette.Add(pieDataPointStyles2);
+            pieSeriesPalette.Add(pieDataPointStyles);
+
+            mcChart.Palette = pieSeriesPalette;
+
+
+
+            ((PieSeries)mcChart.Series[0]).ItemsSource =
+            new KeyValuePair<string, double>[]{
+            new KeyValuePair<string, double>("Error", errRate),
+            new KeyValuePair<string, double>("Success", 1-errRate) };
+
+            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+            
+        }
+
+
 
     }
 
