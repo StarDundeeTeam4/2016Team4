@@ -275,6 +275,7 @@
                         <Label Grid.Column="0" Grid.Row="0" x:Name="SizeLabelTest_Copy1" Content="Address To Search:" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,0,0,0"/>
                         <TextBox x:Name="addressSearch" Height="23"  Grid.Row="0" Margin="0,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Stretch"/>
                         <Button Grid.Row="0" Grid.ColumnSpan="2" Click="SearchForAddress" Margin="40,50,40,-40" Content="Search for address" HorizontalAlignment="Stretch"></Button>
+                        <Button Grid.Row="0" Grid.ColumnSpan="2" Click="Reset" Margin="40,90,40,-80" Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White"></Button>
                     </Grid>
 
 

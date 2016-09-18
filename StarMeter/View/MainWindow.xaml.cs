@@ -227,6 +227,12 @@ namespace StarMeter.View
                 }
             }
 
+            var timeElements = TimeList.Children;
+
+            while (timeElements.Count > 0)
+            {
+                timeElements.Remove((UIElement)timeElements[0]);
+            }
         }
         #region TEMP
         Packet[] packets = new Packet[3];
@@ -398,17 +404,7 @@ namespace StarMeter.View
             SelectedFiles.Children.RemoveAt(id);
             _fileGrids.RemoveAt(id);
         }
-
-        private void RemoveFile(Panel grid)
-        {
-            foreach(UIElement child in grid.Children)
-            {
-                grid.Children.Remove(child);
-            }
-
-            SelectedFiles.Children.Remove(grid);
-        }
-
+        
         public void OpenPopup(object sender, RoutedEventArgs e) 
         {
             var b = (Button)sender;
@@ -533,7 +529,7 @@ namespace StarMeter.View
         /// </summary>
         private void MoveSlider()
         {
-            DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star); ;
+            DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star); 
         }
 
         /// <summary>
@@ -873,7 +869,25 @@ namespace StarMeter.View
             
         }
 
+        void Reset(object sender, RoutedEventArgs e)
+        {
+            controller.packets.Clear();
+            controller.filePaths.Clear();
 
+            SelectedFiles.Children.Clear();
+            _fileGrids.Clear();
+
+            RemoveAllPackets();
+
+            GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+
+            CreateDataRateGraph(controller.packets.ToArray());
+
+            _count = 2;
+            _isUpArrow = false;
+            ShowDataVisPopup(null, null);
+            SelectAllPorts(null, null);
+        }
 
     }
 
