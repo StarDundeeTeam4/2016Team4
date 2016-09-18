@@ -85,14 +85,14 @@
                 <!-- Adjust to align with the scroll bar -->
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column ="1" Style="{DynamicResource PortHeader}">Port 1A</Label>
-            <Label Grid.Row="0" Grid.Column ="2" Style="{DynamicResource PortHeader}">Port 1B</Label>
-            <Label Grid.Row="0" Grid.Column ="3" Style="{DynamicResource PortHeader}">Port 2A</Label>
-            <Label Grid.Row="0" Grid.Column ="4" Style="{DynamicResource PortHeader}">Port 2B</Label>
-            <Label Grid.Row="0" Grid.Column ="5" Style="{DynamicResource PortHeader}">Port 3A</Label>
-            <Label Grid.Row="0" Grid.Column ="6" Style="{DynamicResource PortHeader}">Port 3B</Label>
-            <Label Grid.Row="0" Grid.Column ="7" Style="{DynamicResource PortHeader}">Port 4A</Label>
-            <Label Grid.Row="0" Grid.Column ="8" Style="{DynamicResource PortHeader}">Port 4B</Label>
+            <Label Grid.Row="0" Grid.Column ="1" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 1A</Label>
+            <Label Grid.Row="0" Grid.Column ="2" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 1B</Label>
+            <Label Grid.Row="0" Grid.Column ="3" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 2A</Label>
+            <Label Grid.Row="0" Grid.Column ="4" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 2B</Label>
+            <Label Grid.Row="0" Grid.Column ="5" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 3A</Label>
+            <Label Grid.Row="0" Grid.Column ="6" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 3B</Label>
+            <Label Grid.Row="0" Grid.Column ="7" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 4A</Label>
+            <Label Grid.Row="0" Grid.Column ="8" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 4B</Label>
         </Grid>
 
         <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
