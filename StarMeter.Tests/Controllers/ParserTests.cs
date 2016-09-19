@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -423,8 +424,7 @@ namespace StarMeter.Tests.Controllers
         {
             var parser = new Parser();
             const string expectedValue = "Read";
-            byte byteExpected = 0x4C;
-            var actual = parser.GetRmapType(byteExpected);
+            var actual = parser.GetRmapType(new BitArray(new[] { 0x4c }));
             Assert.AreEqual(expectedValue, actual);
         }
 
