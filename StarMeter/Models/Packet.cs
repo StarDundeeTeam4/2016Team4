@@ -2,6 +2,7 @@
 
 public enum ErrorTypes
 {
+    None,
     DataError,
     Disconnect,
     SequenceError,
