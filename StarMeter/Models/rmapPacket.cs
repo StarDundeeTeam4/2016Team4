@@ -8,7 +8,7 @@ namespace StarMeter.Models
 {
     public class RmapPacket : Packet
     {
-        public byte[] SourceAddress;
+        public byte[] SourcePathAddress;
         public int    DestinationKey;
         public ushort HeaderCrc;
         public bool[] AdditionalInfo;

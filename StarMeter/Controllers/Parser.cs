@@ -53,18 +53,7 @@ namespace StarMeter.Controllers
                     packet.ProtocolId = GetProtocolId(packetHexData, logicalAddressIndex);
                     if (packet.ProtocolId == 1)
                     {
-                        var tmpPacket = packet;
-                        var rmapPacketType = GetRmapType(packet.Cargo[logicalAddressIndex + 1]);
-                        packet = new RmapPacket()
-                        {
-                            DateRecieved = tempDate,
-                            PortNumber = tmpPacket.PortNumber,
-                            PacketId = tmpPacket.PacketId,
-                            PacketType = rmapPacketType,
-                            Cargo = tmpPacket.Cargo,
-                            ProtocolId = tmpPacket.ProtocolId,
-                            FullPacket = tmpPacket.FullPacket
-                        };
+                        packet = CreateRmapPacket(packet, logicalAddressIndex);
                     }
                     packet.Address = GetAddressArray(packetHexData, logicalAddressIndex);
                     packet.Crc = GetCrc(packetHexData);
@@ -89,6 +78,49 @@ namespace StarMeter.Controllers
                 r.ReadLine();
             }
             return PacketDict;
+        }
+
+        private RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
+        {
+            var rmapPacketType = GetRmapType(packet.FullPacket[addressIndex + 2]);
+            var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
+            var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
+            return new RmapPacket()
+            {
+                DateRecieved = packet.DateRecieved,
+                PortNumber = packet.PortNumber,
+                PacketId = packet.PacketId,
+                PacketType = rmapPacketType,
+                Cargo = packet.Cargo,
+                ProtocolId = packet.ProtocolId,
+                FullPacket = packet.FullPacket,
+                SourcePathAddress = sourceAddress
+            };
+        }
+
+        public byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
+        {
+            var result = new List<byte>();
+            for (var i = logicalAddressIndex+4; i < logicalAddressIndex + addressLength + 4; i++)
+            {
+                result.Add(rmapFullPacket[i]);
+            }
+            return result.ToArray();
+        }
+
+        private int GetRmapLogicalAddressLength(byte rmapCommandByte)
+        {
+            var finalArray = new BitArray(new[] { getBit(rmapCommandByte, 1), getBit(rmapCommandByte, 2), false, false, false, false, false, false });
+            var result = new int[1];
+            finalArray.CopyTo(result, 0);
+            var final = result[0];
+            return final*4;
+        }
+
+        private bool getBit(byte cmdByte, int index)
+        {
+            var bit = (cmdByte & (1 << index - 1)) != 0;
+            return bit;
         }
 
         public string GetRmapType(byte rmapCommandByte)

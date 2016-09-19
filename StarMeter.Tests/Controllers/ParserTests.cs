@@ -348,5 +348,42 @@ namespace StarMeter.Tests.Controllers
             var actual = parser.GetRmapType(byteExpected);
             Assert.AreEqual(expectedValue, actual);
         }
+
+        [TestMethod]
+        public void GetSourcePathAddressRmapFromParser()
+        {
+            var parser = new Parser();
+            var readerMock = new Mock<IStreamReader>();
+
+            var stockResponses = new Queue<string>();
+            stockResponses.Enqueue("08-09-2016 18:45:04.045");
+            stockResponses.Enqueue("1");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("08-09-2016 15:12:50.081");
+            stockResponses.Enqueue("P");
+            stockResponses.Enqueue(@"01 01 00 fe 01 4d 20 00 00 03 02 fe 00 00 00 00 00 01 00 00 00 04 dc");
+            stockResponses.Enqueue("EOP");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("08-09-2016 15:13:55.193");
+            stockResponses.Enqueue(null);
+            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
+
+            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
+
+            parser.ParsePackets(readerMock.Object);
+
+            var expectedValue = new RmapPacket()
+            {
+                PacketId = Guid.NewGuid(),
+                PortNumber = 1,
+                Address = new byte[] { 33 },
+                PacketType = "Read",
+                SourcePathAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02 }
+            };
+            var result = parser.PacketDict.Values.FirstOrDefault();
+            Assert.AreEqual(expectedValue.SourcePathAddress.Length, ((RmapPacket)result).SourcePathAddress.Length);
+            Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
+        }
+
     }
 }
