@@ -57,7 +57,7 @@ namespace StarMeter.Controllers
                     }
                     packet.Address = GetAddressArray(packetHexData, logicalAddressIndex);
                     packet.Crc = GetCrc(packetHexData);
-                    packet.SequenceNum = GetSequenceNumber(packetHexData, logicalAddressIndex);
+                    packet.SequenceNum = GetSequenceNumber(packet, logicalAddressIndex);
                     packet.ErrorType = GetErrorType(packet);
 
                     var endingState = r.ReadLine();
@@ -223,9 +223,19 @@ namespace StarMeter.Controllers
             return Convert.ToInt32(fullPacket[logicalIndex + 1], 16);
         }
 
-        public int GetSequenceNumber(string[] fullPacket, int logicalIndex)
+        public int GetSequenceNumber(Packet packet, int logicalIndex)
         {
-            return Convert.ToInt32(fullPacket[logicalIndex + 2], 16);
+            if (packet.GetType() == typeof(RmapPacket))
+            {
+                byte[] sequence = new byte[2];
+                Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
+                Array.Reverse(sequence); //damn little-endian-ness
+                return BitConverter.ToInt16(sequence, 0);
+            }
+            else
+            {
+                return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
+            }
         }
 
         public ErrorTypes GetErrorType(Packet packet)
