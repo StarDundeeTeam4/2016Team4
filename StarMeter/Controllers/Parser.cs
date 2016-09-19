@@ -42,27 +42,31 @@ namespace StarMeter.Controllers
                 if (IsPType(packetType))
                 {
                     //read cargo line and convert to byte array
-                    string[] packetHexData = r.ReadLine().Split(' ');
+                    var packetHexData = r.ReadLine().Split(' ');
                     packet.FullPacket = packetHexData.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
-                    int logicalAddressIndex = GetLogicalAddressIndex(packetHexData);
+                    var logicalAddressIndex = GetLogicalAddressIndex(packetHexData);
 
                     packet.Cargo = GetCargoArray(packetHexData, logicalAddressIndex);
                     packet.ProtocolId = GetProtocolId(packetHexData, logicalAddressIndex);
                     packet.Address = GetAddressArray(packetHexData, logicalAddressIndex);
                     packet.Crc = GetCrc(packetHexData);
                     packet.SequenceNum = GetSequenceNumber(packetHexData, logicalAddressIndex);
+                    packet.ErrorType = GetErrorType(packet);
 
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
+
                 }
                 else
                 {
                     packet.IsError = true;
+
                     r.ReadLine();
                 }
 
-                packet = setPrevPacket(packet);
+
+                packet = SetPrevPacket(packet);
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
@@ -70,7 +74,7 @@ namespace StarMeter.Controllers
             return PacketDict;
         }
 
-        public Packet setPrevPacket(Packet packet)
+        public Packet SetPrevPacket(Packet packet)
         {
             //set previous packet's next packet as this packet
             if (_prevPacket != null)
@@ -146,6 +150,16 @@ namespace StarMeter.Controllers
         public int GetSequenceNumber(string[] fullPacket, int logicalIndex)
         {
             return Convert.ToInt32(fullPacket[logicalIndex + 2], 16);
+        }
+
+        public ErrorTypes GetErrorType(Packet packet)
+        {
+            var calculatedCrc = Crc.CheckCrcForPacket(packet.FullPacket);
+            if (!calculatedCrc)
+            {
+                return ErrorTypes.DataError;
+            }
+            return ErrorTypes.None;
         }
 
     }
