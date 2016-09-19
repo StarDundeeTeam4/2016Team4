@@ -66,8 +66,7 @@ namespace StarMeter.View
                 ProtocolLabel.Content = "Protocol: " + protocolId;
             }
 
-            var sequenceNumber = p.SequenceNum + 1;
-            SequenceNumberLabel.Content = "Sequence Number: " + sequenceNumber;
+            SequenceNumberLabel.Content = "Sequence Number: " + p.SequenceNum;
 
             var addressArray = p.Address;
             var finalAddressString = "";
