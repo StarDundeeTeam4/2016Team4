@@ -47,5 +47,15 @@ namespace StarMeter.Tests.Controllers
 
             Assert.IsFalse(CRC.CheckCrcForPacket(packet));
         }
+
+        [TestMethod]
+        public void TestByteToHexString()
+        {
+            const string expected = "0xff";
+
+            string actual = CRC.ByteToHexString(255);
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
