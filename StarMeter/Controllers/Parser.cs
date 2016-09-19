@@ -230,7 +230,7 @@ namespace StarMeter.Controllers
                 byte[] sequence = new byte[2];
                 Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
                 Array.Reverse(sequence); //damn little-endian-ness
-                return BitConverter.ToInt16(sequence, 0);
+                return BitConverter.ToUInt16(sequence, 0);
             }
             else
             {

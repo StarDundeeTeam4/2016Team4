@@ -21,7 +21,13 @@ namespace StarMeter.Tests.Controllers
             0x54, 0xd5, 0x16, 0x37, 0x96, 0xe4, 0xab, 0x6c, 0x5a, 0xb0, 0x3e
         };
 
-    private readonly Parser _parser = new Parser();
+        private Parser _parser;
+
+        [TestInitialize()]
+        public void Initialize()
+        {
+            _parser = new Parser();
+        }
 
         [TestMethod]
         public void PassingCorrectStringReturnsDateTimeTest()
@@ -310,6 +316,47 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void GetSequenceNumberFromRmap()
+        {
+            const int expected = 0;
+
+            string[] hexData = @"4c 01 7c 20 4a 00 00 00 00 01 00 00 00 00 04 1c 00 00 1e b0 94".Split(' ');
+            byte[] packetData =
+            {
+                0x4c, 0x01, 0x7c, 0x20, 0x4a, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
+                0x00, 0x00, 0x00, 0x04, 0x1c, 0x00, 0x00, 0x1e, 0xb0, 0x94
+            };
+
+            Packet p = new RmapPacket()
+            {
+                FullPacket = packetData,
+            };
+
+            int logicalIndex = _parser.GetLogicalAddressIndex(hexData);
+            
+            Assert.AreEqual(expected, _parser.GetSequenceNumber(p,logicalIndex));
+        }
+
+        [TestMethod]
+        public void GetSequenceNumberFromRmap2()
+        {
+            const int expected = 65533;
+
+            string[] hexData = @"57 01 4c 20 2d ff fd 00 00 02 00 00 00 00 08 d6".Split(' ');
+            byte[] packetData =
+                {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfd, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0xd6};
+
+            Packet p = new RmapPacket()
+            {
+                FullPacket = packetData,
+            };
+
+            int logicalIndex = _parser.GetLogicalAddressIndex(hexData);
+
+            Assert.AreEqual(expected, _parser.GetSequenceNumber(p, logicalIndex));
+        }
+
+        [TestMethod]
         public void GetRmapPacketFromParserWhenRmapProtocolUsed()
         {
             var parser = new Parser();
@@ -417,5 +464,10 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
         }
 
+        [TestCleanup()]
+        public void Cleanup()
+        {
+            _parser = null;
+        }
     }
 }
