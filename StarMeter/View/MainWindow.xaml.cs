@@ -33,9 +33,6 @@ namespace StarMeter.View
         private StackPanel[] _portStacks = new StackPanel[8];
 
 
-
-        
-
         public MainWindow()
         {
             InitializeComponent();
@@ -128,18 +125,20 @@ namespace StarMeter.View
         #endregion
 
 
-        private Button GetPacketButton(Packet p) 
+        void CreateTimeLabel(TimeSpan time) 
         {
             // create a label for the time
             # region Time label
             Label l = new Label();
-            l.Content = "00:00:00.000";
+            l.Content = time.ToString();
             l.SetResourceReference(Control.StyleProperty, "Timestamp");
 
             TimeList.Children.Add(l);
             #endregion
+        }
 
-
+        private Button GetPacketButton(Packet p) 
+        {
             #region Create Button for the packet
             string sty = "";
             
@@ -199,19 +198,91 @@ namespace StarMeter.View
 
         void AddPacketCollection(Packet[] packets) 
         {
+            _previous = packets[0].DateRecieved.TimeOfDay;
             foreach (var p in packets) 
             {
                 AddPacket(p);
             }
         }
 
+        private TimeSpan _previous = new TimeSpan();
+
         private void AddPacket(Packet p) 
         {
-            Button b = GetPacketButton(p);
+            var temp_timespans = _timespans.ToList();
+            var b = GetPacketButton(p);
+            var packet_timespan = p.DateRecieved.TimeOfDay;
+            var sp = GetPanelToUse(p.PortNumber);
 
-            StackPanel sp = GetPanelToUse(p.PortNumber);            
+            bool found = false;
+
+            int index = 0;
+
+            while(found == false && temp_timespans.Count > 0)
+            {
+                index = temp_timespans.Count/2;
+
+
+                if (temp_timespans[index] < packet_timespan)
+                {
+                    if (temp_timespans[index] <= packet_timespan)
+                    {
+                        if ((temp_timespans[index].Add(section) > packet_timespan))
+                        {
+                            found = true;
+                        }
+                        else
+                        {
+                            temp_timespans = temp_timespans.GetRange(index, temp_timespans.Count - index);
+                            //index = index + (index / 2);
+                        }
+                    }
+                }
+                else
+                {
+                    if ((temp_timespans[index].Add(negative_section) < packet_timespan))
+                    {
+                        found = true;
+                    }
+                    else
+                    {
+                        temp_timespans = temp_timespans.GetRange(0, index);
+                        //index = index / 2;
+                    }
+                }
+            }
+
+            //This line will let us know how many empty spaces that we need to add to the stack panel.
+
+            var diff = (temp_timespans[index] - _previous).Add(negative_section);
+            int spaces = 0;
+
+     
+            while(diff.CompareTo(new TimeSpan(0,0,0,0,interval)) >= 0)
+            {
+                diff = diff.Add(negative_section);
+
+                spaces++;
+            }
+
+            
+            
+            for (int i = 0; i < spaces ; i++)
+            {
+                Label lbl = new Label();
+                lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
+                sp.Children.Add(lbl);
+            }
 
             sp.Children.Add(b);
+
+
+
+            _previous = temp_timespans[index];
+
+
+            
+
         }
 
         //This function will remove all packets from the screen which are being displayed.
@@ -614,6 +685,31 @@ namespace StarMeter.View
         }
 
         /// <summary>
+        /// Get the style for a timestamp
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public Style GetFillerStyle(double val)
+        {
+
+            var style = new Style { TargetType = typeof(Label) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+
+
+            var converter = new System.Windows.Media.BrushConverter();
+
+            style.Setters.Add(new Setter(Button.BackgroundProperty, (Brush)converter.ConvertFromString("#b383d3")));
+            style.Setters.Add(new Setter(HeightProperty, val));
+
+            return style;
+        }
+
+        /// <summary>
         /// change the height of the objects - xzoom in and out
         /// </summary>
         /// <param name="sender"></param>
@@ -622,7 +718,8 @@ namespace StarMeter.View
         {
             Application.Current.Resources["Success"] = GetSuccessStyle(HeightScroller.Value);
             Application.Current.Resources["Error"] = GetErrorStyle(HeightScroller.Value);
-            Application.Current.Resources["Timestamp"] = GetTimeStyle(HeightScroller.Value);            
+            Application.Current.Resources["Timestamp"] = GetTimeStyle(HeightScroller.Value);
+            Application.Current.Resources["TimeFiller"] = GetFillerStyle(HeightScroller.Value);            
         }
 
 
@@ -745,16 +842,57 @@ namespace StarMeter.View
 
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                interval = int.Parse(txtInterval.Text);
+            }
+            catch (Exception) 
+            {
+                interval = 5;
+            }
 
             RemoveAllPackets();
 
             Packet[] packets = controller.ParsePackets();
+            CreateAllTimeLabels(packets);
             AddPacketCollection(packets);
 
             CreateChart();
-            CreateDataRateGraph(packets);
-            //GraphPanel.Width = new GridLength(3, GridUnitType.Star);
 
+
+            CreateDataRateGraph(packets);
+
+
+        }
+
+        int interval;
+        TimeSpan section = new TimeSpan();
+        TimeSpan negative_section = new TimeSpan();
+        TimeSpan half_section = new TimeSpan();
+
+
+        TimeSpan[] _timespans;
+
+        void CreateAllTimeLabels(Packet[] packets)
+        {
+            var timelist = new List<TimeSpan>();
+            var tStart = packets[0].DateRecieved.TimeOfDay;
+            var tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
+
+            section = new TimeSpan(0, 0, 0, 0, interval);
+            negative_section = section.Negate();
+            half_section = new TimeSpan(0, 0, 0, 0, interval / 2);
+            var i = 0;
+            var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
+            timelist.Add(curr);
+            while (curr <= tEnd)
+            {
+                i++;
+                CreateTimeLabel(curr);
+                curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
+                timelist.Add(curr);
+            }
+            _timespans = timelist.ToArray();
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)

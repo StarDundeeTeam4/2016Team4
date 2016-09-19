@@ -165,14 +165,26 @@
         </Canvas>
 
         <!-- Logo -->
-        <Image HorizontalAlignment="Left" Height="37" Margin="10,0,0,0" VerticalAlignment="Top" Width="244" Source="/StarMeter;component/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
+            <TextBox Name="txtInterval" Grid.Row="0" Grid.Column="2" FontSize="20" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5">5</TextBox>
+            <Label Foreground="White" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" FontSize="14" VerticalContentAlignment="Center">Interval:</Label>
+            <Label Foreground="White" Grid.Column="3" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" FontSize="14" VerticalContentAlignment="Center">ms</Label>
+        </Grid>
+        
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="1"/>
 
 
         <Grid Grid.Column="0" Grid.Row="1" Name="LeftHandPanel">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
+                <RowDefinition Height="0.5*" />
                 <RowDefinition Height="2.5*" />
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="3*" />
@@ -189,7 +201,7 @@
             <!-- TEMP to display the size of the rectangle -->
             <Label Grid.Row="4" HorizontalAlignment="Center" Name="SizeLabelTest" Content="Filters" Foreground="White" VerticalAlignment="Top" FontWeight="Bold" FontSize="16" />
             <Button Name="CmdTestData" Grid.Row="4" HorizontalAlignment="Right" Content="Add Test values" Width="91" Click="TestTimeCreation" Height="24" Margin="0,383.6,-0.4,-0.4" Grid.RowSpan="2" VerticalAlignment="Top" Visibility="Hidden"/>
-            <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch">
+            <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Button.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF9D9D9D" Offset="1"/>
@@ -255,7 +267,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.ColumnSpan="4" Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="Display Port Info For..." Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0,0,-0.4,18.2" Grid.RowSpan="2"/>
-                        <Button Grid.Row="1" Grid.Column="0" Click="SelectAllPorts" Margin="0,0.2,5,0.2" Grid.ColumnSpan="2">Select All</Button>
+                        <Button Grid.Row="1" Grid.Column="0" Click="SelectAllPorts" Margin="5,0.2,5,0.2" Grid.ColumnSpan="2">Select All</Button>
                         <Button Grid.Row="1" Grid.Column="2" Click="DeselectAllPorts" Margin="5,0.2,4.6,0" Grid.ColumnSpan="2">Deselect All</Button>
 
                     </Grid>
