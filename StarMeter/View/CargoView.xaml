@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d" 
         Title="View the Cargo of the Packet" WindowStyle="ToolWindow"
-          Width="Auto" Height="Auto" SizeToContent="WidthAndHeight" MaxWidth="600" ResizeMode="NoResize">
+          Width="Auto" Height="Auto" SizeToContent="WidthAndHeight" MaxWidth="600" ResizeMode="NoResize" d:DesignWidth="296" d:DesignHeight="204">
 
     <Grid Name="BackgroundColour">
         <Grid.Background>
@@ -16,14 +16,38 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*" Name="LabelPanel" />
+            <RowDefinition Height="1*" Name="LabelPanel" />
             <RowDefinition Height="2*" Name="DataVisualisationPopup" />
             <RowDefinition Height="40" Name="ExitButtonRow"></RowDefinition>
+           
         </Grid.RowDefinitions>
 
-        <Label x:Name="Label" Grid.Row="0" Content="Cargo View" Width="291" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" Foreground="White" />
+        
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+        <Label x:Name="Label" Grid.Row="0" Grid.ColumnSpan="4" Content="Cargo View" Width="290" HorizontalAlignment="Center" HorizontalContentAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Height="26" Margin="0,-3,0,0" />
+        <Label x:Name="Label2" Grid.Row="1" Grid.Column="1" Content="Column Number" HorizontalAlignment="Center" HorizontalContentAlignment="Right" VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Height="22" FontSize="9"/>
+        <TextBox x:Name="ColumnChange"  TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="2" Grid.Row="1" />
+        <Button Grid.Row="1" Grid.Column="3" Content="Change"  FontSize="10" HorizontalAlignment="Stretch" Click="ChangeColumnEvent"/>
+        
+            
+        </Grid>
+        
         <Label x:Name="CargoContent" Grid.Row="1" Foreground="White"  >
-            <TextBlock x:Name="MainCargoContent" TextWrapping="Wrap" Text="{Binding Path=CargoData}"></TextBlock>
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="MainCargoContent" TextWrapping="Wrap" TextAlignment="Justify" Text="{Binding Path=CargoData}" Grid.ColumnSpan="2" MinWidth="300"></TextBlock>
+            </ScrollViewer>
         </Label>
         <Button x:Name="ExitButton" Grid.Row="2" Content="Exit" Background="Red" Click="ExitButtonEvent" Foreground="White"/>
     </Grid>
