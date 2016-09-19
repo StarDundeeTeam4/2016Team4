@@ -15,6 +15,7 @@ namespace StarMeter.Controllers
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
+            _prevPacket = null;
             var r = new StreamReaderWrapper(filePath);
             PacketDict = ParsePackets(r);
             return PacketDict;
