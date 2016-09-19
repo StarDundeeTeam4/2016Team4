@@ -103,7 +103,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\Controller.cs" />
-    <Compile Include="Models\rmapPacket.cs" />
+    <Compile Include="Models\RmapPacket.cs" />
     <Compile Include="View\CargoView.xaml.cs">
       <DependentUpon>CargoView.xaml</DependentUpon>
     </Compile>

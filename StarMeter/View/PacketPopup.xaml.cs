@@ -19,7 +19,7 @@ namespace StarMeter.View
         private Brush _br;
         public Controller Controller;
 
-        public void SetupElements(Brush br, Packet p) 
+        public void SetupElements(Brush br, Packet p)
         {
             _p = p;
             _br = br;
@@ -37,7 +37,7 @@ namespace StarMeter.View
             {
                 logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
                 logo.EndInit();
-                
+
                 lblErrorMsg.Content = "SUCCESS";
             }
             else
@@ -51,8 +51,8 @@ namespace StarMeter.View
 
 
             IconBG.Background = br;
-            ErrorIcon.Source = logo;   
-            
+            ErrorIcon.Source = logo;
+
             TimeLabel.Content = p.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
 
             var protocolId = p.ProtocolId;
@@ -83,7 +83,7 @@ namespace StarMeter.View
                 else
                     finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
             }
-            else 
+            else
             {
                 finalAddressString = "No Address";
             }
@@ -124,7 +124,7 @@ namespace StarMeter.View
                 cv.Owner = this;
                 cv.Show();
             }
-            else 
+            else
             {
                 MessageBox.Show("No Cargo");
             }
@@ -137,4 +137,3 @@ namespace StarMeter.View
 
     }
 }
-
