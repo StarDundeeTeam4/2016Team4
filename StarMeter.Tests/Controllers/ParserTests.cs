@@ -285,5 +285,17 @@ namespace StarMeter.Tests.Controllers
             var expectedSequenceNumber = 0;
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
+
+        [TestMethod]
+        public void GetRmapPacketFromParser()
+        {
+            var parser = new Parser();
+            var cargoParam =
+                @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
+
+            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+
+            var expectedValue = new R
+        }
     }
 }
