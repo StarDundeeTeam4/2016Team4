@@ -44,7 +44,6 @@ namespace StarMeter.Controllers
                     //read cargo line and convert to byte array
                     string[] hex = r.ReadLine().Split(' ');
                     packet.Cargo = hex.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
-
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }

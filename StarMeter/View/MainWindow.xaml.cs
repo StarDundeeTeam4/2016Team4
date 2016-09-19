@@ -421,7 +421,8 @@ namespace StarMeter.View
             if (p != null)
             {
                 pp.SetupElements(br, p); // send the packet as a parameter, along with the colour to make the header
-                pp.ShowDialog();
+                pp.Owner = this;
+                pp.Show();
             }
             
         }
