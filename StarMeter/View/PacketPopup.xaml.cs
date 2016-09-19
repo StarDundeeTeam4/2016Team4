@@ -23,9 +23,13 @@ namespace StarMeter.View
             InitializeComponent();
         }
         Packet _p;
+        Brush _br;
+        public Controller controller;
+
         public void SetupElements(Brush br, Packet p) 
         {
             _p = p;
+            _br = br;
             this.Width = 500;
             this.Height = 500;
 
@@ -58,7 +62,7 @@ namespace StarMeter.View
             IconBG.Background = br;
             ErrorIcon.Source = logo;   
             
-            TimeLabel.Content = p.DateRecieved.ToString();
+            TimeLabel.Content = p.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
 
             
             // get protocol id
@@ -96,7 +100,27 @@ namespace StarMeter.View
 
             AddressLabel.Content = finalAddressString;
 
-         }
+            LeftArrow.Visibility = _p.PrevPacket == null ? Visibility.Collapsed : Visibility.Visible;
+            RightArrow.Visibility = _p.NextPacket == null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void nextPacket(object sender, RoutedEventArgs e)
+        {
+            if (_p.NextPacket != null)
+            {
+                Packet p = controller.FindPacket(_p.NextPacket.GetValueOrDefault());
+                SetupElements(_br, p);
+            }
+        }
+
+        private void prevPacket(object sender, RoutedEventArgs e)
+        {
+            if (_p.PrevPacket != null)
+            {
+                Packet p = controller.FindPacket(_p.PrevPacket.GetValueOrDefault());
+                SetupElements(_br, p);
+            }
+        }
 
         private void ViewCargo(object sender, RoutedEventArgs e)
         {
@@ -116,7 +140,7 @@ namespace StarMeter.View
             }
         }
 
-        private void ExitButtonEvent(Object sender, RoutedEventArgs e)
+        private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
