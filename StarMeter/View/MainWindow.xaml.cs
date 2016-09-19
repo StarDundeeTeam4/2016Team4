@@ -448,6 +448,7 @@ namespace StarMeter.View
                     AddPacket(packet);
                 }
             }
+            protocolSearch.Text = "";
         }
 
         Packet FindPacket(Guid guid) 
