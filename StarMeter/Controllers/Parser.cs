@@ -82,20 +82,32 @@ namespace StarMeter.Controllers
 
         private RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
         {
-            var rmapPacketType = GetRmapType(packet.FullPacket[addressIndex + 2]);
+            var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
+            var rmapPacketType = GetRmapType(rmapCommandByte);
             var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
             var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
-            return new RmapPacket()
+
+            var p = new RmapPacket()
             {
-                DateRecieved = packet.DateRecieved,
-                PortNumber = packet.PortNumber,
-                PacketId = packet.PacketId,
-                PacketType = rmapPacketType,
-                Cargo = packet.Cargo,
-                ProtocolId = packet.ProtocolId,
-                FullPacket = packet.FullPacket,
-                SourcePathAddress = sourceAddress
+                AdditionalInfo    = rmapCommandByte,
+                PacketType        = rmapPacketType,
+                SourcePathAddress = sourceAddress,
+
+                PacketId          = packet.PacketId,
+                DateRecieved      = packet.DateRecieved,
+                PortNumber        = packet.PortNumber,
+                Cargo             = packet.Cargo,
+                ProtocolId        = packet.ProtocolId,
+                FullPacket        = packet.FullPacket,
             };
+
+            if (!CheckRmapCRC(p))
+            {
+                p.IsError = true;
+                p.ErrorType = ErrorTypes.DataError;
+            }
+
+            return p;
         }
 
         public byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
@@ -123,32 +135,25 @@ namespace StarMeter.Controllers
             return bit;
         }
 
-        public string GetRmapType(byte rmapCommandByte)
+        public string GetRmapType(BitArray bitArray)
         {
-            var result = "";
-            var bitArray = new BitArray(new[] {rmapCommandByte});
+            /**
+             * bit 7 = reserved
+             * bit 6 = read/write
+             * bit 5 = reply?
+             * bit 4 = verify
+             */
 
-            if (!bitArray[6])
+            string result = bitArray[6] ? "Read" : "Write";
+            
+            if (bitArray[5]) //reply?
             {
-                result += "Reply ";
-            }
-            if (bitArray[5])
-            {
-                result += "Write";
-            }
-            else if (bitArray[4])
-            {
-                result += "Read Modify Write";
-            }
-            else
-            {
-                result += "Read";
+                result += " Reply";
             }
 
             return result;
 
         }
-
 
         public Packet SetPrevPacket(Packet packet)
         {
@@ -238,9 +243,18 @@ namespace StarMeter.Controllers
             }
         }
 
+        public bool CheckRmapCRC(RmapPacket packet)
+        {
+            ushort dataCrc = packet.FullPacket.Last();
+
+            if (CRC.RMAP_CalculateCRC(packet.Cargo) != dataCrc) return false;
+
+            return true;
+        }
+
         public ErrorTypes GetErrorType(Packet packet)
         {
-            var calculatedCrc = Crc.CheckCrcForPacket(packet.FullPacket);
+            var calculatedCrc = CRC.CheckCrcForPacket(packet.FullPacket);
             if (!calculatedCrc)
             {
                 return ErrorTypes.DataError;
