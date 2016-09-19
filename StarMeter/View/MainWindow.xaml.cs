@@ -431,6 +431,21 @@ namespace StarMeter.View
             }
         }
 
+        private void SearchForProtocol(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            var search = protocolSearch.Text;
+            foreach (var packet in controller.packets.Values)
+            {
+                var packetProtocol = packet.ProtocolId;
+                if (packetProtocol.ToString() == search)
+                {
+                    AddPacket(packet);
+                }
+            }
+            protocolSearch.Text = "";
+        }
+
         Packet FindPacket(Guid guid) 
         {
 
