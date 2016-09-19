@@ -19,12 +19,12 @@ namespace StarMeter.Models
         public DateTime   DateRecieved { get; set; }
         public bool       IsError      { get; set; }
         public ErrorTypes errorType    { get; set; }
-        public int        SequenceNum  { get; private set; }
+        public int        SequenceNum  { get; set; }
         public int        PortNumber   { get; set; }
         public Guid       PrevPacket   { get; set; }
         public Guid       NextPacket   { get; set; }
         public ushort     Crc          { get; set; }
-        public int        ProtocolID   { get; private set; }
+        public int        ProtocolID   { get; set; }
         public byte[]     fullPacket   { get; private set; }
 
         public Packet()

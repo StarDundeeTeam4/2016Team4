@@ -45,6 +45,13 @@ namespace StarMeter.Controllers
                     string[] hex = r.ReadLine().Split(' ');
                     packet.Cargo = hex.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
+                    int logicalAddressIndex = GetLogicalAddressIndex(hex);
+
+                    packet.ProtocolID = GetProtocolId(hex, logicalAddressIndex);
+                    packet.Address = GetAddressArray(hex, logicalAddressIndex);
+                    packet.Crc = GetCrc(hex);
+                    packet.SequenceNum = GetSequenceNumber(hex, logicalAddressIndex);
+
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }
@@ -90,7 +97,7 @@ namespace StarMeter.Controllers
             return index;
         }
 
-        public static byte[] GetAddressArray(int logicalIndex, string[] cargoParam)
+        public static byte[] GetAddressArray(string[] cargoParam, int logicalIndex)
         {
             var byteList = new List<byte>();
             for (var i = 0; i <= logicalIndex; i++)
