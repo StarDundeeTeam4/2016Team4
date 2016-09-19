@@ -24,10 +24,13 @@ namespace StarMeter.Controllers
             var totalNoOfDataChars = 0;
             foreach (var packet in packetDictionary.Values)
             {
-                var packetAddressLength = packet.Address.Length;
-                var packetCargoLength = packet.Cargo.Length;
-                var packetDataChars = packetAddressLength + packetCargoLength;
-                totalNoOfDataChars += packetDataChars;
+                if (packet.Address != null)
+                {
+                    var packetAddressLength = packet.Address.Length;
+                    var packetCargoLength = packet.Cargo.Length;
+                    var packetDataChars = packetAddressLength + packetCargoLength;
+                    totalNoOfDataChars += packetDataChars;
+                }
             }
             return totalNoOfDataChars;
         }
@@ -76,6 +79,75 @@ namespace StarMeter.Controllers
 
             var errorRate = noOfErrorPackets / (double)noOfPackets;
             return errorRate;
+        }
+        public double CalculateErrorRateFromArray(Packet[] packets)
+        {
+            var count = 0;
+
+            foreach (var p in packets) 
+            {
+                if (p.IsError) { count++; }
+            }
+
+            var noOfPackets = packets.Length;
+
+            var errorRate = count / (double)noOfPackets;
+            return errorRate;
+        }
+
+        public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets) 
+        {
+
+            var sortedPackets = from pair in packets orderby pair.DateRecieved ascending select pair;
+
+            List<KeyValuePair<string, int>> returnedData = new List<KeyValuePair<string, int>>();
+            List<KeyValuePair<string, int>> errorData = new List<KeyValuePair<string, int>>();
+
+            if (packets.Length > 0)
+            {
+                TimeSpan tStart = packets[0].DateRecieved.TimeOfDay;
+                TimeSpan tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
+
+                TimeSpan tDiff = tEnd - tStart;
+
+                const int NUM_POINTS = 10;
+
+                double interval = (tDiff.TotalMilliseconds / NUM_POINTS);
+
+                for (int i = 0; i < NUM_POINTS; i++)
+                {
+                    int count = 0;
+                    int errorCount = 0;
+
+                    TimeSpan lowerBound = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * (i))));
+                    TimeSpan upperBound = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * (i + 1))));
+
+                    foreach (var packet in packets)
+                    {
+                        if ((packet.DateRecieved.TimeOfDay >= lowerBound) && (packet.DateRecieved.TimeOfDay <= upperBound))
+                        {
+                            count++;
+
+                            if (packet.IsError)
+                            {
+                                errorCount++;
+                            }
+                        }
+                    }
+
+                    var kvp = new KeyValuePair<string, int>(lowerBound.ToString(), count);
+                    var kvpError = new KeyValuePair<string, int>(lowerBound.ToString(), errorCount);
+                    returnedData.Add(kvp);
+                    errorData.Add(kvpError);
+
+                }
+
+            }
+
+            List<KeyValuePair<string, int>>[] toReturn = new List<KeyValuePair<string, int>>[2];
+            toReturn[0] = returnedData;
+            toReturn[1] = errorData;
+            return toReturn;
         }
     }
 }

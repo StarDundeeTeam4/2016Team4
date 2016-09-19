@@ -5,9 +5,17 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="400"
-	Title="Packet Info">
+	Title="Packet Info" ResizeMode="NoResize">
 
-    <Grid Name="BackgroundColour" Background="#FFDDDDDD">
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#FF161A2E" Offset="1"/>
+                <GradientStop Color="#FF2C597B" Offset="0.535"/>
+                <GradientStop Color="#FF181730"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
 
         <Grid.RowDefinitions>
 
@@ -32,7 +40,7 @@
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.2*" />
+                <RowDefinition Height="0.5*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -46,20 +54,27 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Image  Grid.Row="4" Grid.Column="0"  Source="/StarMeter;component/Resources/left chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
-            <Image  Grid.Row="4" Grid.Column="3"  Source="/StarMeter;component/Resources/right chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
+            <Image  Grid.Row="0" Grid.Column="0"  Source="/StarMeter;component/Resources/left chevron.png" HorizontalAlignment="Left" Margin="0"></Image>
+            <Image  Grid.Row="0" Grid.Column="3"  Source="/StarMeter;component/Resources/right chevron.png" HorizontalAlignment="Right" Margin="0"></Image>
 
 
-            <Label x:Name="TimeLabel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic"/>
-            <Label x:Name="ProtocolLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic"/>
-            <Label x:Name="SequenceNumberLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic"/>
-            <Label x:Name="AddressLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="Black" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2"/>
+            <Label x:Name="TimeLabel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic"/>
+            <Label x:Name="ProtocolLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic"/>
+            <Label x:Name="SequenceNumberLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic"/>
+            <Label x:Name="AddressLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2"/>
 
-            <Button Grid.Row="6" Grid.Column="1" Content="View Cargo" Background="#FF8C8C8C" Foreground="Black" FontFamily="Calibri" FontSize="20" Click="ViewCargo"/>
+            <Button Grid.Row="5" Grid.Column="1" Content="View Cargo" Background="White" Foreground="Black" FontFamily="Calibri" FontSize="20" Click="ViewCargo" Margin="0,10,0,10"/>
 
         </Grid>
 
-        <Button Grid.Row="2" Content="OK" Background="#FF2BB702" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent"/>
+        <Button Grid.Row="2" Content="OK" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF125402" Offset="1"/>
+                    <GradientStop Color="#FF32FF00"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
 
     </Grid>
 </Window>
