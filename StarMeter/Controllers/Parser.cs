@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -45,10 +46,22 @@ namespace StarMeter.Controllers
                     string[] packetHexData = r.ReadLine().Split(' ');
                     packet.FullPacket = packetHexData.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
+                    
                     int logicalAddressIndex = GetLogicalAddressIndex(packetHexData);
 
                     packet.Cargo = GetCargoArray(packetHexData, logicalAddressIndex);
                     packet.ProtocolId = GetProtocolId(packetHexData, logicalAddressIndex);
+                    if (packet.ProtocolId == 1)
+                    {
+                        var tmpPacket = packet;
+                        var rmapPacketType = GetRmapType(packet.Cargo[logicalAddressIndex + 1]);
+                        packet = new RmapPacket()
+                        {
+                            PortNumber = tmpPacket.PortNumber,
+                            PacketId = tmpPacket.PacketId,
+                            PacketType = rmapPacketType
+                        };
+                    }
                     packet.Address = GetAddressArray(packetHexData, logicalAddressIndex);
                     packet.Crc = GetCrc(packetHexData);
                     packet.SequenceNum = GetSequenceNumber(packetHexData, logicalAddressIndex);
@@ -68,6 +81,32 @@ namespace StarMeter.Controllers
                 r.ReadLine();
             }
             return PacketDict;
+        }
+
+        public string GetRmapType(byte rmapCommandByte)
+        {
+            var result = "";
+            var bitArray = new BitArray(new[] {rmapCommandByte});
+
+            if (!bitArray[6])
+            {
+                result += "Reply ";
+            }
+            if (bitArray[5])
+            {
+                result += "Write";
+            }
+            else if (bitArray[4])
+            {
+                result += "Read Modify Write";
+            }
+            else
+            {
+                result += "Read";
+            }
+
+            return result;
+
         }
 
         public Packet setPrevPacket(Packet packet)
