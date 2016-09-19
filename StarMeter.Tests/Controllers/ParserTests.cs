@@ -289,7 +289,7 @@ namespace StarMeter.Tests.Controllers
             stockResponses.Enqueue("");
             stockResponses.Enqueue("08-09-2016 15:12:50.081");
             stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"33 01 4c fe fa 53 2d e5 81 d1 27 41 d5 e5 fe c6 67 05 54 dd 12 75 f0 86 e4 dd 6c 3f 71 49 2d 29 6c 73 99 66 78 45 83 c5 3b 9a ea a1 b4 45 e4 06 cf 54 d5 16 37 96 e4 ab 6c 5a b0 3e");
+            stockResponses.Enqueue(@"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25");
             stockResponses.Enqueue("EOP");
             stockResponses.Enqueue("");
             stockResponses.Enqueue("08-09-2016 15:13:55.193");
@@ -317,7 +317,7 @@ namespace StarMeter.Tests.Controllers
             stockResponses.Enqueue("");
             stockResponses.Enqueue("08-09-2016 15:12:50.081");
             stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"33 01 4c fe fa 53 2d e5 81 d1 27 41 d5 e5 fe c6 67 05 54 dd 12 75 f0 86 e4 dd 6c 3f 71 49 2d 29 6c 73 99 66 78 45 83 c5 3b 9a ea a1 b4 45 e4 06 cf 54 d5 16 37 96 e4 ab 6c 5a b0 3e");
+            stockResponses.Enqueue(@"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25");
             stockResponses.Enqueue("EOP");
             stockResponses.Enqueue("");
             stockResponses.Enqueue("08-09-2016 15:13:55.193");
@@ -333,7 +333,7 @@ namespace StarMeter.Tests.Controllers
                 PacketId = Guid.NewGuid(),
                 PortNumber = 1,
                 Address = new byte[]{33},
-                PacketType = "Read"
+                PacketType = "Reply Read"
             };
             var result = parser.PacketDict.Values.FirstOrDefault();
             Assert.AreEqual(expectedValue.PacketType, ((RmapPacket)result).PacketType);

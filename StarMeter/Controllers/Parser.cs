@@ -58,7 +58,10 @@ namespace StarMeter.Controllers
                         {
                             PortNumber = tmpPacket.PortNumber,
                             PacketId = tmpPacket.PacketId,
-                            PacketType = rmapPacketType
+                            PacketType = rmapPacketType,
+                            Cargo = tmpPacket.Cargo,
+                            ProtocolId = tmpPacket.ProtocolId,
+                            FullPacket = tmpPacket.FullPacket
                         };
                     }
                     packet.Address = GetAddressArray(packetHexData, logicalAddressIndex);
