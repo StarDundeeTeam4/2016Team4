@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace StarMeter.Models
 {
-    class rmapPacket : Packet
+    public class RmapPacket : Packet
     {
-        public byte[] sourceAddress;
-        public int    destinationKey;
-        public ushort headerCrc;
-        public bool[] additionalInfo;
+        public byte[] SourceAddress;
+        public int    DestinationKey;
+        public ushort HeaderCrc;
+        public bool[] AdditionalInfo;
+        public string PacketType;
     }
 }

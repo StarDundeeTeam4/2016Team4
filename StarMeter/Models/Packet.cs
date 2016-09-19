@@ -1,8 +1,8 @@
-﻿using StarMeter.Controllers;
-using System;
+﻿using System;
 
 public enum ErrorTypes
 {
+    None,
     DataError,
     Disconnect,
     SequenceError,
@@ -18,14 +18,14 @@ namespace StarMeter.Models
         public byte[]     Address      { get; set; }
         public DateTime   DateRecieved { get; set; }
         public bool       IsError      { get; set; }
-        public ErrorTypes errorType    { get; set; }
-        public int        SequenceNum  { get; private set; }
+        public ErrorTypes ErrorType    { get; set; }
+        public int        SequenceNum  { get; set; }
         public int        PortNumber   { get; set; }
-        public Guid       PrevPacket   { get; set; }
-        public Guid       NextPacket   { get; set; }
+        public Guid?      PrevPacket   { get; set; }
+        public Guid?      NextPacket   { get; set; }
         public ushort     Crc          { get; set; }
-        public int        ProtocolID   { get; private set; }
-        public byte[]     fullPacket   { get; private set; }
+        public int        ProtocolId   { get; set; }
+        public byte[]     FullPacket   { get; set; }
 
         public Packet()
         {

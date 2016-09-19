@@ -5,20 +5,13 @@ using System.Collections.Generic;
 using System.Windows.Controls.DataVisualization.Charting;
 using StarMeter.Controllers;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization;
-using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Controls.DataVisualization.Charting.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Threading;
 
 
 namespace StarMeter.View
@@ -31,10 +24,6 @@ namespace StarMeter.View
         private readonly Controller controller = new Controller();
 
         private StackPanel[] _portStacks = new StackPanel[8];
-
-
-
-        
 
         public MainWindow()
         {
@@ -415,34 +404,46 @@ namespace StarMeter.View
             var guid = new Guid(text);
             
             PacketPopup pp = new PacketPopup();
+            pp.Controller = controller;
 
             Packet p = controller.FindPacket(guid);
 
             if (p != null)
             {
                 pp.SetupElements(br, p); // send the packet as a parameter, along with the colour to make the header
-                pp.ShowDialog();
+                pp.Owner = this;
+                pp.Show();
             }
             
         }
-		
-        void SearchForAddress(object sender, RoutedEventArgs e)
+
+        private void SearchForAddress(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-
             var search = addressSearch.Text;
-
-            for (int i = 0; i < packets.Length; i++)
+            foreach (var packet in controller.packets.Values)
             {
-                string address = "";
-                if (packets[i] != null)
+                var packetAddress = packet.Address;
+                if (packetAddress != null && packetAddress.GetValue(0).ToString() == search)
                 {
-                    for (int j = 0; j < packets[i].Address.Length; i++)
-                    {
-                        address += packets[i].Address[j] + ".";
-                    }
+                    AddPacket(packet);
                 }
             }
+        }
+
+        private void SearchForProtocol(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            var search = protocolSearch.Text;
+            foreach (var packet in controller.packets.Values)
+            {
+                var packetProtocol = packet.ProtocolId;
+                if (packetProtocol.ToString() == search)
+                {
+                    AddPacket(packet);
+                }
+            }
+            protocolSearch.Text = "";
         }
 
         Packet FindPacket(Guid guid) 
@@ -760,7 +761,7 @@ namespace StarMeter.View
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-            foreach (var packs in controller.packets) 
+            foreach (var packs in controller.packets.Values) 
             {
                 Packet p = (Packet)packs;
                 if (p.IsError) 
@@ -770,7 +771,7 @@ namespace StarMeter.View
             }
 
           
-            CreateDataRateGraph(controller.packets.ToArray());
+            CreateDataRateGraph(controller.packets.Values.ToArray());
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -781,7 +782,7 @@ namespace StarMeter.View
             Packet[] packets = new Packet[controller.packets.Count];
 
             int count = 0;
-            foreach (var p in controller.packets) 
+            foreach (var p in controller.packets.Values) 
             {
                 packets[count] = (Packet)p;
                 count++;
@@ -794,7 +795,7 @@ namespace StarMeter.View
         private void CreateChart() 
         {
             Analyser a = new Analyser();
-            double errRate = a.CalculateErrorRateFromArray(controller.packets.ToArray());
+            double errRate = a.CalculateErrorRateFromArray(controller.packets.Values.ToArray());
             
             
             Style style = new Style(typeof(Chart));
@@ -883,7 +884,7 @@ namespace StarMeter.View
 
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
 
-            CreateDataRateGraph(controller.packets.ToArray());
+            CreateDataRateGraph(controller.packets.Values.ToArray());
 
             _count = 2;
             _isUpArrow = false;

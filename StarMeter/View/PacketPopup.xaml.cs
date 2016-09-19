@@ -1,15 +1,7 @@
 ﻿using StarMeter.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-﻿using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using StarMeter.Controllers;
@@ -22,27 +14,30 @@ namespace StarMeter.View
         {
             InitializeComponent();
         }
-        Packet _p;
-        public void SetupElements(Brush br, Packet p) 
+
+        private Packet _p;
+        private Brush _br;
+        public Controller Controller;
+
+        public void SetupElements(Brush br, Packet p)
         {
             _p = p;
-            this.Width = 500;
-            this.Height = 500;
+            _br = br;
+            Width = 500;
+            Height = 500;
 
             lblErrorMsg.Background = br;
 
             BitmapImage logo = new BitmapImage();
             logo.BeginInit();
 
-
             var converter = new System.Windows.Media.BrushConverter();
-
 
             if (!p.IsError)
             {
                 logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
                 logo.EndInit();
-                
+
                 lblErrorMsg.Content = "SUCCESS";
             }
             else
@@ -56,24 +51,23 @@ namespace StarMeter.View
 
 
             IconBG.Background = br;
-            ErrorIcon.Source = logo;   
-            
-            TimeLabel.Content = p.DateRecieved.ToString();
+            ErrorIcon.Source = logo;
 
-            
-            // get protocol id
-            //int protocol_id = Parser.GetProtocolId(p.Cargo.ToString(), 0);
+            TimeLabel.Content = p.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
 
-            int protocol_id = 1;
+            var protocolId = p.ProtocolId;
 
-            if (protocol_id == 1)
+            if (protocolId == 1)
             {
-                ProtocolLabel.Content = ("Protocol: " + (protocol_id).ToString() + " (RMAP)");
+                ProtocolLabel.Content = "Protocol: " + protocolId + " (RMAP)";
             }
             else
             {
-                ProtocolLabel.Content = ("Protocol: " + (protocol_id).ToString());
+                ProtocolLabel.Content = "Protocol: " + protocolId;
             }
+
+            var sequenceNumber = p.SequenceNum + 1;
+            SequenceNumberLabel.Content = "Sequence Number: " + sequenceNumber;
 
             var addressArray = p.Address;
             var finalAddressString = "";
@@ -87,16 +81,36 @@ namespace StarMeter.View
                         finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
                 }
                 else
-                    finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]).ToString();
+                    finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
             }
-            else 
+            else
             {
                 finalAddressString = "No Address";
             }
 
             AddressLabel.Content = finalAddressString;
 
-         }
+            LeftArrow.Visibility = _p.PrevPacket == null ? Visibility.Collapsed : Visibility.Visible;
+            RightArrow.Visibility = _p.NextPacket == null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void NextPacket(object sender, RoutedEventArgs e)
+        {
+            if (_p.NextPacket != null)
+            {
+                Packet p = Controller.FindPacket(_p.NextPacket.GetValueOrDefault());
+                SetupElements(_br, p);
+            }
+        }
+
+        private void PrevPacket(object sender, RoutedEventArgs e)
+        {
+            if (_p.PrevPacket != null)
+            {
+                Packet p = Controller.FindPacket(_p.PrevPacket.GetValueOrDefault());
+                SetupElements(_br, p);
+            }
+        }
 
         private void ViewCargo(object sender, RoutedEventArgs e)
         {
@@ -107,19 +121,19 @@ namespace StarMeter.View
             {
                 CargoView cv = new CargoView();
                 cv.SetupElements(br, _p);
-                cv.ShowDialog();
+                cv.Owner = this;
+                cv.Show();
             }
-            else 
+            else
             {
                 MessageBox.Show("No Cargo");
             }
         }
 
-        private void ExitButtonEvent(Object sender, RoutedEventArgs e)
+        private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
     }
 }
-
