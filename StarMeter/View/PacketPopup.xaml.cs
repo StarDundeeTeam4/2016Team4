@@ -99,6 +99,9 @@ namespace StarMeter.View
             }
 
             AddressLabel.Content = finalAddressString;
+
+            LeftArrow.Visibility = _p.PrevPacket == null ? Visibility.Collapsed : Visibility.Visible;
+            RightArrow.Visibility = _p.NextPacket == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void nextPacket(object sender, RoutedEventArgs e)
