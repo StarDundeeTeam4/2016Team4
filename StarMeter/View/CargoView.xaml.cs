@@ -19,6 +19,7 @@ namespace StarMeter
     public partial class CargoView : Window
     {
         String CargoData;
+        Packet Packet;
 
         public CargoView()
         {
@@ -27,13 +28,42 @@ namespace StarMeter
 
         public void SetupElements(Brush brush, Packet p)
         {
+            Packet = p; 
             
             foreach (byte cargoByte in p.Cargo)// byte
             {
+
                 MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + "  ";
             }
             CargoData = MainCargoContent.Text;
         }
+
+        public void ChangeColumnEvent(Object sender, RoutedEventArgs e)
+        {
+            var change = int.Parse(ColumnChange.Text);
+            int i = 0;
+            MainCargoContent.Text = null;
+
+            foreach (byte cargoByte in Packet.Cargo)// byte
+            {
+               
+
+                if( i.Equals( change-1))
+                {
+
+                    i = 0;
+                    MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + Environment.NewLine;
+                }
+                else
+                {
+                    i++;
+                    MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + "  ";
+                }
+            }
+            CargoData = MainCargoContent.Text;          
+
+        }
+
 
         private void ExitButtonEvent(Object sender, RoutedEventArgs e)
         {
