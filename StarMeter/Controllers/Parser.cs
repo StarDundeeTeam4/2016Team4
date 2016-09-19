@@ -34,10 +34,10 @@ namespace StarMeter.Controllers
                 var packetId = Guid.NewGuid();
                 var packet = new Packet {PortNumber = portNumber, PacketId = packetId};
 
-                DateTime temp;
-                if (ParseDateTime(line, out temp))
+                DateTime tempDate;
+                if (ParseDateTime(line, out tempDate))
                 {
-                    packet.DateRecieved = temp;
+                    packet.DateRecieved = tempDate;
                 }
 
                 var packetType = r.ReadLine();
@@ -87,6 +87,7 @@ namespace StarMeter.Controllers
             var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
             return new RmapPacket()
             {
+                DateRecieved = packet.DateRecieved,
                 PortNumber = packet.PortNumber,
                 PacketId = packet.PacketId,
                 PacketType = rmapPacketType,

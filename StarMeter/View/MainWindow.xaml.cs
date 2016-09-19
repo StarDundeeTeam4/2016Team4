@@ -139,7 +139,7 @@ namespace StarMeter.View
 
             try
             {
-                lab.Content = p.DateRecieved.TimeOfDay;
+                lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
             }
             catch (Exception e) 
             {
@@ -159,14 +159,7 @@ namespace StarMeter.View
 
             try
             {
-                if (p.IsError)
-                {
-                    sty = "Error";
-                }
-                else
-                {
-                    sty = "Success";
-                }
+                sty = p.IsError ? "Error" : "Success";
             }
             catch (Exception) 
             {
