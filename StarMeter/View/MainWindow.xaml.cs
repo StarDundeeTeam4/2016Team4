@@ -5,20 +5,13 @@ using System.Collections.Generic;
 using System.Windows.Controls.DataVisualization.Charting;
 using StarMeter.Controllers;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization;
-using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Controls.DataVisualization.Charting.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Threading;
 
 
 namespace StarMeter.View
@@ -31,10 +24,6 @@ namespace StarMeter.View
         private readonly Controller controller = new Controller();
 
         private StackPanel[] _portStacks = new StackPanel[8];
-
-
-
-        
 
         public MainWindow()
         {
@@ -415,7 +404,7 @@ namespace StarMeter.View
             var guid = new Guid(text);
             
             PacketPopup pp = new PacketPopup();
-            pp.controller = controller;
+            pp.Controller = controller;
 
             Packet p = controller.FindPacket(guid);
 
