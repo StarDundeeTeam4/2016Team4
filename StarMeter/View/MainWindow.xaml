@@ -210,9 +210,10 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.8*"/>
-                    <RowDefinition Height="0.9*"/>
+                    <RowDefinition Height="1.25*"/>
                     <RowDefinition Height="1.6*"/>
                     <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1.25*"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="2" Margin="40, 5, 40, 0">
@@ -254,7 +255,7 @@
                             <ColumnDefinition Width="113*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.ColumnSpan="4" Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="Display Port Info For..." Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0,0,-0.4,18.2" Grid.RowSpan="2"/>
+                        <Label Grid.ColumnSpan="4" Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="Display Port Info For..." Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="0,-4,0,5"/>
                         <Button Grid.Row="1" Grid.Column="0" Click="SelectAllPorts" Margin="0,0.2,5,0.2" Grid.ColumnSpan="2">Select All</Button>
                         <Button Grid.Row="1" Grid.Column="2" Click="DeselectAllPorts" Margin="5,0.2,4.6,0" Grid.ColumnSpan="2">Deselect All</Button>
 
@@ -279,6 +280,20 @@
                     </Grid>
 
 
+                </Grid>
+                <Grid Row="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Label HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" Content="Protocol To Search:" Foreground="White" />
+                    <TextBox Grid.Row="1" Grid.Column="0" x:Name="protocolSearch"/>
+                    <Button Grid.Row="2" Grid.Column="0" Click="SearchForProtocol" Content="Search for protocol"/>
                 </Grid>
             </Grid>
 

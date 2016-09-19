@@ -416,24 +416,34 @@ namespace StarMeter.View
             }
             
         }
-		
-        void SearchForAddress(object sender, RoutedEventArgs e)
+
+        private void SearchForAddress(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-
             var search = addressSearch.Text;
-
-            for (int i = 0; i < packets.Length; i++)
+            foreach (var packet in controller.packets.Values)
             {
-                string address = "";
-                if (packets[i] != null)
+                var packetAddress = packet.Address;
+                if (packetAddress != null && packetAddress.GetValue(0).ToString() == search)
                 {
-                    for (int j = 0; j < packets[i].Address.Length; i++)
-                    {
-                        address += packets[i].Address[j] + ".";
-                    }
+                    AddPacket(packet);
                 }
             }
+        }
+
+        private void SearchForProtocol(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            var search = protocolSearch.Text;
+            foreach (var packet in controller.packets.Values)
+            {
+                var packetProtocol = packet.ProtocolId;
+                if (packetProtocol.ToString() == search)
+                {
+                    AddPacket(packet);
+                }
+            }
+            protocolSearch.Text = "";
         }
 
         Packet FindPacket(Guid guid) 
