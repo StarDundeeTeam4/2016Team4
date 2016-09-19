@@ -415,6 +415,7 @@ namespace StarMeter.View
             var guid = new Guid(text);
             
             PacketPopup pp = new PacketPopup();
+            pp.controller = controller;
 
             Packet p = controller.FindPacket(guid);
 
@@ -761,7 +762,7 @@ namespace StarMeter.View
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-            foreach (var packs in controller.packets) 
+            foreach (var packs in controller.packets.Values) 
             {
                 Packet p = (Packet)packs;
                 if (p.IsError) 
@@ -771,7 +772,7 @@ namespace StarMeter.View
             }
 
           
-            CreateDataRateGraph(controller.packets.ToArray());
+            CreateDataRateGraph(controller.packets.Values.ToArray());
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -782,7 +783,7 @@ namespace StarMeter.View
             Packet[] packets = new Packet[controller.packets.Count];
 
             int count = 0;
-            foreach (var p in controller.packets) 
+            foreach (var p in controller.packets.Values) 
             {
                 packets[count] = (Packet)p;
                 count++;
@@ -795,7 +796,7 @@ namespace StarMeter.View
         private void CreateChart() 
         {
             Analyser a = new Analyser();
-            double errRate = a.CalculateErrorRateFromArray(controller.packets.ToArray());
+            double errRate = a.CalculateErrorRateFromArray(controller.packets.Values.ToArray());
             
             
             Style style = new Style(typeof(Chart));
@@ -884,7 +885,7 @@ namespace StarMeter.View
 
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
 
-            CreateDataRateGraph(controller.packets.ToArray());
+            CreateDataRateGraph(controller.packets.Values.ToArray());
 
             _count = 2;
             _isUpArrow = false;

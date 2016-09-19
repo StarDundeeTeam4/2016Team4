@@ -10,6 +10,7 @@ namespace StarMeter.Controllers
     public class Parser
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
+        private Guid? _prevPacket = null;
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -60,10 +61,28 @@ namespace StarMeter.Controllers
                     packet.IsError = true;
                     r.ReadLine();
                 }
+
+                packet = setPrevPacket(packet);
+
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
             return PacketDict;
+        }
+
+        public Packet setPrevPacket(Packet packet)
+        {
+            //set previous packet's next packet as this packet
+            if (_prevPacket != null)
+            {
+                Guid prev = _prevPacket.GetValueOrDefault(); //converting from nullable to non-nullable
+                PacketDict[prev].NextPacket = packet.PacketId;
+            }
+            //set current packet's previous packet
+            packet.PrevPacket = _prevPacket;
+            //store this id as the previous packet
+            _prevPacket = packet.PacketId;
+            return packet;
         }
 
         private static bool IsPType(string packetType)

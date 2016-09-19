@@ -9,19 +9,18 @@ namespace StarMeter.Controllers
     {
 
         public readonly List<string> filePaths = new List<string>();
-        public List<Packet> packets = new List<Packet>();
+        public readonly Dictionary<Guid, Packet> packets = new Dictionary<Guid,Packet>();
 
         public Packet FindPacket(Guid guid)
         {
-            foreach (var p in packets)
+            try
             {
-                if (guid.Equals(p.PacketId))
-                {
-                    return p;
-                }
+                return packets[guid];
             }
-
-            return null;
+            catch
+            {
+                return null;
+            }
         }
         
         public List<string> AddFileNames(string[] newFileNames)
@@ -66,10 +65,13 @@ namespace StarMeter.Controllers
             foreach (var file in filePaths) 
             {
                 var packetDict = (parser.ParseFile(file));
-                packets.AddRange(packetDict.Values);
+                foreach (var p in packetDict)
+                {
+                    packets.Add(p.Key, p.Value);
+                }
             }
 
-            return packets.ToArray();
+            return packets.Values.ToArray();
         }
             
     }

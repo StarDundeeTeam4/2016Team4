@@ -20,8 +20,8 @@ namespace StarMeter.Models
         public ErrorTypes ErrorType    { get; set; }
         public int        SequenceNum  { get; set; }
         public int        PortNumber   { get; set; }
-        public Guid       PrevPacket   { get; set; }
-        public Guid       NextPacket   { get; set; }
+        public Guid?      PrevPacket   { get; set; }
+        public Guid?      NextPacket   { get; set; }
         public ushort     Crc          { get; set; }
         public int        ProtocolId   { get; set; }
         public byte[]     FullPacket   { get; set; }
