@@ -11,7 +11,7 @@ namespace StarMeter.Controllers
     public class Parser
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
-        private Guid? _prevPacket = null;
+        private Guid? _prevPacket;
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -228,8 +228,7 @@ namespace StarMeter.Controllers
 
         public int GetProtocolId(byte[] fullPacket, int logicalIndex)
         {
-            //byte.Parse(item, NumberStyles.HexNumber)
-            return (int)fullPacket[logicalIndex + 1];
+            return fullPacket[logicalIndex + 1];
         }
 
         public int GetSequenceNumber(Packet packet, int logicalIndex)

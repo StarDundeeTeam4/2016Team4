@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StarMeter.Controllers;
 using StarMeter.Models;
@@ -34,7 +33,6 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void SplitCargoFromNonRmapPacket()
         {
-            string[] stringData = @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25".Split(' ');
             byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
             Packet p = new Packet()
             {
@@ -51,7 +49,6 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void SplitCargoFromRmapPacket()
         {
-            string[] stringData = @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25".Split(' ');
             byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
             byte[] expectedCargo = { 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
             Packet p = new Packet()
@@ -398,7 +395,6 @@ namespace StarMeter.Tests.Controllers
         {
             const int expected = 0;
 
-            string[] hexData = @"4c 01 7c 20 4a 00 00 00 00 01 00 00 00 00 04 1c 00 00 1e b0 94".Split(' ');
             byte[] packetData =
             {
                 0x4c, 0x01, 0x7c, 0x20, 0x4a, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
@@ -420,7 +416,6 @@ namespace StarMeter.Tests.Controllers
         {
             const int expected = 65533;
 
-            string[] hexData = @"57 01 4c 20 2d ff fd 00 00 02 00 00 00 00 08 d6".Split(' ');
             byte[] packetData =
                 {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfd, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0xd6};
 
@@ -571,8 +566,6 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestCheckRmapCRC()
         {
-            string[] stringData =
-            @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
             byte[] packetData =
             {
                 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e
@@ -610,8 +603,6 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestCheckRmapCRCHeaderError()
         {
-            string[] stringData =
-            @"2d 01 0c 00 57 ff fb 00 00 00 08 2f f3 e3 58 99 aa ef e5 20 25".Split(' ');
             byte[] packetData =
             {
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
@@ -630,8 +621,6 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestCheckRmapCRCCargoError()
         {
-            string[] stringData =
-            @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 24".Split(' ');
             byte[] packetData =
             {
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
@@ -651,8 +640,6 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestCheckRmapCRCTwoErrors()
         {
-            string[] stringData =
-            @"2d 01 0c 00 57 ff fb 00 00 00 08 2f f3 e3 58 99 aa ef e5 20 24".Split(' ');
             byte[] packetData =
             {
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
