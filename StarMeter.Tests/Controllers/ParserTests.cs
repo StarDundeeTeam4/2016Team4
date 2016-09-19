@@ -13,26 +13,26 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class ParserTests
     {
-        readonly byte[] ExampleCargo =
-            {
-                0x01, 0x00, 0xfe, 0xfa, 0x53, 0x2d, 0xe5, 0x81, 0xd1, 0x27, 0x41, 0xd5, 0xe5, 0xfe, 0xc6,
-                0x67, 0x05, 0x54, 0xdd, 0x12, 0x75, 0xf0, 0x86, 0xe4, 0xdd, 0x6c, 0x3f, 0x71, 0x49, 0x2d,
-                0x29, 0x6c, 0x73, 0x99, 0x66, 0x78, 0x45, 0x83, 0xc5, 0x3b, 0x9a, 0xea, 0xa1, 0xb4, 0x45,
-                0xe4, 0x06, 0xcf, 0x54, 0xd5, 0x16, 0x37, 0x96, 0xe4, 0xab, 0x6c, 0x5a, 0xb0, 0x3e
-            };
+        private readonly byte[] _exampleCargo = 
+        {
+            0xfa, 0x53, 0x2d, 0xe5, 0x81, 0xd1, 0x27, 0x41, 0xd5, 0xe5, 0xfe, 0xc6, 0x67, 0x05, 0x54, 
+            0xdd, 0x12, 0x75, 0xf0, 0x86, 0xe4, 0xdd, 0x6c, 0x3f, 0x71, 0x49, 0x2d, 0x29, 0x6c, 0x73, 
+            0x99, 0x66, 0x78, 0x45, 0x83, 0xc5, 0x3b, 0x9a, 0xea, 0xa1, 0xb4, 0x45, 0xe4, 0x06, 0xcf, 
+            0x54, 0xd5, 0x16, 0x37, 0x96, 0xe4, 0xab, 0x6c, 0x5a, 0xb0, 0x3e
+        };
+
+        private readonly Parser _parser = new Parser();
 
         [TestMethod]
         public void PassingCorrectStringReturnsDateTimeTest()
         {
-            var parser = new Parser();
             const string stringDateTime = "08-09-2016 14:27:53.726";
             DateTime result;
-            Assert.IsTrue(Parser.ParseDateTime(stringDateTime, out result));
 
+            Assert.IsTrue(_parser.ParseDateTime(stringDateTime, out result));
             Assert.IsInstanceOfType(result, typeof(DateTime));
             Assert.AreEqual(result, new DateTime(2016, 09, 08, 14, 27, 53, 726));
         }
-
 
         [TestMethod]
         public void NoErrorOnePacketReturnsListWithOneElement()
@@ -54,8 +54,7 @@ namespace StarMeter.Tests.Controllers
 
             readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
 
-            var parser = new Parser();
-            var result = parser.ParsePackets(readerMock.Object);
+            var result = _parser.ParsePackets(readerMock.Object);
             var expected = new Dictionary<Guid, Packet>();
             var packetId = Guid.NewGuid();
             var packet1 = new Packet
@@ -63,7 +62,7 @@ namespace StarMeter.Tests.Controllers
                 IsError = false,
                 PacketId = packetId,
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-                Cargo = ExampleCargo,
+                Cargo = _exampleCargo
             };
             expected.Add(packetId, packet1);
            
@@ -100,15 +99,14 @@ namespace StarMeter.Tests.Controllers
 
             readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(5).Returns(-1);
 
-            var parser = new Parser();
-            var result = parser.ParsePackets(readerMock.Object);
+            var result = _parser.ParsePackets(readerMock.Object);
             var expected = new Dictionary<Guid, Packet>();
 
             var packet1 = new Packet
             {
                 IsError = false,
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-                Cargo = ExampleCargo,
+                Cargo = _exampleCargo,
             };
             var packet2 = new Packet
             {
@@ -148,15 +146,14 @@ namespace StarMeter.Tests.Controllers
 
             readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
 
-            var parser = new Parser();
-            var result = parser.ParsePackets(readerMock.Object);
+            var result = _parser.ParsePackets(readerMock.Object);
 
             var expected = new Dictionary<Guid, Packet>();
             var packet1 = new Packet
             {
                 IsError = true,
                 DateRecieved = DateTime.ParseExact("08-09-2016 15:12:55.051", "dd-MM-yyyy HH:mm:ss.fff", null),
-                Cargo = ExampleCargo,
+                Cargo = _exampleCargo,
             };
            
             var packetId = Guid.NewGuid();
@@ -175,12 +172,11 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void PassingCargoWithAddressinFirstByteReturnsIndex()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"57 01 4c 20 2d ff fa 00 00 02 00 00 00 00 08 12".Split(' ');
-            var expected = 0;
+            const int expected = 0;
 
-            var actual = parser.GetLogicalAddressIndex(cargoParam);
+            var actual = _parser.GetLogicalAddressIndex(cargoParam);
 
             Assert.AreEqual(expected, actual);
         }
@@ -188,12 +184,11 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void PassingCargoWithAddressInThirdByteReturnsIndex()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"01 00 fe fa 4b e7 5d b0 07 bd 57 83 82 ac ac 66 79 2e 35 d7 3d db 80 41 5e 98 2d d1 29 0b 98 85 6f 52 b9 86 88 f4 48 b7 98 17 24 8e 11 f4 f5 23 79 89 10 86 6e 8d 9c 56 e7 a9 f3 8f bc e5 4b a4 69 61 96 ce 0f 45 a7 a3 bb fa 95 ea eb 9b 64 ae 4e a6 e2 91 cc f8 d0 63 c6 f8 42 f3 9f 12 49 25 7b 67 ce 45 46 c2 c1 9b f9 ce 74 40 18 87 41 30 7f ef 73 9f 5f 02 64 91 84 eb e2 a5 d9 78 d7 31 2d cc 29 94 37 54 e0 c8 d8 fc 87 37 a1 a2 d4 d0 95 ca 8b 59 30 94 9f 07 a8 ec 9a 4c 72 01 40 f0 08 f8 6f 63 ea e1 4a 52 e2 ea 97 78 8d d2 64 b7 17 a1 f1 67 46 97 ca ee ba 62 34 90 73 94 ca 89 93 53 68 59 65 52 48 60 9f 01 6b aa e4 01 3b 0c 8d db 6e 70 a9 f1 2d 6d 42 b5 76 1b e3 18 bf 25 56 46 dc 1f b2 90 22 1a 96 a9 cd 76 af 16 9f f8 80 e0 ca 1c 62 8c 10 ad c9 4c 29 92 ca 77 65 eb".Split(' ');
-            var expected = 2;
+            const int expected = 2;
 
-            var actual = parser.GetLogicalAddressIndex(cargoParam);
+            var actual = _parser.GetLogicalAddressIndex(cargoParam);
 
             Assert.AreEqual(expected, actual);
         }
@@ -201,50 +196,45 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetPhysicalPathPortIndexesFromAddress()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"00 04 fe fa 4b e7 5d b0 07 bd 57 83 82 ac ac 66 79 2e 35 d7 3d db 80 41 5e 98 2d d1 29 0b 98 85 6f 52 b9 86 88 f4 48 b7 98 17 24 8e 11 f4 f5 23 79 89 10 86 6e 8d 9c 56 e7 a9 f3 8f bc e5 4b a4 69 61 96 ce 0f 45 a7 a3 bb fa 95 ea eb 9b 64 ae 4e a6 e2 91 cc f8 d0 63 c6 f8 42 f3 9f 12 49 25 7b 67 ce 45 46 c2 c1 9b f9 ce 74 40 18 87 41 30 7f ef 73 9f 5f 02 64 91 84 eb e2 a5 d9 78 d7 31 2d cc 29 94 37 54 e0 c8 d8 fc 87 37 a1 a2 d4 d0 95 ca 8b 59 30 94 9f 07 a8 ec 9a 4c 72 01 40 f0 08 f8 6f 63 ea e1 4a 52 e2 ea 97 78 8d d2 64 b7 17 a1 f1 67 46 97 ca ee ba 62 34 90 73 94 ca 89 93 53 68 59 65 52 48 60 9f 01 6b aa e4 01 3b 0c 8d db 6e 70 a9 f1 2d 6d 42 b5 76 1b e3 18 bf 25 56 46 dc 1f b2 90 22 1a 96 a9 cd 76 af 16 9f f8 80 e0 ca 1c 62 8c 10 ad c9 4c 29 92 ca 77 65 eb".Split(' ');
 
-            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
-
-            var addressArray = Parser.GetAddressArray(cargoParam, logicalIndex);
+            var logicalIndex = _parser.GetLogicalAddressIndex(cargoParam);
+            var addressArray = _parser.GetAddressArray(cargoParam, logicalIndex);
             var expectedPathValues = new[]
             {
                 (byte)Convert.ToInt32("00", 16),
                 (byte)Convert.ToInt32("04", 16),
                 (byte)Convert.ToInt32("fe", 16)
             };
+
             Assert.AreEqual(expectedPathValues[1], addressArray[1]);
         }
 
         [TestMethod]
         public void GetLogicalAddress()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
-
-            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
-
-            var physicalPathValues = Parser.GetAddressArray(cargoParam, logicalIndex);
             var expectedPathValues = new[]
             {
                 (byte)Convert.ToInt32("57", 16)
             };
+
+            var logicalIndex = _parser.GetLogicalAddressIndex(cargoParam);
+            var physicalPathValues = _parser.GetAddressArray(cargoParam, logicalIndex);
+
             Assert.AreEqual(expectedPathValues[0], physicalPathValues[0]);
         }
 
         [TestMethod]
         public void GetCrcFromCargo()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
-
-
             var expected = (byte)Convert.ToInt32("3e", 16);
 
-            var actual = Parser.GetCrc(cargoParam);
+            var actual = _parser.GetCrc(cargoParam);
 
             Assert.AreEqual(expected, actual);
         }
@@ -252,37 +242,38 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetProtocolIdFromCargo()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"57 01 4c 20 2d ff fb 00 00 02 00 00 00 00 08 3e".Split(' ');
-            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
+            const int expected = 1;
 
-            var expected = 1;
-            var actual = Parser.GetProtocolId(cargoParam, logicalIndex);
+            var logicalIndex = _parser.GetLogicalAddressIndex(cargoParam);
+            var actual = _parser.GetProtocolId(cargoParam, logicalIndex);
             Assert.AreEqual(expected, actual);
         }
 
         [TestMethod]
         public void GetSequenceNumberFromNonRmap()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"3f fa 0f 33 d2 6b ef 66 29 db 84 3f 1a d7 68 4a 10 e9 8e 01 b2 f3 e3 ed 70 71 81 0e 5c fe 25 7d 3c 1a e3 50 dd 2a 18 be aa c0 a1 84 7c 1d 4a 86 b4 f4 89 ba 88 71 6d 42 9a 7a d1 d8 cf 35 d5 6f 5e ca 8f 17 27 6a fd 22 47 90 3e 85 e9 86 02 81 5e 2c 40 82 71 f5 27 47 f4 32 56 43 9f 93 4f 43 1b ea 29 52".Split(' ');
-            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
-            var sequenceNumber = parser.GetSequenceNumber(cargoParam, logicalIndex);
             var expectedSequenceNumber = Convert.ToInt32("0f", 16);
+
+            var logicalIndex = _parser.GetLogicalAddressIndex(cargoParam);
+            var sequenceNumber = _parser.GetSequenceNumber(cargoParam, logicalIndex);
+
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
 
         [TestMethod]
         public void GetSequenceNumberFromNonRmap2()
         {
-            var parser = new Parser();
             var cargoParam =
                 @"55 fa 00 3e 8a e4 49 2d f8 22 36 b6 b0 42 37 cc 66 7d b5 03 ed a4 4e 51 f1 04 28 16 e8 8c 85 5b 46 32 98 57 f0 92 98 38 f4 d8 12 20 77 e1 83 6d ef 9d 26 3d 92 b8 0b 31 0d 79 69 72 7a ea 35 f2 8c 39 f3 f5 0d 5e cd cf 8b fe e2 ef 4e 8f e0 1c 8d be d5 ff e1 0d 42 e2 f9 c1 72 b7 90 fb 09 5c 9c 25 e0 1d c8 8f 10 7b 25 5a 4d 2b 1c 96 76 62 a8 a7 69 50 c2 ed 1c ea 1c a4 ea ed 11 08 2a 20".Split(' ');
-            var logicalIndex = parser.GetLogicalAddressIndex(cargoParam);
-            var sequenceNumber = parser.GetSequenceNumber(cargoParam, logicalIndex);
-            var expectedSequenceNumber = 0;
+            const int expectedSequenceNumber = 0;
+
+            var logicalIndex = _parser.GetLogicalAddressIndex(cargoParam);
+            var sequenceNumber = _parser.GetSequenceNumber(cargoParam, logicalIndex);
+
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
     }
