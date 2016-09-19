@@ -139,7 +139,7 @@ namespace StarMeter.View
 
             try
             {
-                lab.Content = p.DateRecieved.TimeOfDay;
+                lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
             }
             catch (Exception e) 
             {
