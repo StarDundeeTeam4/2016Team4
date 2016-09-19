@@ -194,11 +194,14 @@ namespace StarMeter.Controllers
             byte[] cargo;
             if (packet.ProtocolId == 1)
             {
-                RmapPacket p = (RmapPacket) packet;
-                if (p.PacketType.EndsWith("Reply"))
+                string type = GetRmapType(new BitArray(new[] { packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2] }));
+                if (type.EndsWith("Reply"))
                 {
-                    //TODO
-                    cargo = new byte[0];
+                    int start = logicalIndex + 12;
+                    int cargoLength = packet.FullPacket.Length - start;
+                    cargo = new byte[cargoLength];
+                    Array.Copy(packet.FullPacket, start, cargo, 0, cargoLength);
+                    return cargo;
                 }
             }
 
@@ -248,10 +251,17 @@ namespace StarMeter.Controllers
         {
             if (packet.PacketType.EndsWith("Reply"))
             {
+                //test cargo CRC
+                bool cargo = CRC.CheckCrcForPacket(packet.Cargo);
+
                 //test header CRC
                 //remove cargo from header and test as if full packet
+                int length = packet.FullPacket.Length - packet.Cargo.Length;
+                byte[] headerBytes = new byte[length];
+                Array.Copy(packet.FullPacket, headerBytes, length);
+                bool header = CRC.CheckCrcForPacket(headerBytes);
 
-                //test cargo CRC
+                return (header && cargo);
             }
             else
             {

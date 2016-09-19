@@ -48,22 +48,22 @@ namespace StarMeter.Tests.Controllers
             CollectionAssert.AreEqual(cargo, expectedCargo);
         }
 
-        //[TestMethod]
-        //public void SplitCargoFromRmapPacket()
-        //{
-        //    string[] stringData = @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25".Split(' ');
-        //    byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
-        //    byte[] expectedCargo = {0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25};
-        //    Packet p = new Packet()
-        //    {
-        //        ProtocolId = 01,
-        //        FullPacket = data,
-        //    };
+        [TestMethod]
+        public void SplitCargoFromRmapPacket()
+        {
+            string[] stringData = @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25".Split(' ');
+            byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
+            byte[] expectedCargo = { 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
+            Packet p = new Packet()
+            {
+                ProtocolId = 01,
+                FullPacket = data,
+            };
 
-        //    byte[] cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(data));
+            byte[] cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(data));
 
-        //    CollectionAssert.AreEqual(cargo, expectedCargo);
-        //}
+            CollectionAssert.AreEqual(cargo, expectedCargo);
+        }
 
         [TestMethod]
         public void PassingCorrectStringReturnsDateTimeTest()
@@ -591,11 +591,30 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestCheckRmapCRCValid()
         {
-            string[] stringData =
-            @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25".Split(' ');
             byte[] packetData =
             {
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
+            };
+
+            RmapPacket p = new RmapPacket()
+            {
+                ProtocolId = 1,
+                PacketType = "Read Reply",
+                FullPacket = packetData,
+            };
+            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
+
+            Assert.IsTrue(_parser.CheckRmapCRC(p));
+        }
+
+        [TestMethod]
+        public void TestCheckRmapCRCHeaderError()
+        {
+            string[] stringData =
+            @"2d 01 0c 00 57 ff fb 00 00 00 08 2f f3 e3 58 99 aa ef e5 20 25".Split(' ');
+            byte[] packetData =
+            {
+                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
             };
 
             RmapPacket p = new RmapPacket()
@@ -605,68 +624,49 @@ namespace StarMeter.Tests.Controllers
             };
             p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-            Assert.IsTrue(_parser.CheckRmapCRC(p));
+            Assert.IsFalse(_parser.CheckRmapCRC(p));
         }
 
-        //[TestMethod]
-        //public void TestCheckRmapCRCHeaderError()
-        //{
-        //    string[] stringData =
-        //    @"2d 01 0c 00 57 ff fb 00 00 00 08 2f f3 e3 58 99 aa ef e5 20 25".Split(' ');
-        //    byte[] packetData =
-        //    {
-        //        0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
-        //    };
+        [TestMethod]
+        public void TestCheckRmapCRCCargoError()
+        {
+            string[] stringData =
+            @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 24".Split(' ');
+            byte[] packetData =
+            {
+                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
+            };
 
-        //    RmapPacket p = new RmapPacket()
-        //    {
-        //        PacketType = "Read Reply",
-        //        FullPacket = packetData,
-        //    };
-        //    p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
+            RmapPacket p = new RmapPacket()
+            {
+                PacketType = "Read Reply",
+                ProtocolId = 1,
+                FullPacket = packetData,
+            };
+            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-        //    Assert.IsFalse(_parser.CheckRmapCRC(p));
-        //}
+            Assert.IsFalse(_parser.CheckRmapCRC(p));
+        }
 
-        //[TestMethod]
-        //public void TestCheckRmapCRCCargoError()
-        //{
-        //    string[] stringData =
-        //    @"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 24".Split(' ');
-        //    byte[] packetData =
-        //    {
-        //        0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-        //    };
+        [TestMethod]
+        public void TestCheckRmapCRCTwoErrors()
+        {
+            string[] stringData =
+            @"2d 01 0c 00 57 ff fb 00 00 00 08 2f f3 e3 58 99 aa ef e5 20 24".Split(' ');
+            byte[] packetData =
+            {
+                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
+            };
 
-        //    RmapPacket p = new RmapPacket()
-        //    {
-        //        PacketType = "Read Reply",
-        //        FullPacket = packetData,
-        //    };
-        //    p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
+            RmapPacket p = new RmapPacket()
+            {
+                PacketType = "Read Reply",
+                FullPacket = packetData,
+            };
+            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-        //    Assert.IsFalse(_parser.CheckRmapCRC(p));
-        //}
-
-        //[TestMethod]
-        //public void TestCheckRmapCRCTwoErrors()
-        //{
-        //    string[] stringData =
-        //    @"2d 01 0c 00 57 ff fb 00 00 00 08 2f f3 e3 58 99 aa ef e5 20 24".Split(' ');
-        //    byte[] packetData =
-        //    {
-        //        0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-        //    };
-
-        //    RmapPacket p = new RmapPacket()
-        //    {
-        //        PacketType = "Read Reply",
-        //        FullPacket = packetData,
-        //    };
-        //    p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-        //    Assert.IsFalse(_parser.CheckRmapCRC(p));
-        //}
+            Assert.IsFalse(_parser.CheckRmapCRC(p));
+        }
 
         [TestCleanup()]
         public void Cleanup()
