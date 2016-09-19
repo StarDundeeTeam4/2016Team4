@@ -139,7 +139,7 @@ namespace StarMeter.View
             }
         }
 
-        private void ExitButtonEvent(Object sender, RoutedEventArgs e)
+        private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
