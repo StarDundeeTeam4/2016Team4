@@ -131,7 +131,8 @@ namespace StarMeter.View
             {
                 CargoView cv = new CargoView();
                 cv.SetupElements(br, _p);
-                cv.ShowDialog();
+                cv.Owner = this;
+                cv.Show();
             }
             else 
             {
