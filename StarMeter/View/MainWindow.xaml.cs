@@ -159,14 +159,7 @@ namespace StarMeter.View
 
             try
             {
-                if (p.IsError)
-                {
-                    sty = "Error";
-                }
-                else
-                {
-                    sty = "Success";
-                }
+                sty = p.IsError ? "Error" : "Success";
             }
             catch (Exception) 
             {
