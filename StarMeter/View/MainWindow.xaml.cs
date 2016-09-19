@@ -871,6 +871,8 @@ namespace StarMeter.View
 
         void Reset(object sender, RoutedEventArgs e)
         {
+            ChkErrorsOnly.IsChecked = false;
+
             controller.packets.Clear();
             controller.filePaths.Clear();
 

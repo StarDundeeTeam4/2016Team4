@@ -124,7 +124,7 @@ namespace StarMeter.Controllers
 
                     foreach (var packet in packets)
                     {
-                        if ((packet.DateRecieved.TimeOfDay > lowerBound) && (packet.DateRecieved.TimeOfDay < upperBound))
+                        if ((packet.DateRecieved.TimeOfDay >= lowerBound) && (packet.DateRecieved.TimeOfDay <= upperBound))
                         {
                             count++;
 
