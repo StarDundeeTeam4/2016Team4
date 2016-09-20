@@ -462,9 +462,7 @@ namespace StarMeter.View
         public void OpenPopup(object sender, RoutedEventArgs e) 
         {
             var b = (Button)sender;
-
-            var br = b.Background;
-
+            
             var text = b.Tag.ToString();
             var guid = new Guid(text);
             
@@ -475,7 +473,7 @@ namespace StarMeter.View
 
             if (p != null)
             {
-                pp.SetupElements(br, p); // send the packet as a parameter, along with the colour to make the header
+                pp.SetupElements(p); // send the packet as a parameter, along with the colour to make the header
                 pp.Owner = this;
                 pp.Show();
             }
@@ -837,26 +835,43 @@ namespace StarMeter.View
 
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
-            try
+
+            if (controller.filePaths.Count < 1)
             {
-                interval = int.Parse(txtInterval.Text);
+                MessageBox.Show("No Files Selected");
             }
-            catch (Exception) 
+            else
             {
-                interval = 5;
+                bool changed = false;
+
+                try
+                {
+                    if (interval < 0) { interval = 0; changed = true; }
+                    if (interval > 9) { interval = 9; changed = true; }
+                    interval = int.Parse(txtInterval.Text);
+                }
+                catch (Exception)
+                {
+                    interval = 5;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    MessageBox.Show("The interval must an integer be between 0 and 9.\nIt has been defaulted to " + interval);
+                }
+
+                RemoveAllPackets();
+
+                Packet[] packets = controller.ParsePackets();
+                CreateAllTimeLabels(packets);
+                AddPacketCollection(packets);
+
+                CreateChart();
+
+
+                CreateDataRateGraph(packets);
             }
-
-            RemoveAllPackets();
-
-            Packet[] packets = controller.ParsePackets();
-            CreateAllTimeLabels(packets);
-            AddPacketCollection(packets);
-
-            CreateChart();
-
-
-            CreateDataRateGraph(packets);
-
 
         }
 

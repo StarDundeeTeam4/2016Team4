@@ -34,6 +34,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
@@ -67,7 +68,7 @@
         </Grid>
 
         <!-- The column headers -->
-        <Grid Grid.Row="0" Grid.Column="1" Name="PortHeaders">
+        <Grid Grid.Row="0" Grid.Column="2" Name="PortHeaders">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -95,7 +96,7 @@
             <Label Grid.Row="0" Grid.Column ="8" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 4B</Label>
         </Grid>
 
-        <Grid HorizontalAlignment="Stretch" Grid.Column="1" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
+        <Grid HorizontalAlignment="Stretch" Grid.Column="2" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
 
             <ScrollViewer Name="PacketScroller" IsDeferredScrollingEnabled="true" VerticalScrollBarVisibility="Auto">
 
@@ -173,11 +174,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
-            <TextBox Name="txtInterval" Grid.Row="0" Grid.Column="2" FontSize="20" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5">5</TextBox>
+            <TextBox MaxLength="1" Name="txtInterval" Grid.Row="0" Grid.Column="2" FontSize="20" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="5">5</TextBox>
             <Label Foreground="White" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" FontSize="14" VerticalContentAlignment="Center">Interval:</Label>
             <Label Foreground="White" Grid.Column="3" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" FontSize="14" VerticalContentAlignment="Center">ms</Label>
         </Grid>
-        
+
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="1"/>
 
 
@@ -219,6 +220,10 @@
             </Button>
 
             <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="34*"/>
+                </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.8*"/>
@@ -228,7 +233,7 @@
                     <RowDefinition Height="1.25*"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="2" Margin="40, 5, 40, 0">
+                <Grid Grid.Row="2" Margin="40,5.2,39.6,0.2" Grid.ColumnSpan="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
@@ -252,7 +257,7 @@
 
                 </Grid>
 
-                <Grid Grid.Row="1" Margin="0, 7, 0, 9">
+                <Grid Grid.Row="1" Margin="0,6.8,-0.4,8.8" Grid.ColumnSpan="2">
 
 
                     <Grid>
@@ -274,7 +279,7 @@
                     </Grid>
                 </Grid>
 
-                <Grid Grid.Row="3">
+                <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,94.2,-0.4,72.6" Grid.RowSpan="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="3*"/>
@@ -293,7 +298,7 @@
 
 
                 </Grid>
-                <Grid Row="4">
+                <Grid Row="4" Grid.ColumnSpan="2" Margin="0,0.2,-0.4,-0.4">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
@@ -302,7 +307,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    
+
                     <Label HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" Content="Protocol To Search:" Foreground="White" />
                     <TextBox Grid.Row="1" Grid.Column="0" x:Name="protocolSearch"/>
                     <Button Grid.Row="2" Grid.Column="0" Click="SearchForProtocol" Content="Search for protocol"/>
@@ -316,7 +321,7 @@
         </Grid>
 
 
-        <DVC:Chart Name="mcChart" Height="300" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <DVC:Chart Name="mcChart" Height="300" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <DVC:Chart.Series >
                 <DVC:PieSeries Title="Experience" 
                     IndependentValueBinding="{Binding Path=Key}"
