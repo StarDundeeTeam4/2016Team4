@@ -20,7 +20,10 @@ namespace StarMeter.View
 
         public void SetupElements(Packet p)
         {
-
+            if (!(p is RmapPacket))
+            {
+                ViewRmapPropertiesButton.Visibility = Visibility.Hidden;
+            }
             Brush br = GetBrush(p.IsError);
 
             _p = p;
@@ -150,5 +153,15 @@ namespace StarMeter.View
             this.Close();
         }
 
+        private void ShowRmapProperties(object sender, RoutedEventArgs e)
+        {
+            var b = (Button) sender;
+            var br = b.Background;
+
+            var cv = new RmapView();
+            cv.SetupElements(br, (RmapPacket)_p);
+            cv.Owner = this;
+            cv.Show();
+        }
     }
 }

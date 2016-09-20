@@ -19,9 +19,10 @@
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="1.5*" />
-            <RowDefinition Height="10*" />
-            <RowDefinition Height="1.5*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1.5*"/>
             <!--<RowDefinition Height="*" />-->
         </Grid.RowDefinitions>
 
@@ -46,7 +47,6 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="1.8*" />
-                <RowDefinition Height="1.2*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -66,8 +66,8 @@
             <Button Grid.Row="5" Grid.Column="1" Content="View Cargo" Background="White" Foreground="Black" FontFamily="Calibri" FontSize="20" Click="ViewCargo" Margin="0,10,0,10"/>
 
         </Grid>
-
-        <Button Grid.Row="2" Content="OK" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent">
+        <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Width="200" Background="White" Foreground="Black" FontFamily="Calibri" FontSize="20" Click="ShowRmapProperties" Margin="0,0,0,3"/>
+        <Button Grid.Row="3" Content="OK" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF125402" Offset="1"/>
@@ -75,6 +75,6 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-
+        
     </Grid>
 </Window>
