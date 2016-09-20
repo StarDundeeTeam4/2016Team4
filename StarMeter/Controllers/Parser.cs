@@ -113,7 +113,8 @@ namespace StarMeter.Controllers
         public byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
         {
             var result = new List<byte>();
-            for (var i = logicalAddressIndex+4; i < logicalAddressIndex + addressLength + 4; i++)
+            int sourceAddressIndex = logicalAddressIndex+5;
+            for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
             {
                 result.Add(rmapFullPacket[i]);
             }
@@ -143,9 +144,24 @@ namespace StarMeter.Controllers
              * bit 5 = reply?
              * bit 4 = verify
              */
+            string result;
 
-            string result = bitArray[5] ? "Write" : "Read";
-            
+            if (bitArray[5])
+            {
+                result = "Write";
+            }
+            else
+            {
+                if (!bitArray[4])
+                {
+                    result = "Read";
+                }
+                else
+                {
+                    result = "Read-Modify-Write";
+                }
+            }
+
             if (!bitArray[6]) //reply?
             {
                 result += " Reply";
