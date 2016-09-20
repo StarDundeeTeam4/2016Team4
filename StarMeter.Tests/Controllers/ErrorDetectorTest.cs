@@ -11,6 +11,18 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class ErrorDetectorTest
     {
+        private ErrorDetector _errorDetector;
 
+        [TestInitialize]
+        public void Initialise()
+        {
+            _errorDetector = new ErrorDetector();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _errorDetector = null;
+        }
     }
 }
