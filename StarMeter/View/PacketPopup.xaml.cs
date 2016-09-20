@@ -16,13 +16,14 @@ namespace StarMeter.View
         }
 
         private Packet _p;
-        private Brush _br;
         public Controller Controller;
 
-        public void SetupElements(Brush br, Packet p)
+        public void SetupElements(Packet p)
         {
+
+            Brush br = GetBrush(p.IsError);
+
             _p = p;
-            _br = br;
             Width = 500;
             Height = 500;
 
@@ -46,7 +47,7 @@ namespace StarMeter.View
                 logo.UriSource = new Uri("pack://application:,,,/Resources/Error.png");
                 logo.EndInit();
 
-                lblErrorMsg.Content = "ERROR";
+                lblErrorMsg.Content = "ERROR: " + p.ErrorType;
             }
 
 
@@ -93,12 +94,27 @@ namespace StarMeter.View
             RightArrow.Visibility = _p.NextPacket == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        Brush GetBrush(bool isError) 
+        {
+            if (isError)
+            {
+                return Brushes.Red;
+            }
+            else
+            {
+
+                var converter = new System.Windows.Media.BrushConverter();
+
+               return (Brush)converter.ConvertFromString("#6699ff");
+            }
+        }
+
         private void NextPacket(object sender, RoutedEventArgs e)
         {
             if (_p.NextPacket != null)
             {
                 Packet p = Controller.FindPacket(_p.NextPacket.GetValueOrDefault());
-                SetupElements(_br, p);
+                SetupElements(p);
             }
         }
 
@@ -107,7 +123,7 @@ namespace StarMeter.View
             if (_p.PrevPacket != null)
             {
                 Packet p = Controller.FindPacket(_p.PrevPacket.GetValueOrDefault());
-                SetupElements(_br, p);
+                SetupElements(p);
             }
         }
 

@@ -1,0 +1,15 @@
+diff a/StarMeter/Controllers/Parser.cs b/StarMeter/Controllers/Parser.cs	(rejected hunks)
+@@ -34,10 +34,10 @@
+                 var packetId = Guid.NewGuid();
+                 var packet = new Packet {PortNumber = portNumber, PacketId = packetId};
+ 
+-                DateTime temp;
+-                if (ParseDateTime(line, out temp))
++                DateTime tempDate;
++                if (ParseDateTime(line, out tempDate))
+                 {
+-                    packet.DateRecieved = temp;
++                    packet.DateRecieved = tempDate;
+                 }
+ 
+                 var packetType = r.ReadLine();
