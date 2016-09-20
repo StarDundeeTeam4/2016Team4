@@ -88,6 +88,9 @@
     </ApplicationDefinition>
     <Compile Include="Controllers\ErrorDetector.cs" />
     <Compile Include="Models\ObjectFinder.cs" />
+    <Compile Include="View\RmapView.xaml.cs">
+      <DependentUpon>RmapView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Statisticspage.xaml.cs">
       <DependentUpon>Statisticspage.xaml</DependentUpon>
     </Compile>
@@ -121,6 +124,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\PacketPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RmapView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -84,7 +84,7 @@ namespace StarMeter.Controllers
             var rmapPacketType = GetRmapType(rmapCommandByte);
             var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
             var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
-
+            var destinationKey = GetDestinationKey(packet.FullPacket, addressIndex);
             var p = new RmapPacket()
             {
                 CommandByte    = rmapCommandByte,
@@ -96,6 +96,7 @@ namespace StarMeter.Controllers
                 Cargo             = packet.Cargo,
                 ProtocolId        = packet.ProtocolId,
                 FullPacket        = packet.FullPacket,
+                DestinationKey = destinationKey
             };
 
             if (!CheckRmapCRC(p))
@@ -110,7 +111,7 @@ namespace StarMeter.Controllers
         public byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
         {
             var result = new List<byte>();
-            int sourceAddressIndex = logicalAddressIndex+5;
+            int sourceAddressIndex = logicalAddressIndex+4;
             for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
             {
                 result.Add(rmapFullPacket[i]);
@@ -135,35 +136,23 @@ namespace StarMeter.Controllers
 
         public string GetRmapType(BitArray bitArray)
         {
-            /**
-             * bit 7 = reserved
-             * bit 6 = read/write
-             * bit 5 = reply?
-             * bit 4 = verify
-             */
-            string result;
-
+            var result = "";
             if (bitArray[5])
             {
-                result = "Write";
+                result += "Write";
+            }
+            else if (bitArray[4])
+            {
+                result += "Read Modify Write";
             }
             else
             {
-                if (!bitArray[4])
-                {
-                    result = "Read";
-                }
-                else
-                {
-                    result = "Read-Modify-Write";
-                }
+                result += "Read";
             }
-
-            if (!bitArray[6]) //reply?
+            if (!bitArray[6])
             {
                 result += " Reply";
             }
-
             return result;
 
         }
