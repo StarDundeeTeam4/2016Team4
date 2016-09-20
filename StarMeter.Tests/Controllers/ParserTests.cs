@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -319,7 +318,7 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetSequenceNumberFromNonRmap()
         {
-            byte[] _nonRmapPacket =
+            byte[] nonRmapPacket =
             {
                 0x3f, 0xfa, 0x0f, 0x33, 0xd2, 0x6b, 0xef, 0x66, 0x29, 0xdb, 0x84, 0x3f, 0x1a, 0xd7, 0x68, 0x4a, 0x10,
                 0xe9, 0x8e, 0x01, 0xb2, 0xf3, 0xe3, 0xed, 0x70, 0x71, 0x81, 0x0e, 0x5c, 0xfe, 0x25, 0x7d, 0x3c, 0x1a,
@@ -338,9 +337,9 @@ namespace StarMeter.Tests.Controllers
                 0x27, 0x6a, 0xfd, 0x22, 0x47, 0x90, 0x3e, 0x85, 0xe9, 0x86, 0x02, 0x81, 0x5e, 0x2c, 0x40, 0x82, 0x71,
                 0xf5, 0x27, 0x47, 0xf4, 0x32, 0x56, 0x43, 0x9f, 0x93, 0x4f, 0x43, 0x1b, 0xea, 0x29, 0x52
             };
-            Packet p = new Packet()
+            Packet p = new Packet
             {
-                FullPacket = _nonRmapPacket
+                FullPacket = nonRmapPacket
             };
 
             const int expectedSequenceNumber = 15;
@@ -354,7 +353,7 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetSequenceNumberFromNonRmap2()
         {
-            byte[] _nonRmapPacket =
+            byte[] nonRmapPacket =
             {
                 0x55, 0xfa, 0x00, 0x3e, 0x8a, 0xe4, 0x49, 0x2d, 0xf8, 0x22, 0x36, 0xb6, 0xb0, 0x42, 0x37,
                 0xcc, 0x66, 0x7d, 0xb5, 0x03, 0xed, 0xa4, 0x4e, 0x51, 0xf1, 0x04, 0x28, 0x16, 0xe8, 0x8c,
@@ -378,9 +377,9 @@ namespace StarMeter.Tests.Controllers
                 0x1d, 0xc8, 0x8f, 0x10, 0x7b, 0x25, 0x5a, 0x4d, 0x2b, 0x1c, 0x96, 0x76, 0x62, 0xa8, 0xa7, 0x69, 0x50,
                 0xc2, 0xed, 0x1c, 0xea, 0x1c, 0xa4, 0xea, 0xed, 0x11, 0x08, 0x2a, 0x20
             };
-            Packet p = new Packet()
+            Packet p = new Packet
             {
-                FullPacket = _nonRmapPacket
+                FullPacket = nonRmapPacket
             };
             const int expectedSequenceNumber = 0;
 
@@ -492,42 +491,6 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
-        public void GetRmapTypeWrite()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Write";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x6c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeWriteReply()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Write Reply";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x2c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeRead()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Read";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x4c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeReadReply()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Read Reply";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x0c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
         public void GetSourcePathAddressRmapFromParser()
         {
             var parser = new Parser();
@@ -563,117 +526,10 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
         }
 
-        [TestMethod]
-        public void TestCheckRmapCRC()
-        {
-            byte[] packetData =
-            {
-                0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsTrue(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCValid()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                ProtocolId = 1,
-                PacketType = "Read Reply",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsTrue(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCHeaderError()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read Reply",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsFalse(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCCargoError()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read Reply",
-                ProtocolId = 1,
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsFalse(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCTwoErrors()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read Reply",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsFalse(_parser.CheckRmapCRC(p));
-        }
-
-        [TestCleanup()]
+        [TestCleanup]
         public void Cleanup()
         {
             _parser = null;
-        }
-
-        [TestMethod]
-        public void GetDestinationKeyFromRMAP()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-            };
-
-            var actual = _parser.GetDestinationKey(packetData, _parser.GetLogicalAddressIndex(packetData)); // 3 spaces after logical address index
-
-            byte expected = 0x00;
-
-            Assert.AreEqual(expected, actual);
         }
     }
 }
