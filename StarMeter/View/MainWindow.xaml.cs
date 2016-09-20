@@ -245,7 +245,6 @@ namespace StarMeter.View
             while(diff.CompareTo(new TimeSpan(0,0,0,0,interval)) >= 0)
             {
                 diff = diff.Add(negative_section);
-
                 spaces++;
             }
 
