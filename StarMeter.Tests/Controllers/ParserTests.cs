@@ -660,5 +660,20 @@ namespace StarMeter.Tests.Controllers
         {
             _parser = null;
         }
+
+        [TestMethod]
+        public void GetDestinationKeyFromRMAP()
+        {
+            byte[] packetData =
+            {
+                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
+            };
+
+            var actual = _parser.GetDestinationKey(packetData, _parser.GetLogicalAddressIndex(packetData)); // 3 spaces after logical address index
+
+            byte expected = 0x00;
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

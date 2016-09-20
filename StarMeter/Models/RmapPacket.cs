@@ -4,10 +4,10 @@ namespace StarMeter.Models
 {
     public class RmapPacket : Packet
     {
-        public int      DestinationKey;
+        public byte      DestinationKey;
         public byte[]   SourcePathAddress;
         public ushort   HeaderCrc;
         public string   PacketType;
-        public BitArray AdditionalInfo;
+        public BitArray CommandByte;
     }
 }

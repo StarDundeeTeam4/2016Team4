@@ -70,8 +70,6 @@ namespace StarMeter.Controllers
 
                     r.ReadLine();
                 }
-
-
                 packet = SetPrevPacket(packet);
 
                 PacketDict.Add(packetId, packet);
@@ -89,10 +87,9 @@ namespace StarMeter.Controllers
 
             var p = new RmapPacket()
             {
-                AdditionalInfo    = rmapCommandByte,
+                CommandByte    = rmapCommandByte,
                 PacketType        = rmapPacketType,
                 SourcePathAddress = sourceAddress,
-
                 PacketId          = packet.PacketId,
                 DateRecieved      = packet.DateRecieved,
                 PortNumber        = packet.PortNumber,
@@ -296,5 +293,9 @@ namespace StarMeter.Controllers
             return ErrorTypes.None;
         }
 
+        public byte GetDestinationKey(byte[] packetData, int logicalAddressIndex)
+        {
+            return packetData[logicalAddressIndex + 3];
+        }
     }
 }
