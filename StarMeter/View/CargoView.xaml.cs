@@ -33,7 +33,7 @@ namespace StarMeter
             foreach (byte cargoByte in p.Cargo)// byte
             {
 
-                MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + "  ";
+                MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + "  ";
             }
             CargoData = MainCargoContent.Text;
         }
@@ -52,12 +52,12 @@ namespace StarMeter
                 {
 
                     i = 0;
-                    MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + Environment.NewLine;
+                    MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + Environment.NewLine;
                 }
                 else
                 {
                     i++;
-                    MainCargoContent.Text += Crc.ByteToHexString(cargoByte).Substring(2) + "  ";
+                    MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + "  ";
                 }
             }
             CargoData = MainCargoContent.Text;          

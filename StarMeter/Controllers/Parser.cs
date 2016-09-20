@@ -11,7 +11,7 @@ namespace StarMeter.Controllers
     public class Parser
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
-        private Guid? _prevPacket = null;
+        private Guid? _prevPacket;
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -47,17 +47,17 @@ namespace StarMeter.Controllers
                     var packetHexData = r.ReadLine().Split(' ');
                     packet.FullPacket = packetHexData.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
-                    var logicalAddressIndex = GetLogicalAddressIndex(packetHexData);
+                    var logicalAddressIndex = GetLogicalAddressIndex(packet.FullPacket);
 
-                    packet.Cargo = GetCargoArray(packetHexData, logicalAddressIndex);
-                    packet.ProtocolId = GetProtocolId(packetHexData, logicalAddressIndex);
+                    packet.Cargo = GetCargoArray(packet, logicalAddressIndex);
+                    packet.ProtocolId = GetProtocolId(packet.FullPacket, logicalAddressIndex);
                     if (packet.ProtocolId == 1)
                     {
                         packet = CreateRmapPacket(packet, logicalAddressIndex);
                     }
-                    packet.Address = GetAddressArray(packetHexData, logicalAddressIndex);
-                    packet.Crc = GetCrc(packetHexData);
-                    packet.SequenceNum = GetSequenceNumber(packetHexData, logicalAddressIndex);
+                    packet.Address = GetAddressArray(packet.FullPacket, logicalAddressIndex);
+                    packet.Crc = GetCrc(packet.FullPacket);
+                    packet.SequenceNum = GetSequenceNumber(packet, logicalAddressIndex);
                     packet.ErrorType = GetErrorType(packet);
 
                     var endingState = r.ReadLine();
@@ -82,20 +82,32 @@ namespace StarMeter.Controllers
 
         private RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
         {
-            var rmapPacketType = GetRmapType(packet.FullPacket[addressIndex + 2]);
+            var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
+            var rmapPacketType = GetRmapType(rmapCommandByte);
             var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
             var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
-            return new RmapPacket()
+
+            var p = new RmapPacket()
             {
-                DateRecieved = packet.DateRecieved,
-                PortNumber = packet.PortNumber,
-                PacketId = packet.PacketId,
-                PacketType = rmapPacketType,
-                Cargo = packet.Cargo,
-                ProtocolId = packet.ProtocolId,
-                FullPacket = packet.FullPacket,
-                SourcePathAddress = sourceAddress
+                AdditionalInfo    = rmapCommandByte,
+                PacketType        = rmapPacketType,
+                SourcePathAddress = sourceAddress,
+
+                PacketId          = packet.PacketId,
+                DateRecieved      = packet.DateRecieved,
+                PortNumber        = packet.PortNumber,
+                Cargo             = packet.Cargo,
+                ProtocolId        = packet.ProtocolId,
+                FullPacket        = packet.FullPacket,
             };
+
+            if (!CheckRmapCRC(p))
+            {
+                p.IsError = true;
+                p.ErrorType = ErrorTypes.DataError;
+            }
+
+            return p;
         }
 
         public byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
@@ -123,32 +135,25 @@ namespace StarMeter.Controllers
             return bit;
         }
 
-        public string GetRmapType(byte rmapCommandByte)
+        public string GetRmapType(BitArray bitArray)
         {
-            var result = "";
-            var bitArray = new BitArray(new[] {rmapCommandByte});
+            /**
+             * bit 7 = reserved
+             * bit 6 = read/write
+             * bit 5 = reply?
+             * bit 4 = verify
+             */
 
-            if (!bitArray[6])
+            string result = bitArray[5] ? "Write" : "Read";
+            
+            if (!bitArray[6]) //reply?
             {
-                result += "Reply ";
-            }
-            if (bitArray[5])
-            {
-                result += "Write";
-            }
-            else if (bitArray[4])
-            {
-                result += "Read Modify Write";
-            }
-            else
-            {
-                result += "Read";
+                result += " Reply";
             }
 
             return result;
 
         }
-
 
         public Packet SetPrevPacket(Packet packet)
         {
@@ -175,62 +180,99 @@ namespace StarMeter.Controllers
             return DateTime.TryParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null, DateTimeStyles.None, out result);
         }
 
-        public int GetLogicalAddressIndex(string[] fullPacket)
+        public int GetLogicalAddressIndex(byte[] fullPacket)
         {
-            int index = 0, i = 0;
-            foreach (var hexString in fullPacket)
+            for (int i = 0; i < fullPacket.Length; i++)
             {
-                var hexValue = Convert.ToInt32(hexString, 16);
-                if (hexValue >= 32)
+                if (fullPacket[i] >= 32) return i;
+            }
+            return -1;
+        }
+
+        public byte[] GetCargoArray(Packet packet, int logicalIndex)
+        {
+            byte[] cargo;
+            if (packet.ProtocolId == 1)
+            {
+                string type = GetRmapType(new BitArray(new[] { packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2] }));
+                if (type.EndsWith("Reply"))
                 {
-                    index = i;
-                    break;
+                    int start = logicalIndex + 12;
+                    int cargoLength = packet.FullPacket.Length - start;
+                    cargo = new byte[cargoLength];
+                    Array.Copy(packet.FullPacket, start, cargo, 0, cargoLength);
+                    return cargo;
                 }
-                i++;
             }
-            return index;
+
+            logicalIndex++;
+            int length = packet.FullPacket.Length - logicalIndex;
+            cargo = new byte[length];
+            Array.Copy(packet.FullPacket, logicalIndex, cargo, 0, length);
+
+            return cargo;
         }
 
-        public byte[] GetCargoArray(string[] fullPacket, int logicalIndex)
+        public byte[] GetAddressArray(byte[] fullPacket, int logicalIndex)
         {
-            var byteList = new List<byte>();
-            for (var i = logicalIndex + 1 ; i <= fullPacket.Length - 1; i++)
+            byte[] addressArray = new byte[logicalIndex+1];
+            Array.Copy(fullPacket, addressArray, logicalIndex+1);
+            return addressArray;
+        }
+
+        public byte GetCrc(byte[] fullPacket)
+        {
+            return fullPacket.Last();
+            //return (byte)Convert.ToInt32(fullPacket[fullPacket.Length - 1], 16);
+        }
+
+        public int GetProtocolId(byte[] fullPacket, int logicalIndex)
+        {
+            return fullPacket[logicalIndex + 1];
+        }
+
+        public int GetSequenceNumber(Packet packet, int logicalIndex)
+        {
+            if (packet.GetType() == typeof(RmapPacket))
             {
-                byteList.Add((byte)Convert.ToInt32(fullPacket[i], 16));
+                byte[] sequence = new byte[2];
+                Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
+                Array.Reverse(sequence); //damn little-endian-ness
+                return BitConverter.ToUInt16(sequence, 0);
             }
-
-            return byteList.ToArray();
-        }
-
-        public byte[] GetAddressArray(string[] fullPacket, int logicalIndex)
-        {
-            var byteList = new List<byte>();
-            for (var i = 0; i <= logicalIndex; i++)
+            else
             {
-                byteList.Add((byte)Convert.ToInt32(fullPacket[i], 16));
+                return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
+            }
+        }
+
+        public bool CheckRmapCRC(RmapPacket packet)
+        {
+            if (packet.PacketType.EndsWith("Reply"))
+            {
+                //test cargo CRC
+                bool cargo = CRC.CheckCrcForPacket(packet.Cargo);
+
+                //test header CRC
+                //remove cargo from header and test as if full packet
+                int length = packet.FullPacket.Length - packet.Cargo.Length;
+                byte[] headerBytes = new byte[length];
+                Array.Copy(packet.FullPacket, headerBytes, length);
+                bool header = CRC.CheckCrcForPacket(headerBytes);
+
+                return (header && cargo);
+            }
+            else
+            {
+                if (!CRC.CheckCrcForPacket(packet.FullPacket)) return false;
             }
 
-            return byteList.ToArray();
-        }
-
-        public byte GetCrc(string[] fullPacket)
-        {
-            return (byte)Convert.ToInt32(fullPacket[fullPacket.Length - 1], 16);
-        }
-
-        public int GetProtocolId(string[] fullPacket, int logicalIndex)
-        {
-            return Convert.ToInt32(fullPacket[logicalIndex + 1], 16);
-        }
-
-        public int GetSequenceNumber(string[] fullPacket, int logicalIndex)
-        {
-            return Convert.ToInt32(fullPacket[logicalIndex + 2], 16);
+            return true;
         }
 
         public ErrorTypes GetErrorType(Packet packet)
         {
-            var calculatedCrc = Crc.CheckCrcForPacket(packet.FullPacket);
+            var calculatedCrc = CRC.CheckCrcForPacket(packet.FullPacket);
             if (!calculatedCrc)
             {
                 return ErrorTypes.DataError;

@@ -14,10 +14,10 @@ namespace StarMeter.Tests.Controllers
         {
             byte[] packet = { 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08 };
 
-            ushort result = Crc.RMAP_CalculateCRC(packet);
+            ushort result = CRC.RMAP_CalculateCRC(packet);
 
             Assert.AreEqual(result, 0x3e);
-            System.Diagnostics.Trace.WriteLine(Crc.ByteToHexString(result));
+            System.Diagnostics.Trace.WriteLine(CRC.ByteToHexString(result));
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace StarMeter.Tests.Controllers
         {
             byte[] packet = { 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e };
 
-            Assert.IsTrue(Crc.CheckCrcForPacket(packet));
+            Assert.IsTrue(CRC.CheckCrcForPacket(packet));
         }
 
         /// <summary>
@@ -45,7 +45,17 @@ namespace StarMeter.Tests.Controllers
                 0x06, 0xcf, 0x54, 0xd5, 0x16, 0x37, 0x96, 0xe4, 0xab, 0x6c, 0x5a, 0xb0, 0x3e
             };
 
-            Assert.IsFalse(Crc.CheckCrcForPacket(packet));
+            Assert.IsFalse(CRC.CheckCrcForPacket(packet));
+        }
+
+        [TestMethod]
+        public void TestByteToHexString()
+        {
+            const string expected = "0xff";
+
+            string actual = CRC.ByteToHexString(255);
+
+            Assert.AreEqual(expected, actual);
         }
     }
 }

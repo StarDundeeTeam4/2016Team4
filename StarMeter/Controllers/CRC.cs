@@ -3,7 +3,7 @@ using System.Text;
 
 namespace StarMeter.Controllers
 {
-    public static class Crc
+    public static class CRC
     {
         /** The lookup table used to calculate the RMAP CRC for a buffer. */
         private static readonly ushort[] RmapCrcTable = {  0x00, 0x91, 0xe3, 0x72, 0x07, 0x96, 0xe4, 0x75,
