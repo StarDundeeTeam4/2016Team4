@@ -143,9 +143,24 @@ namespace StarMeter.Controllers
              * bit 5 = reply?
              * bit 4 = verify
              */
+            string result;
 
-            string result = bitArray[5] ? "Write" : "Read";
-            
+            if (bitArray[5])
+            {
+                result = "Write";
+            }
+            else
+            {
+                if (!bitArray[4])
+                {
+                    result = "Read";
+                }
+                else
+                {
+                    result = "Read-Modify-Write";
+                }
+            }
+
             if (!bitArray[6]) //reply?
             {
                 result += " Reply";
