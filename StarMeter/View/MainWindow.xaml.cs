@@ -12,6 +12,7 @@ using System.Windows.Controls.DataVisualization.Charting.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Threading;
 
 
 namespace StarMeter.View
@@ -74,7 +75,7 @@ namespace StarMeter.View
 
             var s = new Size(selectionBox.Width, selectionBox.Height);
 
-            SizeLabelTest.Content = s.ToString();
+            FiltersHeading.Content = s.ToString();
 
             // TODO: 
             //
@@ -142,7 +143,7 @@ namespace StarMeter.View
             {
                 lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 lab.Content = "Unknown Packet Type";
             }
@@ -183,6 +184,7 @@ namespace StarMeter.View
         void AddPacketCollection(Packet[] packets) 
         {
             _previous = packets[0].DateRecieved.TimeOfDay;
+
             foreach (var p in packets) 
             {
                 AddPacket(p);
@@ -248,15 +250,16 @@ namespace StarMeter.View
                 spaces++;
             }
 
-            
-            
-            for (int i = 0; i < spaces ; i++)
+
+
+            for (int i = 0; i < spaces; i++)
             {
                 Label lbl = new Label();
                 lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
                 sp.Children.Add(lbl);
             }
 
+            //b.Margin = new Thickness(0, 0, 0, ((HeightScroller.Value * spaces) + ((1 + spaces) * HeightScroller.Value)) + ((HeightScroller.Value) / 10));
             sp.Children.Add(b);
 
 
@@ -687,11 +690,7 @@ namespace StarMeter.View
 
             var style = new Style { TargetType = typeof(Label) };
             style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
-            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
-            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
-            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
-            style.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
-            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+            style.Setters.Add(new Setter(VisibilityProperty, Visibility.Hidden));
 
 
             var converter = new System.Windows.Media.BrushConverter();
@@ -835,40 +834,35 @@ namespace StarMeter.View
 
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
-
             if (controller.filePaths.Count < 1)
             {
                 MessageBox.Show("No Files Selected");
             }
             else
             {
+
+                FiltersPane.Width = new GridLength(3, GridUnitType.Star);
+                FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
+
                 bool changed = false;
-
-                try
-                {
-                    if (interval < 0) { interval = 0; changed = true; }
-                    if (interval > 9) { interval = 9; changed = true; }
-                    interval = int.Parse(txtInterval.Text);
-                }
-                catch (Exception)
-                {
-                    interval = 5;
-                    changed = true;
-                }
-
-                if (changed)
-                {
-                    MessageBox.Show("The interval must an integer be between 0 and 9.\nIt has been defaulted to " + interval);
-                }
 
                 RemoveAllPackets();
 
                 Packet[] packets = controller.ParsePackets();
-                CreateAllTimeLabels(packets);
-                AddPacketCollection(packets);
+                Packet[] firstLoad;
+                try
+                {
+                    firstLoad = packets.ToList().GetRange(0, 100).ToArray();
+                }
+                catch(Exception)
+                {
+                    firstLoad = packets;
+                }
+                
+                CreateAllTimeLabels(firstLoad);
+                AddPacketCollection(firstLoad);
 
                 CreateChart();
-
 
                 CreateDataRateGraph(packets);
             }
@@ -889,21 +883,31 @@ namespace StarMeter.View
             var tStart = packets[0].DateRecieved.TimeOfDay;
             var tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
 
+
+            var milli = (tEnd - tStart).Milliseconds;
+
+            //interval = milli / packets.Length /2;
+            interval = 300;
+            
             section = new TimeSpan(0, 0, 0, 0, interval);
             negative_section = section.Negate();
             half_section = new TimeSpan(0, 0, 0, 0, interval / 2);
             var i = 0;
+
             var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
             timelist.Add(curr);
+
             while (curr <= tEnd)
             {
                 i++;
                 CreateTimeLabel(curr);
+
                 curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
                 timelist.Add(curr);
             }
             _timespans = timelist.ToArray();
         }
+        
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -931,8 +935,12 @@ namespace StarMeter.View
             int count = 0;
             foreach (var p in controller.packets.Values) 
             {
-                packets[count] = (Packet)p;
-                count++;
+                if (count < 100)
+                {
+                    packets[count] = (Packet)p;
+                    count++;
+                }
+                else { break; }
             }
 
             AddPacketCollection(packets);
@@ -1037,6 +1045,76 @@ namespace StarMeter.View
             _isUpArrow = false;
             ShowDataVisPopup(null, null);
             SelectAllPorts(null, null);
+
+            FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
+            FiltersPane.Width = new GridLength(0, GridUnitType.Star);
+
+        }
+
+
+        int pageIndex = 0;
+
+        void NextPage(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            pageIndex++;
+
+            if ((100 * (pageIndex + 1)) > controller.packets.Count)
+            {
+                NextPageBtn.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                NextPageBtn.Visibility = Visibility.Visible;
+            }
+
+
+            Packet[] toLoad;
+            try
+            {
+                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+            }
+            catch (Exception)
+            {
+                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+            }
+
+            CreateAllTimeLabels(toLoad);
+            AddPacketCollection(toLoad);
+
+            PrevPageBtn.Visibility = Visibility.Visible;
+
+        }
+
+        void PrevPage(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            pageIndex--;
+
+            if (pageIndex == 0)
+            {
+                PrevPageBtn.Visibility = Visibility.Hidden;
+            }
+            else 
+            {
+                PrevPageBtn.Visibility = Visibility.Visible;
+            }
+
+            Packet[] toLoad;
+            try
+            {
+                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+            }
+            catch (Exception)
+            {
+                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Values.ToList().Count - (100 * pageIndex)).ToArray();
+            }
+            
+            CreateAllTimeLabels(toLoad);
+            AddPacketCollection(toLoad);
+
+            NextPageBtn.Visibility = Visibility.Visible;
+
         }
 
     }
