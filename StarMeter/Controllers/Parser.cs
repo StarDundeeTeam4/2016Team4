@@ -80,7 +80,7 @@ namespace StarMeter.Controllers
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
-     //       PacketDict.Remove(PacketDict.Keys.Last());
+            PacketDict.Remove(PacketDict.Keys.Last());
             return PacketDict;
         }
 
