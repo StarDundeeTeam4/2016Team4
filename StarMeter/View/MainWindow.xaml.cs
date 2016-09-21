@@ -506,7 +506,7 @@ namespace StarMeter.View
 
             // TODO: change this to be a lookup from dictionary
 
-            foreach (var p in packets) 
+            foreach (var p in sortedPackets) 
             {
                 if (guid.Equals(p.PacketId)) 
                 {
@@ -821,7 +821,7 @@ namespace StarMeter.View
 
         #endregion
 
-        List<Packet> packets = new List<Packet>();
+        List<Packet> sortedPackets = new List<Packet>();
 
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
@@ -1061,7 +1061,7 @@ namespace StarMeter.View
 
 
             Packet[] toLoad;
-            if(packets == null)
+            if(sortedPackets.Count == 0)
             {
                 try
                 {
@@ -1076,11 +1076,11 @@ namespace StarMeter.View
             {
                 try
                 {
-                    toLoad = packets.GetRange((100 * pageIndex), 100).ToArray();
+                    toLoad = sortedPackets.GetRange((100 * pageIndex), 100).ToArray();
                 }
                 catch (Exception)
                 {
-                    toLoad = packets.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                    toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
                 }
             }
             
@@ -1123,19 +1123,55 @@ namespace StarMeter.View
 
         }
 
+        void SearchForPacketsByTime(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+            var start = StartTimeTextBox.Text;
+            var end = EndTimeTextBox.Text;
+
+            DateTime startTime, endTime;
+            if(start != "")
+            {
+                startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
+            }
+            else
+            {
+                return;
+            }
+            if(end == "")
+            {
+                showPacketsFromTime(startTime);
+            }
+            else
+            {
+                endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
+                showPacketsBetweenTime(startTime, endTime);
+            }
+        }
+
         //Shows all packets which were received from the start time onwards
         void showPacketsFromTime(DateTime start)
         {
-            packets = null;
+            sortedPackets.Clear();
+            RemoveAllPackets();
+
             foreach(var packet in controller.packets.Values)
             {
                 if(packet.DateRecieved > start)
                 {
-                    packets.Add(packet);
+                    sortedPackets.Add(packet);
                 }
             }
 
-            packets.OrderBy(p => p.DateRecieved);
+            sortedPackets = controller.packets.Values.Where(p => p.DateRecieved > start).ToList();
+
+
+            sortedPackets.OrderBy(p => p.DateRecieved);
+
+            Packet[] ppp = sortedPackets.ToList().GetRange(0, 100).ToArray();
+
+            CreateAllTimeLabels(ppp);
+            AddPacketCollection(ppp);
         }
         
         //Shows packets which were received between the start and end time.
