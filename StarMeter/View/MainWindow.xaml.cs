@@ -39,7 +39,39 @@ namespace StarMeter.View
             _portStacks[6] = Port4AHolder;
             _portStacks[7] = Port4BHolder;
 
+            _gifDecoder = new GifBitmapDecoder(new Uri("pack://application:,,,/Resources/rocket.gif"), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            LoadingIcon.Source = _gifDecoder.Frames[0];
+
+            _LoadingTimer = new System.Timers.Timer();
+            _LoadingTimer.Elapsed += _LoadingTimer_Elapsed;
+            _LoadingTimer.Interval = 100;
+
+            _LoadingTimer.Start();
         }
+
+
+        void ChangeAnimFrame() 
+        {
+            if (animCount >= _gifDecoder.Frames.Count - 1) 
+            {
+                animCount = 0;
+            }
+
+            LoadingIcon.Source = _gifDecoder.Frames[animCount];
+
+        }
+
+        void _LoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) 
+        {
+            animCount++;
+
+            LoadingIcon.Dispatcher.Invoke(new UpdateAnimation(ChangeAnimFrame));
+       
+
+        }
+
+        private GifBitmapDecoder _gifDecoder;
+        int animCount = 0;
 
         // needed for drawing rectangle - for zooming
         private bool _mouseDown; 
@@ -117,6 +149,9 @@ namespace StarMeter.View
         #endregion
 
 
+        System.Timers.Timer _LoadingTimer;
+
+
         void CreateTimeLabel(TimeSpan time) 
         {
             // create a label for the time
@@ -177,21 +212,44 @@ namespace StarMeter.View
         // work out which panel to assign the packet to
         StackPanel GetPanelToUse(int portNum) 
         {
-            return _portStacks[portNum];
+            return _portStacks[portNum - 1];
         }
 
 
         void AddPacketCollection(Packet[] packets) 
         {
-            _previous = packets[0].DateRecieved.TimeOfDay;
+
+            foreach (Packet p in packets) 
+            {
+                if (_previous[p.PortNumber - 1] == new TimeSpan()) 
+                {
+                    _previous[p.PortNumber - 1] = p.DateRecieved.TimeOfDay;
+                }
+            }
+            
 
             foreach (var p in packets) 
             {
                 AddPacket(p);
             }
+
+            int start, end, total;
+
+            total = controller.packets.Count;
+            start = (pageIndex * 100) + 1;
+            end = start + 99;
+
+            if (end > total) 
+            {
+                end = total;
+            }
+
+
+            lblNumShowing.Content = "Showing " + start + " - "  + end + " of " + total + " packets";
+
         }
 
-        private TimeSpan _previous = new TimeSpan();
+        private TimeSpan[] _previous = new TimeSpan[8];
 
         private void AddPacket(Packet p) 
         {
@@ -207,26 +265,11 @@ namespace StarMeter.View
             while(found == false && temp_timespans.Count > 0)
             {
                 index = temp_timespans.Count/2;
+                
 
-
-                if (temp_timespans[index] < packet_timespan)
+                if (temp_timespans[index] >= packet_timespan)
                 {
-                    if (temp_timespans[index] <= packet_timespan)
-                    {
-                        if ((temp_timespans[index].Add(section) > packet_timespan))
-                        {
-                            found = true;
-                        }
-                        else
-                        {
-                            temp_timespans = temp_timespans.GetRange(index, temp_timespans.Count - index);
-                            //index = index + (index / 2);
-                        }
-                    }
-                }
-                else
-                {
-                    if ((temp_timespans[index].Add(negative_section) < packet_timespan))
+                    if ((temp_timespans[index].Add(half_section) < packet_timespan))
                     {
                         found = true;
                     }
@@ -236,20 +279,36 @@ namespace StarMeter.View
                         //index = index / 2;
                     }
                 }
+                else
+                {
+                    if ((temp_timespans[index].Add(section) > packet_timespan))
+                    {
+                        found = true;
+                    }
+                    else
+                    {
+                        temp_timespans = temp_timespans.GetRange(index, temp_timespans.Count - index);
+                        //index = index + (index / 2);
+                    }
+                }
             }
 
             //This line will let us know how many empty spaces that we need to add to the stack panel.
 
-            var diff = (temp_timespans[index] - _previous).Add(negative_section);
+        
+            var diff = (temp_timespans[index] - _previous[p.PortNumber - 1]);
             int spaces = 0;
 
-     
-            while(diff.CompareTo(new TimeSpan(0,0,0,0,interval)) >= 0)
+
+
+            while(diff.CompareTo(new TimeSpan(0,0,0,0,interval)) > 0)
             {
                 diff = diff.Add(negative_section);
                 spaces++;
             }
 
+
+            Console.WriteLine();
 
 
             for (int i = 0; i < spaces; i++)
@@ -264,7 +323,7 @@ namespace StarMeter.View
 
 
 
-            _previous = temp_timespans[index];
+            _previous[p.PortNumber - 1] = temp_timespans[index];
 
 
             
@@ -292,7 +351,6 @@ namespace StarMeter.View
             }
         }
         #region TEMP
-        Packet[] packets = new Packet[3];
 
         void CreateDataRateGraph(Packet[] packets) 
         {
@@ -517,7 +575,7 @@ namespace StarMeter.View
 
             // TODO: change this to be a lookup from dictionary
 
-            foreach (var p in packets) 
+            foreach (var p in sortedPackets) 
             {
                 if (guid.Equals(p.PacketId)) 
                 {
@@ -560,6 +618,7 @@ namespace StarMeter.View
         }
 
         public delegate void UpdateSlider();
+        public delegate void UpdateAnimation();
         
         // This is the method to run when the timer is raised.
         private void TimerEventProcessor(object myObject,EventArgs myEventArgs)
@@ -832,6 +891,8 @@ namespace StarMeter.View
 
         #endregion
 
+        List<Packet> sortedPackets;
+
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
             if (controller.filePaths.Count < 1)
@@ -840,6 +901,9 @@ namespace StarMeter.View
             }
             else
             {
+                for(int i = 0; i < 8; i++){
+                    _previous[i] = new TimeSpan();
+                }
 
                 FiltersPane.Width = new GridLength(3, GridUnitType.Star);
                 FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
@@ -848,15 +912,28 @@ namespace StarMeter.View
 
                 RemoveAllPackets();
 
-                Packet[] packets = controller.ParsePackets();
+                var packets = controller.ParsePackets().ToList();
+
+
+                //packets = controller.packets.Values.ToList();
+
+                sortedPackets = (from pair in packets orderby pair.DateRecieved ascending select pair).ToList();
+
                 Packet[] firstLoad;
                 try
                 {
-                    firstLoad = packets.ToList().GetRange(0, 100).ToArray();
+                    firstLoad = sortedPackets.GetRange(0, 100).ToArray();
+                    //firstLoad = sortedPackets.Values.ToList().GetRange(0, 100);
+
+                    //List<Packet> packsss = ;
+
+                    //firstLoad = packsss.GetRange(0, 100).ToArray();
+
                 }
                 catch(Exception)
                 {
-                    firstLoad = packets;
+                    //firstLoad = null;
+                    firstLoad = sortedPackets.ToArray();
                 }
                 
                 CreateAllTimeLabels(firstLoad);
@@ -864,7 +941,10 @@ namespace StarMeter.View
 
                 CreateChart();
 
-                CreateDataRateGraph(packets);
+                CreateDataRateGraph(packets.ToArray());
+
+                if (controller.packets.Count < 100) { NextPageBtn.Visibility = System.Windows.Visibility.Hidden; } else { NextPageBtn.Visibility = System.Windows.Visibility.Visible; }
+
             }
 
         }
@@ -884,14 +964,17 @@ namespace StarMeter.View
             var tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
 
 
-            var milli = (tEnd - tStart).Milliseconds;
+            var timeDiff = tEnd - tStart;
 
-            //interval = milli / packets.Length /2;
-            interval = 300;
+            var milli = (int)timeDiff.TotalMilliseconds;
             
+            interval = milli / packets.Length /2;
+            //interval = 300;
+            
+
             section = new TimeSpan(0, 0, 0, 0, interval);
             negative_section = section.Negate();
-            half_section = new TimeSpan(0, 0, 0, 0, interval / 2);
+            half_section = new TimeSpan(0, 0, 0, 0, -interval / 2);
             var i = 0;
 
             var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
@@ -908,7 +991,6 @@ namespace StarMeter.View
             _timespans = timelist.ToArray();
         }
         
-
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
@@ -928,8 +1010,7 @@ namespace StarMeter.View
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-
-            
+                        
             Packet[] packets = new Packet[controller.packets.Count];
 
             int count = 0;
@@ -1051,13 +1132,18 @@ namespace StarMeter.View
 
         }
 
-
         int pageIndex = 0;
 
         void NextPage(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
             pageIndex++;
+
+            for (int i = 0; i < 8; i++)
+            {
+                _previous[i] = new TimeSpan();
+            }
+
 
             if ((100 * (pageIndex + 1)) > controller.packets.Count)
             {
@@ -1072,11 +1158,11 @@ namespace StarMeter.View
             Packet[] toLoad;
             try
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                toLoad = sortedPackets.GetRange((100 * pageIndex), 100).ToArray();
             }
             catch (Exception)
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                toLoad = sortedPackets.GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
             }
 
             CreateAllTimeLabels(toLoad);
@@ -1090,6 +1176,11 @@ namespace StarMeter.View
         {
             RemoveAllPackets();
             pageIndex--;
+            
+            for (int i = 0; i < 8; i++)
+            {
+                _previous[i] = new TimeSpan();
+            }
 
             if (pageIndex == 0)
             {
@@ -1103,11 +1194,11 @@ namespace StarMeter.View
             Packet[] toLoad;
             try
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                toLoad = sortedPackets.GetRange((100 * pageIndex), 100).ToArray();
             }
             catch (Exception)
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Values.ToList().Count - (100 * pageIndex)).ToArray();
+                toLoad = sortedPackets.GetRange((100 * pageIndex), controller.packets.Values.ToList().Count - (100 * pageIndex)).ToArray();
             }
             
             CreateAllTimeLabels(toLoad);
