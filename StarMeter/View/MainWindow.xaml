@@ -15,9 +15,14 @@
 
 
     <!-- The main grid to seperate the Left Panel, the Port info, and the DVS-->
-    <Grid
-        x:Name="MainGrid"
+    <Grid                    
+              MouseDown="Grid_MouseDown"
+            MouseUp="Grid_MouseUp"
+            MouseMove="Grid_MouseMove"
+             x:Name="MainGrid"
         >
+
+        
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                 <GradientStop Color="#FF161A2E" Offset="1"/>
@@ -39,16 +44,18 @@
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
-        <Button Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
+        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
             <Button.Background>
-                <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="/StarMeter;component/Resources/left chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
-        <Button Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
+        <Button BorderThickness="0" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
             <Button.Background>
-                <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="/StarMeter;component/Resources/right chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
+        
+        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="2" Margin="100,0,0,0">Showing 0 to 0 of 0 results</Label>
 
         <Button Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
@@ -57,10 +64,7 @@
         </Button>
 
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
-        MouseDown="Grid_MouseDown"
-        MouseUp="Grid_MouseUp"
-        MouseMove="Grid_MouseMove">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"       >
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -69,11 +73,12 @@
             <Grid Grid.Row="2" IsHitTestVisible="false">
 
                 <!-- Chart for displaying the data rates, assigned to the bottom row -->
-                <DVC:Chart Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
+                <DVC:Chart Visibility="Visible" Background="Transparent" Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
                     <DVC:LineSeries  DependentValuePath="Value" 
                     IndependentValuePath="Key" ItemsSource="{Binding}"            
                     IsSelectionEnabled="True"/>
                 </DVC:Chart>
+
             </Grid>
 
         </Grid>
@@ -155,7 +160,7 @@
             </ScrollViewer>
 
         </Grid>
-
+        
         <Canvas>
             <Canvas.Background>
                 <ImageBrush/>
@@ -208,7 +213,7 @@
             </ScrollViewer>
 
             <!-- TEMP to display the size of the rectangle -->
- 
+
             <Button Name="CmdTestData" Grid.Row="4" HorizontalAlignment="Right" Content="Add Test values" Width="91" Click="TestTimeCreation" Height="24" Margin="0,383.6,-0.4,-0.4" Grid.RowSpan="2" VerticalAlignment="Top" Visibility="Hidden"/>
             <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Button.Background>
@@ -226,14 +231,15 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
+            <Image Visibility="Hidden" Name="LoadingIcon" HorizontalAlignment="Left" Height="112" Margin="76,0.4,0,-20.4" Grid.Row="4" Grid.RowSpan="2" VerticalAlignment="Top" Width="116"/>
 
 
         </Grid>
-        
+
         <Grid Name="FiltersPanel" Grid.Row="1" Grid.Column="1">
-         
+
             <Grid Name="FiltersGrid" Grid.Row="4">
-                
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height=".2*" Name="Heading"/>
                     <RowDefinition Height=".25*" Name="ErrorsOnly"/>
@@ -293,24 +299,24 @@
 
                     </Grid>
                 </Grid>
-                    
-                    <Grid Grid.Row="4">
 
-                        <Grid Name="AddressSearching">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="2*"/>
-                                <RowDefinition Height="2*"/>
-                                <RowDefinition Height="2*"/>
-                            </Grid.RowDefinitions>
-                            
-                            <TextBox x:Name="addressSearch" Grid.Row="1" Margin="10,5,10,5" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Stretch"/>
-                            <Label Grid.Row="0" x:Name="SizeLabelTest_Copy1" Content="Address To Search:" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="10,0,10,0"/>
-                            <Button Margin="10,5,10,5" Grid.Row="2" Click="SearchForAddress" Content="Search for address" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Button>
-                        </Grid>
-                        
+                <Grid Grid.Row="4">
+
+                    <Grid Name="AddressSearching">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBox x:Name="addressSearch" Grid.Row="1" Margin="10,5,10,5" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                        <Label Grid.Row="0" x:Name="SizeLabelTest_Copy1" Content="Address To Search:" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="10,0,10,0"/>
+                        <Button Margin="10,5,10,5" Grid.Row="2" Click="SearchForAddress" Content="Search for address" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Button>
+                    </Grid>
+
 
                 </Grid>
-                
+
                 <Grid Grid.Row="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*"/>
