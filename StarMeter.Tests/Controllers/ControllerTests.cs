@@ -8,34 +8,34 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class ControllerTests
     {
-        private Controller controller;
+        private Controller _controller;
 
         [TestInitialize]
         public void Initialize()
         {
-            controller = new Controller();
+            _controller = new Controller();
         }
 
         [TestMethod]
         public void TestAddFileNames()
         {
-            Assert.AreEqual(controller.filePaths.Count, 0);
+            Assert.AreEqual(_controller.filePaths.Count, 0);
 
             string[] toAdd = {"test1", "test2"};
-            controller.AddFileNames(toAdd);
+            _controller.AddFileNames(toAdd);
 
-            Assert.AreEqual(controller.filePaths.Count, 2);
-            Assert.AreEqual(controller.filePaths.First(), "test1");
-            Assert.AreEqual(controller.filePaths.Last(), "test2");
+            Assert.AreEqual(_controller.filePaths.Count, 2);
+            Assert.AreEqual(_controller.filePaths.First(), "test1");
+            Assert.AreEqual(_controller.filePaths.Last(), "test2");
         }
 
         [TestMethod]
         public void TestGetFileNames()
         {
-            controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
-            controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test2_link1.rec");
+            _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
+            _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test2_link1.rec");
 
-            string[] response = controller.GetFileNames();
+            string[] response = _controller.GetFileNames();
             string[] expected = {"test1_link1.rec", "test2_link1.rec"};
 
             Assert.IsTrue(response.SequenceEqual(expected));
@@ -44,22 +44,21 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void RemoveFile()
         {
-            controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
-            controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test2_link1.rec");
+            _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
+            _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test2_link1.rec");
 
-            controller.RemoveFile("test2_link1.rec");
+            _controller.RemoveFile("test2_link1.rec");
 
-            List <string> response = controller.filePaths;
-            List<string> expected = new List<string>();
-            expected.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
+            List <string> response = _controller.filePaths;
+            List<string> expected = new List<string> {@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec"};
 
             Assert.IsTrue(response.SequenceEqual(expected));
         }
 
-        [TestCleanup()]
+        [TestCleanup]
         public void Cleanup()
         {
-            controller = null;
+            _controller = null;
         }
     }
 }

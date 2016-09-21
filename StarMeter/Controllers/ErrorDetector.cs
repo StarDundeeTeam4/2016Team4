@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;   
-using StarMeter.Models;
+﻿using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {

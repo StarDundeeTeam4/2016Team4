@@ -5,7 +5,6 @@ using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-
     public interface IAnalyser
     {
         int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary);
@@ -18,7 +17,6 @@ namespace StarMeter.Controllers
 
     public class Analyser : IAnalyser
     {
-
         public int CalculateTotalNoOfDataChars(Dictionary<Guid, Packet> packetDictionary)
         {
             var totalNoOfDataChars = 0;
@@ -97,7 +95,6 @@ namespace StarMeter.Controllers
 
         public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets) 
         {
-
             var sortedPackets = from pair in packets orderby pair.DateRecieved ascending select pair;
 
             List<KeyValuePair<string, int>> returnedData = new List<KeyValuePair<string, int>>();
@@ -110,11 +107,11 @@ namespace StarMeter.Controllers
 
                 TimeSpan tDiff = tEnd - tStart;
 
-                const int NUM_POINTS = 10;
+                const int numPoints = 10;
 
-                double interval = (tDiff.TotalMilliseconds / NUM_POINTS);
+                double interval = (tDiff.TotalMilliseconds / numPoints);
 
-                for (int i = 0; i < NUM_POINTS; i++)
+                for (int i = 0; i < numPoints; i++)
                 {
                     int count = 0;
                     int errorCount = 0;
@@ -139,9 +136,7 @@ namespace StarMeter.Controllers
                     var kvpError = new KeyValuePair<string, int>(lowerBound.ToString(), errorCount);
                     returnedData.Add(kvp);
                     errorData.Add(kvpError);
-
                 }
-
             }
 
             List<KeyValuePair<string, int>>[] toReturn = new List<KeyValuePair<string, int>>[2];

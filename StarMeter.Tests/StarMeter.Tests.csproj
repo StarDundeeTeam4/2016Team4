@@ -108,6 +108,7 @@
     <Compile Include="Controllers\ErrorDetectorTest.cs" />
     <Compile Include="Controllers\ParserTests.cs" />
     <Compile Include="Controllers\CRCTest.cs" />
+    <Compile Include="Controllers\RmapPacketHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
