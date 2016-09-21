@@ -1,4 +1,5 @@
-﻿using StarMeter.Models;
+﻿using System.Linq;
+using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
@@ -32,10 +33,11 @@ namespace StarMeter.Controllers
 
         public bool IsDataError(Packet previousPacket, Packet currentPacket)
         {
-            var isCrcCorrect = CRC.CheckCrcForPacket(currentPacket.FullPacket);
+            //var isCrcCorrect = CRC.CheckCrcForPacket(currentPacket.FullPacket);
             var isBabblingIdiot = CheckForBabblingIdiot(currentPacket, previousPacket);
 
-            return !isCrcCorrect || isBabblingIdiot;
+            //return !isCrcCorrect || isBabblingIdiot;
+            return isBabblingIdiot;
         }
 
         public bool IsSequenceError(Packet previousPacket, Packet currentPacket)
@@ -55,7 +57,7 @@ namespace StarMeter.Controllers
 
         private static bool CheckForBabblingIdiot(Packet currentPacket, Packet previousPacket)
         {
-            return previousPacket.FullPacket == currentPacket.FullPacket;
+            return previousPacket.FullPacket.SequenceEqual(currentPacket.FullPacket);
         }
     }
 }
