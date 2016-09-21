@@ -220,7 +220,6 @@ namespace StarMeter.View
                         else
                         {
                             temp_timespans = temp_timespans.GetRange(index, temp_timespans.Count - index);
-                            //index = index + (index / 2);
                         }
                     }
                 }
@@ -233,14 +232,13 @@ namespace StarMeter.View
                     else
                     {
                         temp_timespans = temp_timespans.GetRange(0, index);
-                        //index = index / 2;
                     }
                 }
             }
 
-            //This line will let us know how many empty spaces that we need to add to the stack panel.
 
-            var diff = (temp_timespans[index] - _previous).Add(negative_section);
+
+            var diff = (temp_timespans[index] - _previous).Add(negative_section); //This line will let us know how many empty spaces that we need to add to the stack panel.
             int spaces = 0;
 
      
@@ -250,24 +248,15 @@ namespace StarMeter.View
                 spaces++;
             }
 
-
-
             for (int i = 0; i < spaces; i++)
             {
                 Label lbl = new Label();
                 lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
                 sp.Children.Add(lbl);
             }
-
-            //b.Margin = new Thickness(0, 0, 0, ((HeightScroller.Value * spaces) + ((1 + spaces) * HeightScroller.Value)) + ((HeightScroller.Value) / 10));
             sp.Children.Add(b);
 
-
-
             _previous = temp_timespans[index];
-
-
-            
 
         }
 
@@ -1117,6 +1106,17 @@ namespace StarMeter.View
 
         }
 
+        //Shows all packets which were received from the start time onwards
+        void showPacketsFromTime(DateTime start)
+        {
+
+        }
+        
+        //Shows packets which were received between the start and end time.
+        void showPacketsBetweenTime(DateTime start, DateTime end)
+        {
+
+        }
     }
 
 
