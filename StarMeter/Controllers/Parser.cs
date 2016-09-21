@@ -12,6 +12,7 @@ namespace StarMeter.Controllers
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
         private Guid? _prevPacket;
         private readonly PacketHandler _packetHandler = new PacketHandler();
+        private readonly RmapPacketHandler _rmapPacketHandler = new RmapPacketHandler();
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -60,7 +61,7 @@ namespace StarMeter.Controllers
                     packet.SequenceNum = _packetHandler.GetSequenceNumber(packet, logicalAddressIndex);
                     if (packet.ProtocolId == 1)
                     {
-                        packet = RmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
+                        packet = _rmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
                     }
                     else
                     {
