@@ -5,9 +5,9 @@ using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-    public class RmapPacketHandler
+    public static class RmapPacketHandler
     {
-        public RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
+        public static RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
         {
             var rmapCommandByte = new BitArray(new[] { packet.FullPacket[addressIndex + 2] });
             var rmapPacketType = GetRmapType(rmapCommandByte);
@@ -37,7 +37,7 @@ namespace StarMeter.Controllers
             return rmapPacket;
         }
 
-        public byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
+        public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
         {
             var result = new List<byte>();
             var sourceAddressIndex = logicalAddressIndex + 4;
@@ -56,7 +56,7 @@ namespace StarMeter.Controllers
             return result.ToArray();
         }
 
-        private int GetRmapLogicalAddressLength(byte rmapCommandByte)
+        private static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
             var finalArray = new BitArray(new[] { getBit(rmapCommandByte, 1), getBit(rmapCommandByte, 2), false, false, false, false, false, false });
             var result = new int[1];
@@ -65,13 +65,13 @@ namespace StarMeter.Controllers
             return final * 4;
         }
 
-        private bool getBit(byte cmdByte, int index)
+        private static bool getBit(byte cmdByte, int index)
         {
             var bit = (cmdByte & (1 << index - 1)) != 0;
             return bit;
         }
 
-        public bool CheckRmapCrc(RmapPacket packet)
+        public static bool CheckRmapCrc(RmapPacket packet)
         {
             if (packet.PacketType.EndsWith("Reply"))
             {
@@ -92,7 +92,7 @@ namespace StarMeter.Controllers
             return true;
         }
 
-        public string GetRmapType(BitArray bitArray)
+        public static string GetRmapType(BitArray bitArray)
         {
             var result = "";
             if (bitArray[5])
@@ -115,7 +115,7 @@ namespace StarMeter.Controllers
             return result;
         }
 
-        public byte GetDestinationKey(byte[] packetData, int logicalAddressIndex)
+        public static byte GetDestinationKey(byte[] packetData, int logicalAddressIndex)
         {
             return packetData[logicalAddressIndex + 3];
         }

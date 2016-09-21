@@ -12,7 +12,6 @@ namespace StarMeter.Controllers
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
         private Guid? _prevPacket;
-        readonly RmapPacketHandler _rmapPacketHandler = new RmapPacketHandler();
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -54,18 +53,19 @@ namespace StarMeter.Controllers
                     
                     var logicalAddressIndex = GetLogicalAddressIndex(packet.FullPacket);
 
-                    packet.Cargo = GetCargoArray(packet, logicalAddressIndex);
                     packet.ProtocolId = GetProtocolId(packet.FullPacket, logicalAddressIndex);
-                    if (packet.ProtocolId == 1)
-                    {
-                        packet = _rmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
-                    }
+                    packet.Cargo = GetCargoArray(packet, logicalAddressIndex);
                     packet.Address = GetAddressArray(packet.FullPacket, logicalAddressIndex);
                     packet.Crc = GetCrc(packet.FullPacket);
                     packet.SequenceNum = GetSequenceNumber(packet, logicalAddressIndex);
-                    packet.ErrorType = GetErrorType(packet);
-
-                   
+                    if (packet.ProtocolId == 1)
+                    {
+                        packet = RmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
+                    }
+                    else
+                    {
+                        packet.ErrorType = GetErrorType(packet);
+                    }
                 }
                 else
                 {
@@ -133,7 +133,7 @@ namespace StarMeter.Controllers
             byte[] cargo;
             if (packet.ProtocolId == 1)
             {
-                string type = _rmapPacketHandler.GetRmapType(new BitArray(new[] { packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2] }));
+                string type = RmapPacketHandler.GetRmapType(new BitArray(new[] { packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2] }));
                 if (type.EndsWith("Reply"))
                 {
                     int start = logicalIndex + 12;
@@ -198,8 +198,16 @@ namespace StarMeter.Controllers
 
         public ErrorTypes GetErrorType(Packet packet)
         {
-            var calculatedCrc = CRC.CheckCrcForPacket(packet.FullPacket);
-            return !calculatedCrc ? ErrorTypes.DataError : ErrorTypes.None;
+            bool CrcValid;
+            if (packet.GetType() == typeof(RmapPacket))
+            {
+                CrcValid = RmapPacketHandler.CheckRmapCrc((RmapPacket)packet);
+            }
+            else
+            {
+                CrcValid = CRC.CheckCrcForPacket(packet.FullPacket);
+            }
+            return !CrcValid ? ErrorTypes.DataError : ErrorTypes.None;
         }
 
     }
