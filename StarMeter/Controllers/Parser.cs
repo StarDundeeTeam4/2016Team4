@@ -42,6 +42,7 @@ namespace StarMeter.Controllers
                 }
 
                 var packetType = r.ReadLine();
+                packet = SetPrevPacket(packet);
                 if (IsPType(packetType))
                 {
                     //read cargo line and convert to byte array
@@ -67,13 +68,19 @@ namespace StarMeter.Controllers
                 else
                 {
                     packet.IsError = true;
-                    r.ReadLine();
+                    var errorType = r.ReadLine();
+                    var previousPacket = GetPrevPacket(packet);
+                    previousPacket.IsError = true;
+                    if (errorType == "Disconnect")
+                    {
+                        packet.ErrorType = ErrorTypes.Disconnect;
+                    }
                 }
-                packet = SetPrevPacket(packet);
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
+     //       PacketDict.Remove(PacketDict.Keys.Last());
             return PacketDict;
         }
 
@@ -90,6 +97,14 @@ namespace StarMeter.Controllers
             //store this id as the previous packet
             _prevPacket = packet.PacketId;
             return packet;
+        }
+
+        private Packet GetPrevPacket(Packet packet)
+        {
+            Guid prevPacketId = (Guid)packet.PrevPacket;
+            Packet previousPacket;
+            PacketDict.TryGetValue(prevPacketId, out previousPacket);
+            return previousPacket;
         }
 
         private static bool IsPType(string packetType)
