@@ -7,7 +7,6 @@ namespace StarMeter.Controllers
 {
     public class Controller
     {
-
         public readonly List<string> filePaths = new List<string>();
         public readonly Dictionary<Guid, Packet> packets = new Dictionary<Guid,Packet>();
 
@@ -37,7 +36,6 @@ namespace StarMeter.Controllers
             }
 
             return filesAdded;
-
         }
 
         public string[] GetFileNames()
@@ -52,12 +50,12 @@ namespace StarMeter.Controllers
             {
                 filePaths.RemoveAt(index);
             }
+
             return index;
         }
 
         public Packet[] ParsePackets() 
         {
-
             packets.Clear();
 
             Parser parser = new Parser();

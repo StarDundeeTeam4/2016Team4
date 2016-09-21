@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -71,141 +70,6 @@ namespace StarMeter.Tests.Controllers
             Assert.IsTrue(_parser.ParseDateTime(stringDateTime, out result));
             Assert.IsInstanceOfType(result, typeof(DateTime));
             Assert.AreEqual(result, new DateTime(2016, 09, 08, 14, 27, 53, 726));
-        }
-
-        [TestMethod]
-        public void NoErrorOnePacketReturnsListWithOneElement()
-        {
-            var readerMock = new Mock<IStreamReader>();
-
-            var stockResponses = new Queue<string>();
-            stockResponses.Enqueue("08-09-2016 18:45:04.045");
-            stockResponses.Enqueue("1");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:12:50.081");
-            stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"01 00 fe fa 53 2d e5 81 d1 27 41 d5 e5 fe c6 67 05 54 dd 12 75 f0 86 e4 dd 6c 3f 71 49 2d 29 6c 73 99 66 78 45 83 c5 3b 9a ea a1 b4 45 e4 06 cf 54 d5 16 37 96 e4 ab 6c 5a b0 3e");
-            stockResponses.Enqueue("EOP");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:13:55.193");
-            stockResponses.Enqueue(null);
-            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
-
-            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
-
-            var result = _parser.ParsePackets(readerMock.Object);
-            var expected = new Dictionary<Guid, Packet>();
-            var packetId = Guid.NewGuid();
-            var packet1 = new Packet
-            {
-                IsError = false,
-                PacketId = packetId,
-                DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-                Cargo = _exampleCargo
-            };
-            expected.Add(packetId, packet1);
-           
-            var comparativePacket = (from a in result.Values
-                where a.DateRecieved == packet1.DateRecieved
-                select a).First();
-
-
-            Assert.AreEqual(expected[packetId].Cargo.Length, comparativePacket.Cargo.Length);
-            Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
-        }
-
-        [TestMethod]
-        public void PacketCollectionWithErrorParsed()
-        {
-            var readerMock = new Mock<IStreamReader>();
-
-            var stockResponses = new Queue<string>();
-            stockResponses.Enqueue("08-09-2016 18:45:04.045");
-            stockResponses.Enqueue("1");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:12:50.081");
-            stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"00 fe fa 00 17 50 b8 f6 ca d3 9e 3c 52 74 51 9f ef 80 ba f6 75 92 de c3 aa 62 5f aa f0 de 46 28 24 7c ff 81 c5 ce a5 fa 59 57 81 49 0c 9d cd 4a 9b 7f bd f3 70 c9 c0 8a 0f 06 03 15 b0 95 36 13 2d ff 94 69 1f 88 1d 9f 44 04 26 4c 25 ec 14 cf f5 b1 65 40 bb 50 f0 a7 b4 27 6d 6b f2 07 37 0d 4a 8a 51 15 6d a7 a7 4d 55 83 97 2e e3 8a b0 98 c6 bf ba c6 9e 50 f6 80 61 6e a7 92 fe 5b d0 7e 41 c5 40 6e f7 52 cc 6c 52 7c dc d5 8f 9f 29 0b d5 50 c4 6b 61 f1 5b 7f e0 82 b8 74 1c ba 8a ce db 57 68 5a 04 b2 13 64 04 96 fb 2b 70 52 05 92 ec 0d 8c 18 4b 5a a6 0a f8 0d a8 f8 94 4c ec 65 e0 e9 d1 c2 de ef 04 9e 33 7a fe 17 d0 cc ce 94 d1 9e 19 b6 a5 b4 5f 8b 70 b4 7f 05 ad 38 7e ab 18 22 84 8f cb 30 27 80 a7 d0 ec 80 f5 35 0b 79 4d aa 73 2b b7 26 0e 69 11 21 46 85 b1 a7 c8");
-            stockResponses.Enqueue("EOP");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:53:23.690");
-            stockResponses.Enqueue("E");
-            stockResponses.Enqueue("Disconnect");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:13:55.193");
-            stockResponses.Enqueue(null);
-            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
-
-            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(5).Returns(-1);
-
-            var result = _parser.ParsePackets(readerMock.Object);
-            var expected = new Dictionary<Guid, Packet>();
-
-            var packet1 = new Packet
-            {
-                IsError = false,
-                DateRecieved = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
-                Cargo = _exampleCargo,
-            };
-            var packet2 = new Packet
-            {
-                DateRecieved = DateTime.ParseExact("08-09-2016 15:53:23.690", "dd-MM-yyyy HH:mm:ss.fff", null),
-                IsError = true
-            };
-            var packetId = Guid.NewGuid();
-            expected.Add(packetId, packet1);
-            packetId = Guid.NewGuid();
-            expected.Add(packetId, packet2);
-            var comparativePacket = (from a in result.Values
-                                    where a.DateRecieved == packet2.DateRecieved
-                                    select a).First();
-
-            Assert.AreEqual(expected.Count, result.Count);
-            Assert.AreEqual(expected[packetId].DateRecieved, comparativePacket.DateRecieved);
-            Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
-        }
-         
-        [TestMethod]
-        public void NoneErrorParsesSuccesfully()
-        {
-            var readerMock = new Mock<IStreamReader>();
-
-            var stockResponses = new Queue<string>();
-            stockResponses.Enqueue("08-09-2016 18:45:04.045");
-            stockResponses.Enqueue("1");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:12:55.051");
-            stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"01 00 fe fa 53 2d e5 81 d1 27 41 d5 e5 fe c6 67 05 54 dd 12 75 f0 86 e4 dd 6c 3f 71 49 2d 29 6c 73 99 66 78 45 83 c5 3b 9a ea a1 b4 45 e4 06 cf 54 d5 16 37 96 e4 ab 6c 5a b0 3e");
-            stockResponses.Enqueue("None");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:13:55.193");
-            stockResponses.Enqueue(null);
-            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
-
-            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
-
-            var result = _parser.ParsePackets(readerMock.Object);
-
-            var expected = new Dictionary<Guid, Packet>();
-            var packet1 = new Packet
-            {
-                IsError = true,
-                DateRecieved = DateTime.ParseExact("08-09-2016 15:12:55.051", "dd-MM-yyyy HH:mm:ss.fff", null),
-                Cargo = _exampleCargo,
-            };
-           
-            var packetId = Guid.NewGuid();
-            expected.Add(packetId, packet1);
-
-            var comparativePacket = (from a in result.Values
-                                     where a.DateRecieved == packet1.DateRecieved
-                                     select a).First();
-
-            Assert.AreEqual(expected[packetId].Cargo.Length, comparativePacket.Cargo.Length);
-            Assert.AreEqual(expected[packetId].Cargo[2], comparativePacket.Cargo[2]);
-            Assert.AreEqual(expected[packetId].DateRecieved, comparativePacket.DateRecieved);
-            Assert.AreEqual(expected[packetId].IsError, comparativePacket.IsError);
         }
 
         [TestMethod]
@@ -319,7 +183,7 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetSequenceNumberFromNonRmap()
         {
-            byte[] _nonRmapPacket =
+            byte[] nonRmapPacket =
             {
                 0x3f, 0xfa, 0x0f, 0x33, 0xd2, 0x6b, 0xef, 0x66, 0x29, 0xdb, 0x84, 0x3f, 0x1a, 0xd7, 0x68, 0x4a, 0x10,
                 0xe9, 0x8e, 0x01, 0xb2, 0xf3, 0xe3, 0xed, 0x70, 0x71, 0x81, 0x0e, 0x5c, 0xfe, 0x25, 0x7d, 0x3c, 0x1a,
@@ -338,9 +202,9 @@ namespace StarMeter.Tests.Controllers
                 0x27, 0x6a, 0xfd, 0x22, 0x47, 0x90, 0x3e, 0x85, 0xe9, 0x86, 0x02, 0x81, 0x5e, 0x2c, 0x40, 0x82, 0x71,
                 0xf5, 0x27, 0x47, 0xf4, 0x32, 0x56, 0x43, 0x9f, 0x93, 0x4f, 0x43, 0x1b, 0xea, 0x29, 0x52
             };
-            Packet p = new Packet()
+            Packet p = new Packet
             {
-                FullPacket = _nonRmapPacket
+                FullPacket = nonRmapPacket
             };
 
             const int expectedSequenceNumber = 15;
@@ -354,7 +218,7 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetSequenceNumberFromNonRmap2()
         {
-            byte[] _nonRmapPacket =
+            byte[] nonRmapPacket =
             {
                 0x55, 0xfa, 0x00, 0x3e, 0x8a, 0xe4, 0x49, 0x2d, 0xf8, 0x22, 0x36, 0xb6, 0xb0, 0x42, 0x37,
                 0xcc, 0x66, 0x7d, 0xb5, 0x03, 0xed, 0xa4, 0x4e, 0x51, 0xf1, 0x04, 0x28, 0x16, 0xe8, 0x8c,
@@ -378,9 +242,9 @@ namespace StarMeter.Tests.Controllers
                 0x1d, 0xc8, 0x8f, 0x10, 0x7b, 0x25, 0x5a, 0x4d, 0x2b, 0x1c, 0x96, 0x76, 0x62, 0xa8, 0xa7, 0x69, 0x50,
                 0xc2, 0xed, 0x1c, 0xea, 0x1c, 0xa4, 0xea, 0xed, 0x11, 0x08, 0x2a, 0x20
             };
-            Packet p = new Packet()
+            Packet p = new Packet
             {
-                FullPacket = _nonRmapPacket
+                FullPacket = nonRmapPacket
             };
             const int expectedSequenceNumber = 0;
 
@@ -429,251 +293,108 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expected, _parser.GetSequenceNumber(p, logicalIndex));
         }
 
-        [TestMethod]
-        public void GetRmapPacketFromParserWhenRmapProtocolUsed()
-        {
-            var parser = new Parser();
-            var readerMock = new Mock<IStreamReader>();
+//        [TestMethod]
+//        public void GetRmapPacketFromParserWhenRmapProtocolUsed()
+//        {
+//            var parser = new Parser();
+//            var readerMock = new Mock<IStreamReader>();
+//
+//            var stockResponses = new Queue<string>();
+//            stockResponses.Enqueue("08-09-2016 15:11:04.045");
+//            stockResponses.Enqueue("1");
+//            stockResponses.Enqueue("");
+//            stockResponses.Enqueue("08-09-2016 15:12:50.081");
+//            stockResponses.Enqueue("P");
+//            stockResponses.Enqueue(@"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25");
+//            stockResponses.Enqueue("EOP");
+//            stockResponses.Enqueue("");
+//            stockResponses.Enqueue("08-09-2016 15:13:55.193");
+//            stockResponses.Enqueue(null);
+//            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
+//                
+//            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
+//
+//            parser.ParsePackets(readerMock.Object);
+//
+//            var expectedValue = typeof(RmapPacket);
+//            var result = parser.PacketDict.Values.FirstOrDefault().GetType();
+//            Assert.AreEqual(expectedValue, result);
+//        }
+//
+//        [TestMethod]
+//        public void GetRmapPacketWithTypeSet()
+//        {
+//            var parser = new Parser();
+//            var readerMock = new Mock<IStreamReader>();
+//
+//            var stockResponses = new Queue<string>();
+//            stockResponses.Enqueue("08-09-2016 18:45:04.045");
+//            stockResponses.Enqueue("1");
+//            stockResponses.Enqueue("");
+//            stockResponses.Enqueue("08-09-2016 15:12:50.081");
+//            stockResponses.Enqueue("P");
+//            stockResponses.Enqueue(@"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25");
+//            stockResponses.Enqueue("EOP");
+//            stockResponses.Enqueue("");
+//            stockResponses.Enqueue("08-09-2016 15:13:55.193");
+//            stockResponses.Enqueue(null);
+//            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
+//
+//            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
+//
+//            parser.ParsePackets(readerMock.Object);
+//
+//            var expectedValue = new RmapPacket()
+//            {
+//                PacketId = Guid.NewGuid(),
+//                PortNumber = 1,
+//                Address = new byte[]{33},
+//                PacketType = "Read Reply"
+//            };
+//            var result = parser.PacketDict.Values.FirstOrDefault();
+//            Assert.AreEqual(expectedValue.PacketType, ((RmapPacket)result).PacketType);
+//        }
+//
+//        [TestMethod]
+//        public void GetSourcePathAddressRmapFromParser()
+//        {
+//            var parser = new Parser();
+//            var readerMock = new Mock<IStreamReader>();
+//
+//            var stockResponses = new Queue<string>();
+//            stockResponses.Enqueue("08-09-2016 18:45:04.045");
+//            stockResponses.Enqueue("1");
+//            stockResponses.Enqueue("");
+//            stockResponses.Enqueue("08-09-2016 15:12:50.081");
+//            stockResponses.Enqueue("P");
+//            stockResponses.Enqueue(@"01 01 00 fe 01 4d 20 00 00 03 02 fe 00 00 00 00 00 01 00 00 00 04 dc");
+//            stockResponses.Enqueue("EOP");
+//            stockResponses.Enqueue("");
+//            stockResponses.Enqueue("08-09-2016 15:13:55.193");
+//            stockResponses.Enqueue(null);
+//            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
+//
+//            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
+//
+//            parser.ParsePackets(readerMock.Object);
+//
+//            var expectedValue = new RmapPacket()
+//            {
+//                PacketId = Guid.NewGuid(),
+//                PortNumber = 1,
+//                Address = new byte[] { 33 },
+//                PacketType = "Read",
+//                SourcePathAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02 }
+//            };
+//            var result = parser.PacketDict.Values.FirstOrDefault();
+//            Assert.AreEqual(expectedValue.SourcePathAddress.Length, ((RmapPacket)result).SourcePathAddress.Length);
+//            Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
+//        }
 
-            var stockResponses = new Queue<string>();
-            stockResponses.Enqueue("08-09-2016 18:45:04.045");
-            stockResponses.Enqueue("1");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:12:50.081");
-            stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25");
-            stockResponses.Enqueue("EOP");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:13:55.193");
-            stockResponses.Enqueue(null);
-            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
-
-            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
-
-            parser.ParsePackets(readerMock.Object);
-
-            var expectedValue = typeof(RmapPacket);
-            var result = parser.PacketDict.Values.FirstOrDefault().GetType();
-            Assert.AreEqual(expectedValue, result);
-        }
-
-        [TestMethod]
-        public void GetRmapPacketWithTypeSet()
-        {
-            var parser = new Parser();
-            var readerMock = new Mock<IStreamReader>();
-
-            var stockResponses = new Queue<string>();
-            stockResponses.Enqueue("08-09-2016 18:45:04.045");
-            stockResponses.Enqueue("1");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:12:50.081");
-            stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"2d 01 0c 00 57 ff fb 00 00 00 08 2e f3 e3 58 99 aa ef e5 20 25");
-            stockResponses.Enqueue("EOP");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:13:55.193");
-            stockResponses.Enqueue(null);
-            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
-
-            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
-
-            parser.ParsePackets(readerMock.Object);
-
-            var expectedValue = new RmapPacket()
-            {
-                PacketId = Guid.NewGuid(),
-                PortNumber = 1,
-                Address = new byte[]{33},
-                PacketType = "Read Reply"
-            };
-            var result = parser.PacketDict.Values.FirstOrDefault();
-            Assert.AreEqual(expectedValue.PacketType, ((RmapPacket)result).PacketType);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeWrite()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Write";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x6c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeWriteReply()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Write Reply";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x2c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeRead()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Read";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x4c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetRmapTypeReadReply()
-        {
-            var parser = new Parser();
-            const string expectedValue = "Read Reply";
-            var actual = parser.GetRmapType(new BitArray(new[] { 0x0c }));
-            Assert.AreEqual(expectedValue, actual);
-        }
-
-        [TestMethod]
-        public void GetSourcePathAddressRmapFromParser()
-        {
-            var parser = new Parser();
-            var readerMock = new Mock<IStreamReader>();
-
-            var stockResponses = new Queue<string>();
-            stockResponses.Enqueue("08-09-2016 18:45:04.045");
-            stockResponses.Enqueue("1");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:12:50.081");
-            stockResponses.Enqueue("P");
-            stockResponses.Enqueue(@"01 01 00 fe 01 4d 20 00 00 03 02 fe 00 00 00 00 00 01 00 00 00 04 dc");
-            stockResponses.Enqueue("EOP");
-            stockResponses.Enqueue("");
-            stockResponses.Enqueue("08-09-2016 15:13:55.193");
-            stockResponses.Enqueue(null);
-            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
-
-            readerMock.SetupSequence(t => t.Peek()).Returns(5).Returns(-1);
-
-            parser.ParsePackets(readerMock.Object);
-
-            var expectedValue = new RmapPacket()
-            {
-                PacketId = Guid.NewGuid(),
-                PortNumber = 1,
-                Address = new byte[] { 33 },
-                PacketType = "Read",
-                SourcePathAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02 }
-            };
-            var result = parser.PacketDict.Values.FirstOrDefault();
-            Assert.AreEqual(expectedValue.SourcePathAddress.Length, ((RmapPacket)result).SourcePathAddress.Length);
-            Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRC()
-        {
-            byte[] packetData =
-            {
-                0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsTrue(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCValid()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                ProtocolId = 1,
-                PacketType = "Read Reply",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsTrue(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCHeaderError()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read Reply",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsFalse(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCCargoError()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read Reply",
-                ProtocolId = 1,
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsFalse(_parser.CheckRmapCRC(p));
-        }
-
-        [TestMethod]
-        public void TestCheckRmapCRCTwoErrors()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-            };
-
-            RmapPacket p = new RmapPacket()
-            {
-                PacketType = "Read Reply",
-                FullPacket = packetData,
-            };
-            p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
-
-            Assert.IsFalse(_parser.CheckRmapCRC(p));
-        }
-
-        [TestCleanup()]
+        [TestCleanup]
         public void Cleanup()
         {
             _parser = null;
-        }
-
-        [TestMethod]
-        public void GetDestinationKeyFromRMAP()
-        {
-            byte[] packetData =
-            {
-                0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
-            };
-
-            var actual = _parser.GetDestinationKey(packetData, _parser.GetLogicalAddressIndex(packetData)); // 3 spaces after logical address index
-
-            byte expected = 0x00;
-
-            Assert.AreEqual(expected, actual);
         }
     }
 }
