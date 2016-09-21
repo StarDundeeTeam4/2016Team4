@@ -280,8 +280,8 @@ namespace StarMeter.View
                 timeElements.Remove((UIElement)timeElements[0]);
             }
         }
+
         #region TEMP
-        Packet[] packets = new Packet[3];
 
         void CreateDataRateGraph(Packet[] packets) 
         {
@@ -821,6 +821,8 @@ namespace StarMeter.View
 
         #endregion
 
+        List<Packet> packets = new List<Packet>();
+
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
             if (controller.filePaths.Count < 1)
@@ -1059,14 +1061,29 @@ namespace StarMeter.View
 
 
             Packet[] toLoad;
-            try
+            if(packets == null)
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                try
+                {
+                    toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                }
+                catch (Exception)
+                {
+                    toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                }
             }
-            catch (Exception)
+            else
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                try
+                {
+                    toLoad = packets.GetRange((100 * pageIndex), 100).ToArray();
+                }
+                catch (Exception)
+                {
+                    toLoad = packets.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                }
             }
+            
 
             CreateAllTimeLabels(toLoad);
             AddPacketCollection(toLoad);
@@ -1109,7 +1126,16 @@ namespace StarMeter.View
         //Shows all packets which were received from the start time onwards
         void showPacketsFromTime(DateTime start)
         {
+            packets = null;
+            foreach(var packet in controller.packets.Values)
+            {
+                if(packet.DateRecieved > start)
+                {
+                    packets.Add(packet);
+                }
+            }
 
+            packets.OrderBy(p => p.DateRecieved);
         }
         
         //Shows packets which were received between the start and end time.
