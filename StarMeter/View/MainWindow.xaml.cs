@@ -943,7 +943,7 @@ namespace StarMeter.View
 
                 CreateDataRateGraph(packets.ToArray());
 
-                if (controller.packets.Count < 100) { NextPageBtn.Visibility = System.Windows.Visibility.Hidden; } else { NextPageBtn.Visibility = System.Windows.Visibility.Visible; }
+                if (sortedPackets.Count < 100) { NextPageBtn.Visibility = System.Windows.Visibility.Hidden; } else { NextPageBtn.Visibility = System.Windows.Visibility.Visible; }
 
             }
 
