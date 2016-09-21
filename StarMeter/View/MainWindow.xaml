@@ -241,13 +241,14 @@
             <Grid Name="FiltersGrid" Grid.Row="4">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height=".4*" Name="Heading"/>
-                    <RowDefinition Height=".5*" Name="ErrorsOnly"/>
-                    <RowDefinition Height="1*" Name="PortInfoButtons"/>
+                    <RowDefinition Height=".2*" Name="Heading"/>
+                    <RowDefinition Height=".25*" Name="ErrorsOnly"/>
+                    <RowDefinition Height="0.45*" Name="PortInfoButtons"/>
                     <RowDefinition Height="1.25*" Name="PortChecks"/>
                     <RowDefinition Height=".8*" Name="AddressSearch"/>
                     <RowDefinition Height=".8*" Name="ProtocolSearch"/>
-                    <RowDefinition Height=".4*" Name="ResetBit"></RowDefinition>
+                    <RowDefinition Height="1*" Name="TimeFilters"/>
+                    <RowDefinition Height=".20*" Name="ResetBit"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Label Name ="FiltersHeading" Grid.Row="0" HorizontalAlignment="Center" Content="Filters" Foreground="White" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" />
@@ -330,10 +331,29 @@
                     <TextBox Grid.Row="1" Grid.Column="0" x:Name="protocolSearch" Margin="10,5,10,5"/>
                     <Button Grid.Row="2" Grid.Column="0" Click="SearchForProtocol" Content="Search for protocol" Margin="10,5,10,5"/>
                 </Grid>
-
-
-                <Button Grid.Row="6" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="5"></Button>
-
+                
+                <Grid  Grid.Row="6" Name="TimeFilterSection">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Label Grid.Row="0" Content="Enter times to search" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    
+                    <Grid Name="TimeInput" Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBox Grid.Column="0" Margin="10,10,10,10"  Name="StartTimeTextBox"/>
+                        <TextBox Grid.Column="1" Margin="10,10,10,10" Name="EndTimeTextBox" />
+                    </Grid>
+                    
+                    <Button Click="SearchForPacketsByTime" Grid.Row="2" Content="Search for times" HorizontalAlignment="Stretch" Margin="10,9,10,9"/>
+                </Grid>
+                <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="5"></Button>
 
             </Grid>
 
