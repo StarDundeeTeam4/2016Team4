@@ -9,7 +9,7 @@ namespace StarMeter.Controllers
     {
         public RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
         {
-            var rmapCommandByte = Reverse(new BitArray(new[] { packet.FullPacket[addressIndex + 2] }));
+            var rmapCommandByte = new BitArray(new[] { packet.FullPacket[addressIndex + 2] });
             var rmapPacketType = GetRmapType(rmapCommandByte);
             var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
             var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
@@ -120,20 +120,6 @@ namespace StarMeter.Controllers
             return packetData[logicalAddressIndex + 3];
         }
 
-        //Modified from - Tim Lloyd - StackOverFlow
-        public BitArray Reverse(BitArray array)
-        {
-            var result = array;
-            var length = result.Length;
-            var mid = length / 2;
-
-            for (var i = 0; i < mid; i++)
-            {
-                var bit = result[i];
-                result[i] = result[length - i - 1];
-                result[length - i - 1] = bit;
-            }
-            return result;
-        }
+       
     }
 }
