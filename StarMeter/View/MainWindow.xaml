@@ -15,9 +15,14 @@
 
 
     <!-- The main grid to seperate the Left Panel, the Port info, and the DVS-->
-    <Grid
-        x:Name="MainGrid"
+    <Grid                    
+              MouseDown="Grid_MouseDown"
+            MouseUp="Grid_MouseUp"
+            MouseMove="Grid_MouseMove"
+             x:Name="MainGrid"
         >
+
+        
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                 <GradientStop Color="#FF161A2E" Offset="1"/>
@@ -59,10 +64,7 @@
         </Button>
 
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
-        MouseDown="Grid_MouseDown"
-        MouseUp="Grid_MouseUp"
-        MouseMove="Grid_MouseMove">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"       >
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -71,11 +73,12 @@
             <Grid Grid.Row="2" IsHitTestVisible="false">
 
                 <!-- Chart for displaying the data rates, assigned to the bottom row -->
-                <DVC:Chart Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
+                <DVC:Chart Visibility="Visible" Background="Transparent" Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
                     <DVC:LineSeries  DependentValuePath="Value" 
                     IndependentValuePath="Key" ItemsSource="{Binding}"            
                     IsSelectionEnabled="True"/>
                 </DVC:Chart>
+
             </Grid>
 
         </Grid>
@@ -157,7 +160,7 @@
             </ScrollViewer>
 
         </Grid>
-
+        
         <Canvas>
             <Canvas.Background>
                 <ImageBrush/>
