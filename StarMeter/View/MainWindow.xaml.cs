@@ -1050,7 +1050,7 @@ namespace StarMeter.View
             RemoveAllPackets();
             pageIndex++;
 
-            if ((100 * (pageIndex + 1)) > controller.packets.Count)
+            if ((100 * (pageIndex + 1)) > sortedPackets.Count)
             {
                 NextPageBtn.Visibility = Visibility.Hidden;
             }
@@ -1061,15 +1061,16 @@ namespace StarMeter.View
 
 
             Packet[] toLoad;
+
             if(sortedPackets.Count == 0)
             {
                 try
                 {
-                    toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                    toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), 100).ToArray();
                 }
                 catch (Exception)
                 {
-                    toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                    toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), sortedPackets.Count - (100 * pageIndex)).ToArray();
                 }
             }
             else
@@ -1080,7 +1081,7 @@ namespace StarMeter.View
                 }
                 catch (Exception)
                 {
-                    toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                    toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), sortedPackets.Count - (100 * pageIndex)).ToArray();
                 }
             }
             
@@ -1107,15 +1108,30 @@ namespace StarMeter.View
             }
 
             Packet[] toLoad;
-            try
+
+            if (sortedPackets.Count == 0)
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                try
+                {
+                    toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), 100).ToArray();
+                }
+                catch (Exception)
+                {
+                    toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                }
             }
-            catch (Exception)
+            else
             {
-                toLoad = controller.packets.Values.ToList().GetRange((100 * pageIndex), controller.packets.Values.ToList().Count - (100 * pageIndex)).ToArray();
+                try
+                {
+                    toLoad = sortedPackets.GetRange((100 * pageIndex), 100).ToArray();
+                }
+                catch (Exception)
+                {
+                    toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), controller.packets.Count - (100 * pageIndex)).ToArray();
+                }
             }
-            
+
             CreateAllTimeLabels(toLoad);
             AddPacketCollection(toLoad);
 
@@ -1155,29 +1171,51 @@ namespace StarMeter.View
             sortedPackets.Clear();
             RemoveAllPackets();
 
-            foreach(var packet in controller.packets.Values)
-            {
-                if(packet.DateRecieved > start)
-                {
-                    sortedPackets.Add(packet);
-                }
-            }
-
             sortedPackets = controller.packets.Values.Where(p => p.DateRecieved > start).ToList();
 
 
             sortedPackets.OrderBy(p => p.DateRecieved);
 
-            Packet[] ppp = sortedPackets.ToList().GetRange(0, 100).ToArray();
+            Packet[] firstHundredPackets;
 
-            CreateAllTimeLabels(ppp);
-            AddPacketCollection(ppp);
+            if(sortedPackets.Count < 100)
+            {
+                firstHundredPackets = sortedPackets.GetRange(0, sortedPackets.Count).ToArray();
+            }
+            else
+            {
+                firstHundredPackets = sortedPackets.GetRange(0, 100).ToArray();
+            }
+            
+
+            CreateAllTimeLabels(firstHundredPackets);
+            AddPacketCollection(firstHundredPackets);
         }
         
         //Shows packets which were received between the start and end time.
         void showPacketsBetweenTime(DateTime start, DateTime end)
         {
+            sortedPackets.Clear();
+            RemoveAllPackets();
 
+            sortedPackets = controller.packets.Values.Where(p => p.DateRecieved >= start && p.DateRecieved <= end).ToList();
+
+
+            sortedPackets.OrderBy(p => p.DateRecieved);
+
+            Packet[] firstHundredPackets;
+
+            if (sortedPackets.Count < 100)
+            {
+                firstHundredPackets = sortedPackets.GetRange(0, sortedPackets.Count).ToArray();
+            }
+            else
+            {
+                firstHundredPackets = sortedPackets.GetRange(0, 100).ToArray();
+            }
+
+            CreateAllTimeLabels(firstHundredPackets);
+            AddPacketCollection(firstHundredPackets);
         }
     }
 
