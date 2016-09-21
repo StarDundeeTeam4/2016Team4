@@ -14,7 +14,7 @@ namespace StarMeter.Controllers
             var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
             var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
             var destinationKey = GetDestinationKey(packet.FullPacket, addressIndex);
-            var rmapPacket = new RmapPacket()
+            var rmapPacket = new RmapPacket
             {
                 CommandByte = rmapCommandByte,
                 PacketType = rmapPacketType,
@@ -41,10 +41,18 @@ namespace StarMeter.Controllers
         {
             var result = new List<byte>();
             var sourceAddressIndex = logicalAddressIndex + 4;
-            for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
+            try
             {
-                result.Add(rmapFullPacket[i]);
+                for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
+                {
+                    result.Add(rmapFullPacket[i]);
+                }
             }
+            catch (IndexOutOfRangeException e)
+            {
+                return result.ToArray();
+            }
+
             return result.ToArray();
         }
 
@@ -79,10 +87,7 @@ namespace StarMeter.Controllers
 
                 return (header && cargo);
             }
-            else
-            {
-                if (!CRC.CheckCrcForPacket(packet.FullPacket)) return false;
-            }
+            if (!CRC.CheckCrcForPacket(packet.FullPacket)) return false;
 
             return true;
         }
@@ -115,5 +120,6 @@ namespace StarMeter.Controllers
             return packetData[logicalAddressIndex + 3];
         }
 
+       
     }
 }
