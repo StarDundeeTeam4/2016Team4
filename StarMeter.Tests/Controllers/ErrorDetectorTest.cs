@@ -83,28 +83,28 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expectedResult, actualResult);  
         }
 
-        [TestMethod]
-        public void TestParityError()
-        {
-            byte[] data = { 0x4c, 0x01, 0x7c, 0x20, 0x4a, 0x00, 0x1f, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xfa, 0x00, 0x00, 0x19, 0x42, 0x01 };
-            byte[] data2 = { 0x4c, 0x01, 0x7c, 0x20, 0x4a, 0x00, 0x20, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xdb, 0x00, 0x00, 0x11, 0xcf, 0x94 };
-            Packet packet1 = new Packet()
-            {
-                FullPacket = data,
-                SequenceNum = 31
-            };
-            Packet packet2 = new Packet()
-            {
-                FullPacket = data2,
-                SequenceNum = 32
-            };
-
-            var expectedResult = ErrorTypes.DataError;
-
-            var actualResult = _errorDetector.GetErrorType(packet1, packet2);
-
-            Assert.AreEqual(expectedResult, actualResult);  
-        }
+//        [TestMethod]
+//        public void TestParityError()
+//        {
+//            byte[] data = { 0x4c, 0x01, 0x7c, 0x20, 0x4a, 0x00, 0x1f, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xfa, 0x00, 0x00, 0x19, 0x42, 0x01 };
+//            byte[] data2 = { 0x4c, 0x01, 0x7c, 0x20, 0x4a, 0x00, 0x20, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xdb, 0x00, 0x00, 0x11, 0xcf, 0x94 };
+//            Packet packet1 = new Packet()
+//            {
+//                FullPacket = data,
+//                SequenceNum = 31
+//            };
+//            Packet packet2 = new Packet()
+//            {
+//                FullPacket = data2,
+//                SequenceNum = 32
+//            };
+//
+//            var expectedResult = ErrorTypes.DataError;
+//
+//            var actualResult = _errorDetector.GetErrorType(packet1, packet2);
+//
+//            Assert.AreEqual(expectedResult, actualResult);  
+//        }
 
         [TestCleanup]
         public void Cleanup()

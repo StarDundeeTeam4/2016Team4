@@ -70,14 +70,19 @@ namespace StarMeter.Controllers
                 else
                 {
                     packet.IsError = true;
-                    var errorType = r.ReadLine();
-                    var previousPacket = GetPrevPacket(packet);
-                    previousPacket.IsError = true;
-                    if (errorType == "Disconnect")
+                    var error = r.ReadLine();
+                    if (error == "Disconnect")
                     {
                         packet.ErrorType = ErrorTypes.Disconnect;
                     }
+                    ErrorDetector errorDetector = new ErrorDetector();
+                    var previousPacket = GetPrevPacket(packet);
+                    var previousPreviousPacket = GetPrevPacket(previousPacket);
+                    previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
+                    previousPacket.IsError = true;
                 }
+
+                
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
