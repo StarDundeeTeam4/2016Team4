@@ -8,12 +8,10 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class RmapPacketHandlerTests
     {
-        private RmapPacketHandler _rmapPacketHandler;
         private Parser _parser;
         [TestInitialize]
         public void Initialize()
         {
-            _rmapPacketHandler = new RmapPacketHandler();
             _parser = new Parser();
         }
 
@@ -25,7 +23,7 @@ namespace StarMeter.Tests.Controllers
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
             };
 
-            var actual = _rmapPacketHandler.GetDestinationKey(packetData, _parser.GetLogicalAddressIndex(packetData)); // 3 spaces after logical address index
+            var actual = RmapPacketHandler.GetDestinationKey(packetData, _parser.GetLogicalAddressIndex(packetData)); // 3 spaces after logical address index
 
             byte expected = 0x00;
 
@@ -47,7 +45,7 @@ namespace StarMeter.Tests.Controllers
             };
             p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-            Assert.IsFalse(_rmapPacketHandler.CheckRmapCrc(p));
+            Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
         [TestMethod]
         public void TestCheckRmapCrcCargoError()
@@ -65,7 +63,7 @@ namespace StarMeter.Tests.Controllers
             };
             p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-            Assert.IsFalse(_rmapPacketHandler.CheckRmapCrc(p));
+            Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
 
         [TestMethod]
@@ -83,7 +81,7 @@ namespace StarMeter.Tests.Controllers
             };
             p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-            Assert.IsTrue(_rmapPacketHandler.CheckRmapCrc(p));
+            Assert.IsTrue(RmapPacketHandler.CheckRmapCrc(p));
         }
 
         [TestMethod]
@@ -102,7 +100,7 @@ namespace StarMeter.Tests.Controllers
             };
             p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-            Assert.IsTrue(_rmapPacketHandler.CheckRmapCrc(p));
+            Assert.IsTrue(RmapPacketHandler.CheckRmapCrc(p));
         }
 
         [TestMethod]
@@ -120,14 +118,14 @@ namespace StarMeter.Tests.Controllers
             };
             p.Cargo = _parser.GetCargoArray(p, _parser.GetLogicalAddressIndex(packetData));
 
-            Assert.IsFalse(_rmapPacketHandler.CheckRmapCrc(p));
+            Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
 
         [TestMethod]
         public void GetRmapTypeWrite()
         {
             const string expectedValue = "Write";
-            var actual = _rmapPacketHandler.GetRmapType(new BitArray(new[] { 0x6c }));
+            var actual = RmapPacketHandler.GetRmapType(new BitArray(new[] { 0x6c }));
             Assert.AreEqual(expectedValue, actual);
         }
 
@@ -135,7 +133,7 @@ namespace StarMeter.Tests.Controllers
         public void GetRmapTypeWriteReply()
         {
             const string expectedValue = "Write Reply";
-            var actual = _rmapPacketHandler.GetRmapType(new BitArray(new[] { 0x2c }));
+            var actual = RmapPacketHandler.GetRmapType(new BitArray(new[] { 0x2c }));
             Assert.AreEqual(expectedValue, actual);
         }
 
@@ -143,7 +141,7 @@ namespace StarMeter.Tests.Controllers
         public void GetRmapTypeRead()
         {
             const string expectedValue = "Read";
-            var actual = _rmapPacketHandler.GetRmapType(new BitArray(new[] { 0x4c }));
+            var actual = RmapPacketHandler.GetRmapType(new BitArray(new[] { 0x4c }));
             Assert.AreEqual(expectedValue, actual);
         }
 
@@ -151,14 +149,13 @@ namespace StarMeter.Tests.Controllers
         public void GetRmapTypeReadReply()
         {
             const string expectedValue = "Read Reply";
-            var actual = _rmapPacketHandler.GetRmapType(new BitArray(new[] { 0x0c }));
+            var actual = RmapPacketHandler.GetRmapType(new BitArray(new[] { 0x0c }));
             Assert.AreEqual(expectedValue, actual);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            _rmapPacketHandler = null;
             _parser = null;
         }
 
