@@ -49,7 +49,7 @@ namespace StarMeter.View
                     SourcePathAddressLabel.Content += Convert.ToInt32(p.SourcePathAddress[i]) + "  ";
             }
 
-            CommandByteLabel.Content += ToBitString(p.CommandByte);
+            CommandByteLabel.Content += ToBitString(Reverse(p.CommandByte));
             PacketTypeLabel.Content += p.PacketType;
 
         }
@@ -70,6 +70,22 @@ namespace StarMeter.View
         private void ExitButtonEvent(Object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        //Modified from - Tim Lloyd - StackOverFlow
+        public BitArray Reverse(BitArray array)
+        {
+            var result = array;
+            var length = result.Length;
+            var mid = length / 2;
+
+            for (var i = 0; i < mid; i++)
+            {
+                var bit = result[i];
+                result[i] = result[length - i - 1];
+                result[length - i - 1] = bit;
+            }
+            return result;
         }
 
     }

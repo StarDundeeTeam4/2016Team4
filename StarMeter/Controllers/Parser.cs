@@ -49,6 +49,9 @@ namespace StarMeter.Controllers
                     var packetHexData = r.ReadLine().Split(' ');
                     packet.FullPacket = packetHexData.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
+                    var endingState = r.ReadLine();
+                    packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
+                    
                     var logicalAddressIndex = GetLogicalAddressIndex(packet.FullPacket);
 
                     packet.Cargo = GetCargoArray(packet, logicalAddressIndex);
@@ -62,8 +65,7 @@ namespace StarMeter.Controllers
                     packet.SequenceNum = GetSequenceNumber(packet, logicalAddressIndex);
                     packet.ErrorType = GetErrorType(packet);
 
-                    var endingState = r.ReadLine();
-                    packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
+                   
                 }
                 else
                 {
@@ -164,32 +166,40 @@ namespace StarMeter.Controllers
 
         public int GetProtocolId(byte[] fullPacket, int logicalIndex)
         {
-            return fullPacket[logicalIndex + 1];
+            try
+            {
+                return fullPacket[logicalIndex + 1];
+            }
+
+            catch (IndexOutOfRangeException e)
+            {
+                return -1;
+            }
         }
 
         public int GetSequenceNumber(Packet packet, int logicalIndex)
         {
-            if (packet.GetType() == typeof(RmapPacket))
+            try
             {
+                if (packet.GetType() != typeof(RmapPacket)) return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
                 byte[] sequence = new byte[2];
+
                 Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
                 Array.Reverse(sequence); //damn little-endian-ness
+
+
                 return BitConverter.ToUInt16(sequence, 0);
             }
-            else
+            catch (Exception e)
             {
-                return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
+                return -1;
             }
         }
 
         public ErrorTypes GetErrorType(Packet packet)
         {
             var calculatedCrc = CRC.CheckCrcForPacket(packet.FullPacket);
-            if (!calculatedCrc)
-            {
-                return ErrorTypes.DataError;
-            }
-            return ErrorTypes.None;
+            return !calculatedCrc ? ErrorTypes.DataError : ErrorTypes.None;
         }
 
     }
