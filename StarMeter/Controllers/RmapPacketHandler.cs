@@ -5,9 +5,9 @@ using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-    public static class RmapPacketHandler
+    public class RmapPacketHandler
     {
-        public static RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
+        public RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
         {
             var rmapCommandByte = new BitArray(new[] { packet.FullPacket[addressIndex + 2] });
             var rmapPacketType = GetRmapType(rmapCommandByte);
