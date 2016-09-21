@@ -52,16 +52,19 @@ namespace StarMeter.Controllers
                     
                     var logicalAddressIndex = GetLogicalAddressIndex(packet.FullPacket);
 
-                    packet.Cargo = GetCargoArray(packet, logicalAddressIndex);
                     packet.ProtocolId = GetProtocolId(packet.FullPacket, logicalAddressIndex);
+                    packet.Cargo = GetCargoArray(packet, logicalAddressIndex);
+                    packet.Address = GetAddressArray(packet.FullPacket, logicalAddressIndex);
+                    packet.Crc = GetCrc(packet.FullPacket);
+                    packet.SequenceNum = GetSequenceNumber(packet, logicalAddressIndex);
                     if (packet.ProtocolId == 1)
                     {
                         packet = RmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
                     }
-                    packet.Address = GetAddressArray(packet.FullPacket, logicalAddressIndex);
-                    packet.Crc = GetCrc(packet.FullPacket);
-                    packet.SequenceNum = GetSequenceNumber(packet, logicalAddressIndex);
-                    packet.ErrorType = GetErrorType(packet);
+                    else
+                    {
+                        packet.ErrorType = GetErrorType(packet);
+                    }
                 }
                 else
                 {
