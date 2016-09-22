@@ -22,7 +22,7 @@
              x:Name="MainGrid"
         >
 
-        
+
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                 <GradientStop Color="#FF161A2E" Offset="1"/>
@@ -54,7 +54,7 @@
                 <ImageBrush ImageSource="/StarMeter;component/Resources/right chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
-        
+
         <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="2" Margin="100,0,0,0">Showing 0 to 0 of 0 results</Label>
 
         <Button Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
@@ -119,7 +119,8 @@
                 <Grid Background="#FF171753" Name="PacketGrid">
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="11*"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="46*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- 1 column per port and 1 for the time -->
@@ -135,24 +136,24 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Container for the time elements -->
-                    <StackPanel Grid.Row="1" Background="#FF616161" Name="TimeList"/>
+                    <StackPanel Background="#FF616161" Name="TimeList" Margin="0,0,0,-0.4" Grid.RowSpan="2"/>
 
                     <!-- Containers for port info -->
-                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{DynamicResource PortA}" Name="Port1AHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="1" Style="{DynamicResource PortA}" Name="Port1AHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="2" Style="{DynamicResource PortB}" Name="Port1BHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="2" Style="{DynamicResource PortB}" Name="Port1BHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="3" Style="{DynamicResource PortA}" Name="Port2AHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="3" Style="{DynamicResource PortA}" Name="Port2AHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="4" Style="{DynamicResource PortB}" Name="Port2BHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="4" Style="{DynamicResource PortB}" Name="Port2BHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="5" Style="{DynamicResource PortA}" Name="Port3AHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="5" Style="{DynamicResource PortA}" Name="Port3AHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="6" Style="{DynamicResource PortB}" Name="Port3BHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="6" Style="{DynamicResource PortB}" Name="Port3BHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="7" Style="{DynamicResource PortA}" Name="Port4AHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="7" Style="{DynamicResource PortA}" Name="Port4AHolder" Grid.RowSpan="2">
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.Column="8" Style="{DynamicResource PortB}" Name="Port4BHolder">
+                    <StackPanel Grid.Row="0" Grid.Column="8" Style="{DynamicResource PortB}" Name="Port4BHolder" Grid.RowSpan="2">
                     </StackPanel>
 
                 </Grid>
@@ -160,7 +161,7 @@
             </ScrollViewer>
 
         </Grid>
-        
+
         <Canvas>
             <Canvas.Background>
                 <ImageBrush/>
@@ -331,26 +332,26 @@
                     <TextBox Grid.Row="1" Grid.Column="0" x:Name="protocolSearch" Margin="10,5,10,5"/>
                     <Button Grid.Row="2" Grid.Column="0" Click="SearchForProtocol" Content="Search for protocol" Margin="10,5,10,5"/>
                 </Grid>
-                
+
                 <Grid  Grid.Row="6" Name="TimeFilterSection">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
+
                     <Label Grid.Row="0" Content="Enter times to search" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    
+
                     <Grid Name="TimeInput" Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <TextBox Grid.Column="0" Margin="10,10,10,10"  Name="StartTimeTextBox"/>
                         <TextBox Grid.Column="1" Margin="10,10,10,10" Name="EndTimeTextBox" />
                     </Grid>
-                    
+
                     <Button Click="SearchForPacketsByTime" Grid.Row="2" Content="Search for times" HorizontalAlignment="Stretch" Margin="10,9,10,9"/>
                 </Grid>
                 <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="5"></Button>

@@ -1,0 +1,17 @@
+﻿<Window x:Class="StarMeter.View.MultiplePacketPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Several Packets share the same timespan" Height="350" Width="200" ResizeMode="NoResize" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0,1" StartPoint="1,1">
+            <GradientStop Color="#FF161A2E" Offset="1"/>
+            <GradientStop Color="#FF2C597B" Offset="0.535"/>
+            <GradientStop Color="#FF181730"/>
+        </LinearGradientBrush>
+    </Window.Background>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="PacketList"/>
+        </ScrollViewer>
+    </Grid>
+</Window>
