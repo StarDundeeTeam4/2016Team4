@@ -5,7 +5,7 @@ namespace StarMeter.Controllers
 {
     public interface IErrorDetector
     {
-        ErrorTypes GetErrorType(Packet previousPacket, Packet currentPacket);
+        ErrorType GetErrorType(Packet previousPacket, Packet currentPacket);
         bool IsDataError(Packet previousPacket, Packet currentPacket);
         bool IsSequenceError(Packet previousPacket, Packet currentPacket);
         bool IsTimeoutError(Packet previousPacket, Packet currentPacket);
@@ -14,21 +14,21 @@ namespace StarMeter.Controllers
 
     public class ErrorDetector : IErrorDetector
     {
-        public ErrorTypes GetErrorType(Packet previousPacket, Packet currentPacket)
+        public ErrorType GetErrorType(Packet previousPacket, Packet currentPacket)
         {
             if (IsTimeoutError(previousPacket, currentPacket))
             {
-                return ErrorTypes.Timeout;
+                return ErrorType.Timeout;
             }
             if(IsDataError(previousPacket, currentPacket))
             {
-                return ErrorTypes.DataError;
+                return ErrorType.DataError;
             }
             if (IsSequenceError(previousPacket, currentPacket))
             {
-                return ErrorTypes.SequenceError;
+                return ErrorType.SequenceError;
             }
-            return ErrorTypes.None;
+            return ErrorType.None;
         }
 
         public bool IsDataError(Packet previousPacket, Packet currentPacket)

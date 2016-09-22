@@ -71,7 +71,7 @@ namespace StarMeter.Controllers
                     var error = r.ReadLine();
                     if (error == "Disconnect")
                     {
-                        packet.ErrorType = ErrorTypes.Disconnect;
+                        packet.ErrorType = ErrorType.Disconnect;
                     }
 
                     if (PacketDict.Count > 2) { 
@@ -115,7 +115,7 @@ namespace StarMeter.Controllers
             return previousPacket;
         }
 
-        public ErrorTypes GetErrorType(Packet packet)
+        public ErrorType GetErrorType(Packet packet)
         {
             bool CrcValid;
             if (packet.GetType() == typeof(RmapPacket))
@@ -126,7 +126,7 @@ namespace StarMeter.Controllers
             {
                 CrcValid = CRC.CheckCrcForPacket(packet.FullPacket);
             }
-            return !CrcValid ? ErrorTypes.DataError : ErrorTypes.None;
+            return !CrcValid ? ErrorType.DataError : ErrorType.None;
         }
     }
 }

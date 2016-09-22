@@ -34,7 +34,7 @@ namespace StarMeter.Controllers
             if (!CheckRmapCrc(rmapPacket))
             {
                 rmapPacket.IsError = true;
-                rmapPacket.ErrorType = ErrorTypes.DataError;
+                rmapPacket.ErrorType = ErrorType.DataError;
             }
 
             return rmapPacket;
