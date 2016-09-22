@@ -808,6 +808,7 @@ namespace StarMeter.View
         System.Timers.Timer _t;
         int _count;
 
+
         /// <summary>
         /// set the height of the packet buttons
         /// </summary>
