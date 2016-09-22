@@ -34,10 +34,11 @@ namespace StarMeter.Controllers
         public bool IsDataError(Packet previousPacket, Packet currentPacket)
         {
             //var isCrcCorrect = CRC.CheckCrcForPacket(currentPacket.FullPacket);
+            var isCrcCorrect = isCrcError(currentPacket);
             var isBabblingIdiot = CheckForBabblingIdiot(currentPacket, previousPacket);
 
             //return !isCrcCorrect || isBabblingIdiot;
-            return isBabblingIdiot;
+            return isBabblingIdiot || !isCrcCorrect;
         }
 
         public bool IsSequenceError(Packet previousPacket, Packet currentPacket)
@@ -58,6 +59,21 @@ namespace StarMeter.Controllers
         private static bool CheckForBabblingIdiot(Packet currentPacket, Packet previousPacket)
         {
             return previousPacket.FullPacket.SequenceEqual(currentPacket.FullPacket);
+        }
+
+        private static bool isCrcError(Packet currentPacket)
+        {
+            bool CrcValid;
+            if (currentPacket.GetType() == typeof(RmapPacket))
+            {
+                CrcValid = RmapPacketHandler.CheckRmapCrc((RmapPacket)currentPacket);
+            }
+            else
+            {
+                //CrcValid = CRC.CheckCrcForPacket(currentPacket.FullPacket);
+                CrcValid = true;
+            }
+            return CrcValid;
         }
     }
 }
