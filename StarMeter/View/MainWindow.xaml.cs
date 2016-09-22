@@ -109,7 +109,6 @@ namespace StarMeter.View
 
             var s = new Size(selectionBox.Width, selectionBox.Height);
 
-            FiltersHeading.Content = s.ToString();
 
             // TODO: 
             //
@@ -1487,6 +1486,17 @@ namespace StarMeter.View
                 AddPacketCollection(firstHundredPackets);
             }
         }
+
+        private void Image_MouseEnter(object sender, MouseEventArgs e)
+        {
+            HelpPanel.Visibility = Visibility.Visible;
+        }
+
+        private void Image_MouseLeave(object sender, MouseEventArgs e)
+        {
+            HelpPanel.Visibility = Visibility.Hidden;
+        }
+
     }
 
 

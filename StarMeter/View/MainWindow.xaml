@@ -362,17 +362,61 @@
         </Grid>
 
 
-        <DVC:Chart Name="mcChart" Height="300" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <DVC:Chart.Series >
-                <DVC:PieSeries Title="Experience" 
-                    IndependentValueBinding="{Binding Path=Key}"
-                    DependentValueBinding="{Binding Path=Value}" Background="Black">
-                </DVC:PieSeries>
+        <Grid Grid.Column="3" Grid.Row="1">
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            </DVC:Chart.Series>
+            <Image MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Row="2" Source="/StarMeter;component/Resources/help.png" Margin="40, 40, 60, 0" VerticalAlignment="Bottom">
+                <Image.OpacityMask>
+                    <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
+                </Image.OpacityMask>
 
-        </DVC:Chart>
+            </Image>
+
+            <DVC:Chart Name="mcChart" Height="300" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <DVC:Chart.Series >
+                    <DVC:PieSeries Title="Experience" 
+                        IndependentValueBinding="{Binding Path=Key}"
+                        DependentValueBinding="{Binding Path=Value}" Background="Black">
+                    </DVC:PieSeries>
+                </DVC:Chart.Series>
+
+            </DVC:Chart>
+            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.RowSpan="2" Grid.Row ="1" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
+
+                <Grid Height="172" Width="168">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".8*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height=".8*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Colours -->
+                    <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+
+                    <!-- Labels -->
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
+                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packet close together</TextBlock>
+                    <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+
+                </Grid>
+            </Canvas>
+
+        </Grid>
+
     </Grid>
 
 </Window>
