@@ -5,15 +5,17 @@ using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-    public class RmapPacketHandler
+    public static class RmapPacketHandler
     {
-        public RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
+        public static RmapPacket CreateRmapPacket(Packet packet)
         {
-            var rmapCommandByte = new BitArray(new[] { packet.FullPacket[addressIndex + 2] });
-            var rmapPacketType = GetRmapType(rmapCommandByte);
-            var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
-            var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
-            var destinationKey = GetDestinationKey(packet.FullPacket, addressIndex);
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet.FullPacket);
+            var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
+            int addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
+
+            string rmapPacketType = GetRmapType(rmapCommandByte);
+            byte[] sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength);
+            byte destinationKey = GetDestinationKey(packet.FullPacket);
             var rmapPacket = new RmapPacket
             {
                 CommandByte = rmapCommandByte,
@@ -32,16 +34,17 @@ namespace StarMeter.Controllers
             if (!CheckRmapCrc(rmapPacket))
             {
                 rmapPacket.IsError = true;
-                rmapPacket.ErrorType = ErrorTypes.DataError;
+                rmapPacket.ErrorType = ErrorType.DataError;
             }
 
             return rmapPacket;
         }
 
-        public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
+        public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength)
         {
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
             var result = new List<byte>();
-            var sourceAddressIndex = logicalAddressIndex + 4;
+            var sourceAddressIndex = addressIndex + 4;
             try
             {
                 for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
@@ -57,7 +60,7 @@ namespace StarMeter.Controllers
             return result.ToArray();
         }
 
-        private static int GetRmapLogicalAddressLength(byte rmapCommandByte)
+        public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
             var finalArray = new BitArray(new[] { getBit(rmapCommandByte, 1), getBit(rmapCommandByte, 2), false, false, false, false, false, false });
             var result = new int[1];
@@ -66,7 +69,7 @@ namespace StarMeter.Controllers
             return final * 4;
         }
 
-        private static bool getBit(byte cmdByte, int index)
+        public static bool getBit(byte cmdByte, int index)
         {
             var bit = (cmdByte & (1 << index - 1)) != 0;
             return bit;
@@ -116,11 +119,10 @@ namespace StarMeter.Controllers
             return result;
         }
 
-        public static byte GetDestinationKey(byte[] packetData, int logicalAddressIndex)
+        public static byte GetDestinationKey(byte[] fullPacket)
         {
-            return packetData[logicalAddressIndex + 3];
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(fullPacket);
+            return fullPacket[addressIndex + 3];
         }
-
-       
     }
 }

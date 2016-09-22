@@ -8,11 +8,10 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class RmapPacketHandlerTests
     {
-        private PacketHandler _packetHandler;
         [TestInitialize]
         public void Initialize()
         {
-            _packetHandler = new PacketHandler();
+            
         }
 
         [TestMethod]
@@ -23,7 +22,7 @@ namespace StarMeter.Tests.Controllers
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2f, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
             };
 
-            var actual = RmapPacketHandler.GetDestinationKey(packetData, _packetHandler.GetLogicalAddressIndex(packetData)); // 3 spaces after logical address index
+            var actual = RmapPacketHandler.GetDestinationKey(packetData); // 3 spaces after logical address index
 
             byte expected = 0x00;
 
@@ -43,7 +42,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read Reply",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(packetData));
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -61,7 +60,7 @@ namespace StarMeter.Tests.Controllers
                 ProtocolId = 1,
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(packetData));
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -79,7 +78,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(packetData));
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsTrue(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -98,7 +97,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read Reply",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(packetData));
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsTrue(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -116,7 +115,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read Reply",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(packetData));
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -156,8 +155,7 @@ namespace StarMeter.Tests.Controllers
         [TestCleanup]
         public void Cleanup()
         {
-            _packetHandler = null;
+            
         }
-
     }
 }

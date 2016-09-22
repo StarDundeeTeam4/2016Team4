@@ -11,8 +11,6 @@ namespace StarMeter.Controllers
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
         private Guid? _prevPacket;
-        private readonly PacketHandler _packetHandler = new PacketHandler();
-        private readonly RmapPacketHandler _rmapPacketHandler = new RmapPacketHandler();
 
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
@@ -37,14 +35,14 @@ namespace StarMeter.Controllers
                 var packet = new Packet {PortNumber = portNumber, PacketId = packetId};
 
                 DateTime tempDate;
-                if (_packetHandler.ParseDateTime(line, out tempDate))
+                if (PacketHandler.ParseDateTime(line, out tempDate))
                 {
                     packet.DateRecieved = tempDate;
                 }
 
                 var packetType = r.ReadLine();
                 packet = SetPrevPacket(packet);
-                if (_packetHandler.IsPType(packetType))
+                if (PacketHandler.IsPType(packetType))
                 {
                     //read cargo line and convert to byte array
                     var packetHexData = r.ReadLine().Split(' ');
@@ -52,17 +50,15 @@ namespace StarMeter.Controllers
 
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
-                    
-                    var logicalAddressIndex = _packetHandler.GetLogicalAddressIndex(packet.FullPacket);
 
-                    packet.ProtocolId = _packetHandler.GetProtocolId(packet.FullPacket, logicalAddressIndex);
-                    packet.Cargo = _packetHandler.GetCargoArray(packet, logicalAddressIndex);
-                    packet.Address = _packetHandler.GetAddressArray(packet.FullPacket, logicalAddressIndex);
-                    packet.Crc = _packetHandler.GetCrc(packet.FullPacket);
-                    packet.SequenceNum = _packetHandler.GetSequenceNumber(packet, logicalAddressIndex);
+                    packet.ProtocolId = PacketHandler.GetProtocolId(packet.FullPacket);
+                    packet.Cargo = PacketHandler.GetCargoArray(packet);
+                    packet.Address = PacketHandler.GetAddressArray(packet.FullPacket);
+                    packet.Crc = PacketHandler.GetCrc(packet.FullPacket);
+                    packet.SequenceNum = PacketHandler.GetSequenceNumber(packet);
                     if (packet.ProtocolId == 1)
                     {
-                        packet = _rmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
+                        packet = RmapPacketHandler.CreateRmapPacket(packet);
                     }
                 }
                 else
@@ -71,7 +67,7 @@ namespace StarMeter.Controllers
                     var error = r.ReadLine();
                     if (error == "Disconnect")
                     {
-                        packet.ErrorType = ErrorTypes.Disconnect;
+                        packet.ErrorType = ErrorType.Disconnect;
                     }
 
                     if (PacketDict.Count > 2) { 
@@ -112,6 +108,5 @@ namespace StarMeter.Controllers
             PacketDict.TryGetValue(prevPacketId, out previousPacket);
             return previousPacket;
         }
-
     }
 }

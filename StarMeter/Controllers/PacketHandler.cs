@@ -6,19 +6,19 @@ using System.Collections;
 
 namespace StarMeter.Controllers
 {
-    public class PacketHandler
+    public static class PacketHandler
     {
-        public bool IsPType(string packetType)
+        public static bool IsPType(string packetType)
         {
             return string.CompareOrdinal(packetType, "P") == 0;
         }
 
-        public bool ParseDateTime(string stringDateTime, out DateTime result)
+        public static bool ParseDateTime(string stringDateTime, out DateTime result)
         {
             return DateTime.TryParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null, DateTimeStyles.None, out result);
         }
 
-        public int GetLogicalAddressIndex(byte[] fullPacket)
+        public static int GetLogicalAddressIndex(byte[] fullPacket)
         {
             for (int i = 0; i < fullPacket.Length; i++)
             {
@@ -27,8 +27,9 @@ namespace StarMeter.Controllers
             return -1;
         }
 
-        public byte[] GetCargoArray(Packet packet, int logicalIndex)
+        public static byte[] GetCargoArray(Packet packet)
         {
+            int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
             byte[] cargo;
             if (packet.ProtocolId == 1)
             {
@@ -50,22 +51,24 @@ namespace StarMeter.Controllers
             return cargo;
         }
 
-        public byte[] GetAddressArray(byte[] fullPacket, int logicalIndex)
+        public static byte[] GetAddressArray(byte[] fullPacket)
         {
+            int logicalIndex = GetLogicalAddressIndex(fullPacket);
             byte[] addressArray = new byte[logicalIndex + 1];
             Array.Copy(fullPacket, addressArray, logicalIndex + 1);
             return addressArray;
         }
 
-        public byte GetCrc(byte[] fullPacket)
+        public static byte GetCrc(byte[] fullPacket)
         {
             return fullPacket.Last();
         }
 
-        public int GetProtocolId(byte[] fullPacket, int logicalIndex)
+        public static int GetProtocolId(byte[] fullPacket)
         {
             try
             {
+                int logicalIndex = GetLogicalAddressIndex(fullPacket);
                 return fullPacket[logicalIndex + 1];
             }
 
@@ -75,10 +78,11 @@ namespace StarMeter.Controllers
             }
         }
 
-        public int GetSequenceNumber(Packet packet, int logicalIndex)
+        public static int GetSequenceNumber(Packet packet)
         {
             try
             {
+                int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
                 if (packet.GetType() != typeof(RmapPacket)) return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
                 byte[] sequence = new byte[2];
 
