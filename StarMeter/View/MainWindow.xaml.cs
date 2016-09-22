@@ -48,7 +48,7 @@ namespace StarMeter.View
             _LoadingTimer.Elapsed += _LoadingTimer_Elapsed;
             _LoadingTimer.Interval = 100;
 
-            _LoadingTimer.Start();
+            //_LoadingTimer.Start();
         }
 
 
@@ -62,14 +62,30 @@ namespace StarMeter.View
             LoadingIcon.Source = _gifDecoder.Frames[animCount];
 
         }
+        void ChangeDots() 
+        {
+            int dots = animCount / 6;
+
+            string[] split = LoadingMessage.Content.ToString().Split('.');
+
+            string dottage = "";
+
+            for (int i = 0; i < dots; i++)
+            {
+                dottage += ".";
+            }
+
+            Console.WriteLine(animCount);
+
+            LoadingMessage.Content = split[0] + dottage;
+        }
 
         void _LoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             animCount++;
 
             LoadingIcon.Dispatcher.Invoke(new UpdateAnimation(ChangeAnimFrame));
-
-
+            LoadingMessage.Dispatcher.Invoke(new UpdateAnimation(ChangeDots));
         }
 
         private GifBitmapDecoder _gifDecoder;
@@ -492,6 +508,7 @@ namespace StarMeter.View
             {
                 var lineSeries1 = new LineSeries
                 {
+                    IsSelectionEnabled = true,
                     Title = "Data Rate",
                     Foreground = Brushes.White,
                     DependentValuePath = "Value",
@@ -593,6 +610,9 @@ namespace StarMeter.View
         {
             LoadingIcon.Visibility = System.Windows.Visibility.Visible;
             LoadingMessage.Visibility = System.Windows.Visibility.Visible;
+            LoadingMessage.Content = "Selecting File";
+
+            _LoadingTimer.Start();
 
             var ofd = new OpenFileDialog
             {
@@ -603,10 +623,18 @@ namespace StarMeter.View
 
             bool? confirmed = ofd.ShowDialog();
 
-            if (confirmed != true) return;
+            if (confirmed != true) 
+            {              
+                LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
+                LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
+                return;
+            }
+
+            LoadingMessage.Content = "Selecting File";
 
             // display file name
             List<string> filesAdded = controller.AddFileNames(ofd.FileNames);
+
 
             foreach (string fileName in filesAdded)
             {
@@ -657,6 +685,8 @@ namespace StarMeter.View
                 _fileGrids.Add(g);
 
             }
+
+
             LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
             LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
         }
@@ -1707,6 +1737,7 @@ namespace StarMeter.View
         {
             HelpPanel.Visibility = Visibility.Hidden;
         }
+
 
     }
 }
