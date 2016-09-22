@@ -31,24 +31,36 @@ namespace StarMeter.Controllers
         {
             int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
             byte[] cargo;
-            if (packet.ProtocolId == 1)
-            {
-                string type = RmapPacketHandler.GetRmapType(new BitArray(new[] { packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2] }));
-                if (type.EndsWith("Reply"))
-                {
-                    int start = logicalIndex + 12;
-                    int cargoLength = packet.FullPacket.Length - start;
-                    cargo = new byte[cargoLength];
-                    Array.Copy(packet.FullPacket, start, cargo, 0, cargoLength);
-                    return cargo;
-                }
-            }
-            logicalIndex++;
-            int length = packet.FullPacket.Length - logicalIndex;
-            cargo = new byte[length];
-            Array.Copy(packet.FullPacket, logicalIndex, cargo, 0, length);
 
-            return cargo;
+            try
+            {
+                if (packet.ProtocolId == 1)
+                {
+                    string type =
+                        RmapPacketHandler.GetRmapType(
+                            new BitArray(new[] {packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2]}));
+
+                    if (type.EndsWith("Reply"))
+                    {
+                        int start = logicalIndex + 12;
+                        int cargoLength = packet.FullPacket.Length - start;
+                        cargo = new byte[cargoLength];
+                        Array.Copy(packet.FullPacket, start, cargo, 0, cargoLength);
+                        return cargo;
+                    }
+                }
+                logicalIndex++;
+                int length = packet.FullPacket.Length - logicalIndex;
+                cargo = new byte[length];
+                Array.Copy(packet.FullPacket, logicalIndex, cargo, 0, length);
+
+                return cargo;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+                //need to set incomplete packet error?
+            }
         }
 
         public static byte[] GetAddressArray(byte[] fullPacket)

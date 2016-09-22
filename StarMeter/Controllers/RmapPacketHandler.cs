@@ -9,27 +9,50 @@ namespace StarMeter.Controllers
     {
         public static RmapPacket CreateRmapPacket(Packet packet)
         {
-            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet.FullPacket);
-            var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
-            int addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
+            RmapPacket rmapPacket = new RmapPacket();
 
-            string rmapPacketType = GetRmapType(rmapCommandByte);
-            byte[] sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength);
-            byte destinationKey = GetDestinationKey(packet.FullPacket);
-            var rmapPacket = new RmapPacket
+            //setting vars to be essentially null so packet can be created even if error
+            BitArray rmapCommandByte = null;
+            byte destinationKey = 0x00;
+            int addressLength = -1;
+            string rmapPacketType = "";
+            byte[] sourceAddress = null;
+
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet.FullPacket);
+
+            try
             {
-                CommandByte = rmapCommandByte,
-                PacketType = rmapPacketType,
-                SourcePathAddress = sourceAddress,
-                PacketId = packet.PacketId,
-                DateRecieved = packet.DateRecieved,
-                PortNumber = packet.PortNumber,
-                Cargo = packet.Cargo,
-                ProtocolId = packet.ProtocolId,
-                FullPacket = packet.FullPacket,
-                PrevPacket = packet.PrevPacket,
-                DestinationKey = destinationKey
-            };
+                if (addressIndex == -1)
+                {
+                    throw new IndexOutOfRangeException(); //no logical address so is incomplete or otherwise dataerror
+                }
+
+                rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
+                destinationKey = GetDestinationKey(packet.FullPacket);
+                addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
+
+                rmapPacketType = GetRmapType(rmapCommandByte);
+                sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                rmapPacket.IsError = true;
+                rmapPacket.ErrorType = ErrorType.DataError;
+            }
+
+            rmapPacket.PacketId     = packet.PacketId;
+            rmapPacket.DateRecieved = packet.DateRecieved;
+            rmapPacket.PrevPacket   = packet.PrevPacket;
+            rmapPacket.PacketType   = rmapPacketType;
+
+            rmapPacket.PortNumber = packet.PortNumber;
+            rmapPacket.ProtocolId = packet.ProtocolId;
+
+            rmapPacket.CommandByte       = rmapCommandByte;
+            rmapPacket.DestinationKey    = destinationKey;
+            rmapPacket.SourcePathAddress = sourceAddress;
+            rmapPacket.Cargo             = packet.Cargo;
+            rmapPacket.FullPacket        = packet.FullPacket;
 
             if (!CheckRmapCrc(rmapPacket))
             {
@@ -43,18 +66,20 @@ namespace StarMeter.Controllers
         public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength)
         {
             int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
+            int sourceAddressIndex = addressIndex + 4;
+
             var result = new List<byte>();
-            var sourceAddressIndex = addressIndex + 4;
             try
             {
-                for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
+                for (int i = 0; i < addressLength; i++)
                 {
-                    result.Add(rmapFullPacket[i]);
+                    result.Add(rmapFullPacket[sourceAddressIndex + i]);
                 }
             }
             catch (IndexOutOfRangeException e)
             {
-                return result.ToArray();
+                System.Diagnostics.Trace.WriteLine("IndexOutOfRangeException in GetSourceAddressRmap");
+                System.Diagnostics.Trace.WriteLine(e);
             }
 
             return result.ToArray();
@@ -62,6 +87,7 @@ namespace StarMeter.Controllers
 
         public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
+            //What does this do/how does it work?
             var finalArray = new BitArray(new[] { getBit(rmapCommandByte, 1), getBit(rmapCommandByte, 2), false, false, false, false, false, false });
             var result = new int[1];
             finalArray.CopyTo(result, 0);
