@@ -25,6 +25,7 @@ namespace StarMeter.Controllers
                 Cargo = packet.Cargo,
                 ProtocolId = packet.ProtocolId,
                 FullPacket = packet.FullPacket,
+                PrevPacket = packet.PrevPacket,
                 DestinationKey = destinationKey
             };
 
