@@ -39,7 +39,7 @@
             <ColumnDefinition Width="0*" Name="FiltersPane"/>
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="0*" Name="RightButtonColumn"/>
-            <ColumnDefinition Width="3*" Name="GraphPanelPie"/>
+            <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
         <Canvas Name="HelpPanel" Visibility="Hidden" Grid.RowSpan="2" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
