@@ -52,9 +52,9 @@ namespace StarMeter.View
         }
 
 
-        void ChangeAnimFrame() 
+        void ChangeAnimFrame()
         {
-            if (animCount >= _gifDecoder.Frames.Count - 1) 
+            if (animCount >= _gifDecoder.Frames.Count - 1)
             {
                 animCount = 0;
             }
@@ -63,12 +63,12 @@ namespace StarMeter.View
 
         }
 
-        void _LoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e) 
+        void _LoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             animCount++;
 
             LoadingIcon.Dispatcher.Invoke(new UpdateAnimation(ChangeAnimFrame));
-       
+
 
         }
 
@@ -76,11 +76,11 @@ namespace StarMeter.View
         int animCount = 0;
 
         // needed for drawing rectangle - for zooming
-        private bool _mouseDown; 
+        private bool _mouseDown;
         private Point _mouseDownPos;
 
         // TODO - Find reference to this stuff
-        #region Drag Rectangle Methods 
+        #region Drag Rectangle Methods
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // Capture and track the mouse.
@@ -153,7 +153,7 @@ namespace StarMeter.View
         System.Timers.Timer _LoadingTimer;
 
 
-        void CreateTimeLabel(TimeSpan time) 
+        void CreateTimeLabel(TimeSpan time)
         {
             // create a label for the time
             # region Time label
@@ -165,15 +165,15 @@ namespace StarMeter.View
             #endregion
         }
 
-        public Button GetPacketButton(Packet p, string nameToSet) 
+        public Button GetPacketButton(Packet p, string nameToSet)
         {
             #region Create Button for the packet
             string sty = "";
-            
+
             var b = new Button();
             b.Click += OpenPopup;
 
-            string nameOutput = nameToSet.Replace('.', 'M').Replace(':','_');
+            string nameOutput = nameToSet.Replace('.', 'M').Replace(':', '_');
 
             var lab = new Label();
 
@@ -190,18 +190,18 @@ namespace StarMeter.View
             {
                 b.Tag = p.PacketId;
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 b.Tag = "";
             }
-           
+
             b.Content = lab;
 
             try
             {
                 sty = p.IsError ? "Error" : "Success";
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 sty = "Error";
             }
@@ -209,27 +209,27 @@ namespace StarMeter.View
             b.SetResourceReference(Control.StyleProperty, sty);
 
             b.Name = "btn" + nameOutput;
-            
+
             StackPanel stackPan = GetPanelToUse(p.PortNumber);
-            
+
             return b;
             #endregion
 
         }
 
         // work out which panel to assign the packet to
-        StackPanel GetPanelToUse(int portNum) 
+        StackPanel GetPanelToUse(int portNum)
         {
             return _portStacks[portNum - 1];
         }
 
 
-        void AddPacketCollection(Packet[] packets) 
+        void AddPacketCollection(Packet[] packets)
         {
 
-            foreach (Packet p in packets) 
+            foreach (Packet p in packets)
             {
-                if (_previous[p.PortNumber - 1] == new TimeSpan()) 
+                if (_previous[p.PortNumber - 1] == new TimeSpan())
                 {
                     _previous[p.PortNumber - 1] = p.DateRecieved.TimeOfDay;
                 }
@@ -256,7 +256,7 @@ namespace StarMeter.View
                 }
             }
 
-            foreach (var p in packets) 
+            foreach (var p in packets)
             {
                 AddPacket(p, temp_timespans);
             }
@@ -267,12 +267,20 @@ namespace StarMeter.View
             start = (pageIndex * 100) + 1;
             end = start + 99;
 
-            if (end > total) 
+            if (end > total)
             {
                 end = total;
             }
+
+            if(packets.Length == 0)
+            {
+                lblNumShowing.Content = "No packets to display";
+            }
+            else
+            {
+                lblNumShowing.Content = "Showing " + start + " - " + end + " of " + total + " packets";
+            }
             
-            lblNumShowing.Content = "Showing " + start + " - "  + end + " of " + total + " packets";
 
         }
 
@@ -281,10 +289,10 @@ namespace StarMeter.View
 
         List<List<Guid>[]> _timeSpanOccupied = new List<List<Guid>[]>();
 
-        private void AddPacket(Packet p, List<KeyValuePair<int, TimeSpan>> temp_timespans) 
+        private void AddPacket(Packet p, List<KeyValuePair<int, TimeSpan>> temp_timespans)
         {
 
-           // var temp_timespans = _timespans.ToList();
+            // var temp_timespans = _timespans.ToList();
             var packet_timespan = p.DateRecieved.TimeOfDay;
             var sp = GetPanelToUse(p.PortNumber);
 
@@ -292,10 +300,10 @@ namespace StarMeter.View
 
             int index = 0;
 
-            while(found == false && temp_timespans.Count > 0)
+            while (found == false && temp_timespans.Count > 0)
             {
-                index = temp_timespans.Count/2;
-                
+                index = temp_timespans.Count / 2;
+
 
                 if (temp_timespans[index].Value >= packet_timespan)
                 {
@@ -325,12 +333,12 @@ namespace StarMeter.View
             _timeSpanOccupied[temp_timespans[index].Key][p.PortNumber].Add(p.PacketId);
             var currentNumber = _timeSpanOccupied[temp_timespans[index].Key][p.PortNumber].Count;
 
-            if (currentNumber > 1) 
+            if (currentNumber > 1)
             {
                 Console.WriteLine("CLASH " + temp_timespans[index].Key);
 
                 var childObjs = GetPanelToUse(p.PortNumber).Children;
-                
+
                 string toFind = "btn" + temp_timespans[index].Value.ToString().Replace('.', 'M').Replace(':', '_');
 
 
@@ -349,8 +357,8 @@ namespace StarMeter.View
                 //    }
                 //    catch (InvalidCastException) { }
                 //}
-                
-                var existingBtn = (Button) sp.FindName(toFind);
+
+                var existingBtn = (Button)sp.FindName(toFind);
 
 
 
@@ -369,6 +377,7 @@ namespace StarMeter.View
                 // clear all event handlers here
 
                 btn.Click -= OpenPopup;
+                
                 btn.Click -= ViewMultiplePackets;
                 btn.Click -= ViewMultiplePackets;
                 btn.Click -= ViewMultiplePackets;
@@ -409,16 +418,16 @@ namespace StarMeter.View
                 var b = GetPacketButton(p, temp_timespans[index].Value.ToString());
 
                 sp.Children.Add(b);
-                
+
                 _previous[p.PortNumber - 1] = temp_timespans[index].Value;
             }
-            
+
         }
 
         //This function will remove all packets from the screen which are being displayed.
         void RemoveAllPackets()
         {
-            for (int i = 0; i < 8; i++ )
+            for (int i = 0; i < 8; i++)
             {
                 var childElements = _portStacks[i].Children;
 
@@ -438,7 +447,7 @@ namespace StarMeter.View
 
         #region TEMP
 
-        void CreateDataRateGraph(Packet[] packets) 
+        void CreateDataRateGraph(Packet[] packets)
         {
             RatesLineChart.Series.Clear();
             RatesLineChart.DataContext = null;
@@ -509,7 +518,7 @@ namespace StarMeter.View
 
         }
 
-        private void TestTimeCreation(object sender, RoutedEventArgs e) 
+        private void TestTimeCreation(object sender, RoutedEventArgs e)
         {
             //AddPacketCollection(packets);
 
@@ -524,7 +533,7 @@ namespace StarMeter.View
         }
         #endregion
 
-        void ViewMultiplePackets(object sender, RoutedEventArgs e) 
+        void ViewMultiplePackets(object sender, RoutedEventArgs e)
         {
             MultiplePacketPopup mpp = new MultiplePacketPopup(controller);
 
@@ -536,7 +545,7 @@ namespace StarMeter.View
             List<Guid> guids = _timeSpanOccupied[id][port];
             List<Packet> ps = new List<Packet>();
 
-            foreach (Guid g in guids) 
+            foreach (Guid g in guids)
             {
                 ps.Add(FindPacket(g));
             }
@@ -548,7 +557,7 @@ namespace StarMeter.View
         //This will allow us to read the files or remove the files later.
         private readonly List<Grid> _fileGrids = new List<Grid>();
 
-        private void FileSelection(object sender, RoutedEventArgs e) 
+        private void FileSelection(object sender, RoutedEventArgs e)
         {
             LoadingIcon.Visibility = System.Windows.Visibility.Visible;
             LoadingMessage.Visibility = System.Windows.Visibility.Visible;
@@ -566,7 +575,7 @@ namespace StarMeter.View
 
             // display file name
             List<string> filesAdded = controller.AddFileNames(ofd.FileNames);
-                
+
             foreach (string fileName in filesAdded)
             {
                 string actualName = fileName.Split('.')[0];
@@ -590,7 +599,7 @@ namespace StarMeter.View
                 Label l = new Label
                 {
                     Name = "label_" + actualName,
-                    Style = (Style) Application.Current.Resources["FileSelected"],
+                    Style = (Style)Application.Current.Resources["FileSelected"],
                     Content = fileName
                 };
 
@@ -630,14 +639,14 @@ namespace StarMeter.View
             SelectedFiles.Children.RemoveAt(id);
             _fileGrids.RemoveAt(id);
         }
-        
-        public void OpenPopup(object sender, RoutedEventArgs e) 
+
+        public void OpenPopup(object sender, RoutedEventArgs e)
         {
             var b = (Button)sender;
-            
+
             var text = b.Tag.ToString();
             var guid = new Guid(text);
-            
+
             PacketPopup pp = new PacketPopup();
             pp.Controller = controller;
 
@@ -649,7 +658,7 @@ namespace StarMeter.View
                 pp.Owner = this;
                 pp.Show();
             }
-            
+
         }
 
         private void SearchForAddress(object sender, RoutedEventArgs e)
@@ -670,7 +679,19 @@ namespace StarMeter.View
                 }
             }
 
-            AddPacketCollection(packList.ToArray());
+            try
+            {
+                CreateAllTimeLabels(packList.Take(100).ToArray());
+                AddPacketCollection(packList.ToArray().Take(100).ToArray());
+            }
+            catch
+            {
+                if(packList.Count > 0)
+                {
+                    CreateAllTimeLabels(packList.Take(packList.Count).ToArray());
+                    AddPacketCollection(packList.ToArray().Take(packList.Count).ToArray());
+                }
+            }
 
         }
 
@@ -692,19 +713,29 @@ namespace StarMeter.View
                 }
             }
 
-            AddPacketCollection(packList.ToArray());
+            try
+            {
+                CreateAllTimeLabels(packList.Take(100).ToArray());
+                AddPacketCollection(packList.Take(100).ToArray());
+            }
+            catch
+            {
+                CreateAllTimeLabels(packList.Take(packList.Count).ToArray());
+                AddPacketCollection(packList.Take(packList.Count).ToArray());
+            }
+            
 
             //protocolSearch.Text = "";
         }
 
-        Packet FindPacket(Guid guid) 
+        Packet FindPacket(Guid guid)
         {
 
             // TODO: change this to be a lookup from dictionary
 
-            foreach (var p in sortedPackets) 
+            foreach (var p in sortedPackets)
             {
-                if (guid.Equals(p.PacketId)) 
+                if (guid.Equals(p.PacketId))
                 {
                     return p;
                 }
@@ -712,7 +743,7 @@ namespace StarMeter.View
 
             return null;
         }
-        
+
         //This lets us know which image to change to.
         private bool _isUpArrow = true;
 
@@ -746,9 +777,9 @@ namespace StarMeter.View
 
         public delegate void UpdateSlider();
         public delegate void UpdateAnimation();
-        
+
         // This is the method to run when the timer is raised.
-        private void TimerEventProcessor(object myObject,EventArgs myEventArgs)
+        private void TimerEventProcessor(object myObject, EventArgs myEventArgs)
         {
 
             // Restarts the timer and increments the counter.
@@ -756,7 +787,7 @@ namespace StarMeter.View
             {
                 _count += 1;
             }
-            else 
+            else
             {
                 _count -= 1;
             }
@@ -782,7 +813,7 @@ namespace StarMeter.View
         /// </summary>
         private void MoveSlider()
         {
-            DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star); 
+            DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star);
         }
 
         /// <summary>
@@ -822,7 +853,7 @@ namespace StarMeter.View
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        private static Style GetSuccessStyle(double val) 
+        private static Style GetSuccessStyle(double val)
         {
 
             var style = new Style { TargetType = typeof(Button) };
@@ -897,7 +928,7 @@ namespace StarMeter.View
             Application.Current.Resources["Success"] = GetSuccessStyle(HeightScroller.Value);
             Application.Current.Resources["Error"] = GetErrorStyle(HeightScroller.Value);
             Application.Current.Resources["Timestamp"] = GetTimeStyle(HeightScroller.Value);
-            Application.Current.Resources["TimeFiller"] = GetFillerStyle(HeightScroller.Value);            
+            Application.Current.Resources["TimeFiller"] = GetFillerStyle(HeightScroller.Value);
         }
 
 
@@ -924,7 +955,7 @@ namespace StarMeter.View
             Port1B.Width = new GridLength(0, GridUnitType.Star);
             Port1BHeader.Width = new GridLength(0, GridUnitType.Star);
         }
-        
+
 
         void DisplayPort2A(object sender, RoutedEventArgs e)
         {
@@ -1028,7 +1059,8 @@ namespace StarMeter.View
             }
             else
             {
-                for(int i = 0; i < 8; i++){
+                for (int i = 0; i < 8; i++)
+                {
                     _previous[i] = new TimeSpan();
                 }
 
@@ -1055,12 +1087,12 @@ namespace StarMeter.View
                     //firstLoad = packsss.GetRange(0, 100).ToArray();
 
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     //firstLoad = null;
                     firstLoad = sortedPackets.ToArray();
                 }
-                
+
                 CreateAllTimeLabels(firstLoad);
                 AddPacketCollection(firstLoad);
 
@@ -1096,9 +1128,17 @@ namespace StarMeter.View
 
             _timeSpanOccupied.Add(l);
 
-
+            var tStart = new TimeSpan();
             var timelist = new List<TimeSpan>();
-            var tStart = packets[0].DateRecieved.TimeOfDay;
+            try
+            {
+                tStart = packets[0].DateRecieved.TimeOfDay;
+            }
+            catch
+            {
+                return; //This code executes if there are no packets to show.
+            }
+
             var tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
 
 
@@ -1139,7 +1179,6 @@ namespace StarMeter.View
 
                 _timeSpanOccupied.Add(list);
 
-
                 while (curr <= tEnd)
                 {
                     i++;
@@ -1160,17 +1199,17 @@ namespace StarMeter.View
                 _timespans = timelist.ToArray();
             }
         }
-        
+
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
 
             var packList = new List<Packet>();
-            
-            foreach (var packs in controller.packets.Values) 
+
+            foreach (var packs in controller.packets.Values)
             {
                 Packet p = (Packet)packs;
-                if (p.IsError) 
+                if (p.IsError)
                 {
                     packList.Add(p);
                 }
@@ -1180,18 +1219,18 @@ namespace StarMeter.View
             
             
             AddPacketCollection(packList.ToArray());
-          
+
             CreateDataRateGraph(controller.packets.Values.ToArray());
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-                        
+
             Packet[] packets = new Packet[controller.packets.Count];
 
             int count = 0;
-            foreach (var p in controller.packets.Values) 
+            foreach (var p in controller.packets.Values)
             {
                 if (count < 100)
                 {
@@ -1206,12 +1245,12 @@ namespace StarMeter.View
             CreateDataRateGraph(packets);
         }
 
-        private void CreateChart() 
+        private void CreateChart()
         {
             Analyser a = new Analyser();
             double errRate = a.CalculateErrorRateFromArray(controller.packets.Values.ToArray());
-            
-            
+
+
             Style style = new Style(typeof(Chart));
             Setter st1 = new Setter(Chart.BackgroundProperty,
                                         new SolidColorBrush(Colors.Transparent));
@@ -1227,7 +1266,7 @@ namespace StarMeter.View
             style.Setters.Add(st4);
 
             mcChart.Style = style;
-            
+
             EdgePanel ep = ObjectFinder.FindChild<EdgePanel>(mcChart, "ChartArea");
             if (ep != null)
             {
@@ -1243,7 +1282,7 @@ namespace StarMeter.View
                     border.BorderBrush = new SolidColorBrush(Colors.Transparent);
                 }
             }
-            
+
             Legend legend = ObjectFinder.FindChild<Legend>(mcChart, "Legend");
             if (legend != null)
             {
@@ -1252,7 +1291,7 @@ namespace StarMeter.View
                 legend.BorderBrush = new SolidColorBrush(Colors.Transparent);
             }
 
-            
+
             System.Windows.Controls.DataVisualization.ResourceDictionaryCollection pieSeriesPalette = new System.Windows.Controls.DataVisualization.ResourceDictionaryCollection();
 
             Brush currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
@@ -1281,7 +1320,7 @@ namespace StarMeter.View
             new KeyValuePair<string, double>("Success", 1-errRate) };
 
             GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-            
+
         }
 
         void Reset(object sender, RoutedEventArgs e)
@@ -1334,7 +1373,7 @@ namespace StarMeter.View
 
             Packet[] toLoad;
 
-            if(sortedPackets.Count == 0)
+            if (sortedPackets.Count == 0)
             {
                 try
                 {
@@ -1356,7 +1395,7 @@ namespace StarMeter.View
                     toLoad = sortedPackets.ToList().GetRange((100 * pageIndex), sortedPackets.Count - (100 * pageIndex)).ToArray();
                 }
             }
-            
+
 
             CreateAllTimeLabels(toLoad);
             AddPacketCollection(toLoad);
@@ -1369,7 +1408,7 @@ namespace StarMeter.View
         {
             RemoveAllPackets();
             pageIndex--;
-            
+
             for (int i = 0; i < 8; i++)
             {
                 _previous[i] = new TimeSpan();
@@ -1379,7 +1418,7 @@ namespace StarMeter.View
             {
                 PrevPageBtn.Visibility = Visibility.Hidden;
             }
-            else 
+            else
             {
                 PrevPageBtn.Visibility = Visibility.Visible;
             }
@@ -1428,23 +1467,40 @@ namespace StarMeter.View
 
             DateTime startTime = new DateTime();
             DateTime endTime = new DateTime();
-            if(start != "")
+            if (start != "")
             {
-                startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
+                try
+                {
+                    startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
+                }
+                catch
+                {
+                    MessageBox.Show("You have entered an invalid time for the start date.");
+                    return;
+                }
             }
-            if(end != "")
+            if (end != "")
             {
-                endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
+                try
+                {
+                    endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
+                }
+                
+                catch
+                {
+                    MessageBox.Show("You have entered an invalid time for the end date.");
+                    return;
+                }
             }
-            if(start != "" && end != "")
+            if (start != "" && end != "")
             {
                 showPacketsBetweenTime(startTime, endTime);
             }
-            else if(start == "")
+            else if (start == "")
             {
                 showPacketsUntilTime(endTime);
             }
-            else if(end == "")
+            else if (end == "")
             {
                 showPacketsFromTime(startTime);
             }
@@ -1460,11 +1516,11 @@ namespace StarMeter.View
 
             sortedPackets = controller.packets.Values.Where(p => p.DateRecieved > start).ToList();
 
-            sortedPackets =  sortedPackets.OrderBy(p => p.DateRecieved).ToList();
+            sortedPackets = sortedPackets.OrderBy(p => p.DateRecieved).ToList();
 
             Packet[] firstHundredPackets;
 
-            if(sortedPackets.Count < 100)
+            if (sortedPackets.Count < 100)
             {
                 firstHundredPackets = sortedPackets.GetRange(0, sortedPackets.Count).ToArray();
             }
@@ -1507,7 +1563,7 @@ namespace StarMeter.View
                 AddPacketCollection(firstHundredPackets);
             }
         }
-        
+
         //Shows packets which were received between the start and end time.
         void showPacketsBetweenTime(DateTime start, DateTime end)
         {
@@ -1548,6 +1604,4 @@ namespace StarMeter.View
         }
 
     }
-
-
 }
