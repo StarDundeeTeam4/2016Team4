@@ -251,33 +251,42 @@ namespace StarMeter.View
 
         private TimeSpan[] _previous = new TimeSpan[8];
 
+        //Appends the packet to the screen.
         private void AddPacket(Packet p) 
         {
-            var temp_timespans = _timespans.ToList();
+            if(p.SequenceNum == 3)
+            {
+                var y = 101.5;
+            }
+            var temp_timespans = _timespans.ToList(); //This is the list that we will be using to find which timespan to allign our packet with.
             var b = GetPacketButton(p);
             var packet_timespan = p.DateRecieved.TimeOfDay;
             var sp = GetPanelToUse(p.PortNumber);
+            int min = 0;
+            int max = temp_timespans.Count;
 
+            //The following code is a binary search algorithm to allign the packet we are adding with the timestamps on the side of the screen.
+            //The code uses sections to "approximate" which timestamp our current packet should fall into as it is extremely unlikely that 
+            //the packet's DateReceived variable will be equal to one of the timestamps. e.g. A packet received at time 15:59:59.999 should be 
+            //entered into the timeslot 16:00:00.000 (if such a timestamp exists)
             bool found = false;
-
             int index = 0;
 
-            while(found == false && temp_timespans.Count > 0)
+            while(found == false && max > 0)
             {
-                index = temp_timespans.Count/2;
-                
+                index = (max+min) / 2;
 
                 if (temp_timespans[index] >= packet_timespan)
                 {
                     if ((temp_timespans[index].Add(half_section) < packet_timespan))
                     {
-
                         found = true;
                     }
                     else
                     {
-                        temp_timespans = temp_timespans.GetRange(0, index);
-                        //index = index / 2;
+                        //temp_timespans = temp_timespans.GetRange(0, index);
+                        min = max - index;
+                        max = index;
                     }
                 }
                 else
@@ -288,8 +297,9 @@ namespace StarMeter.View
                     }
                     else
                     {
-                        temp_timespans = temp_timespans.GetRange(index, temp_timespans.Count - index);
-                        //index = index + (index / 2);
+                        //temp_timespans = temp_timespans.GetRange(index, temp_timespans.Count - index);
+                        min = index;
+                        max = max - min;
                     }
                 }
             }
@@ -564,7 +574,7 @@ namespace StarMeter.View
             protocolSearch.Text = "";
         }
 
-        Packet FindPacket(Guid guid) 
+        public Packet FindPacket(Guid guid) 
         {
 
             // TODO: change this to be a lookup from dictionary
