@@ -35,13 +35,10 @@ namespace StarMeter.View
             BitmapImage logo = new BitmapImage();
             logo.BeginInit();
 
-            var converter = new System.Windows.Media.BrushConverter();
-
             if (!p.IsError)
             {
                 logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
                 logo.EndInit();
-
                 lblErrorMsg.Content = "SUCCESS";
             }
             else
@@ -49,16 +46,12 @@ namespace StarMeter.View
 
                 logo.UriSource = new Uri("pack://application:,,,/Resources/Error.png");
                 logo.EndInit();
-
                 lblErrorMsg.Content = "ERROR: " + p.ErrorType;
             }
 
-
             IconBG.Background = br;
             ErrorIcon.Source = logo;
-
             TimeLabel.Content = p.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
-
             var protocolId = p.ProtocolId;
 
             if (protocolId == 1)
@@ -93,11 +86,16 @@ namespace StarMeter.View
 
             AddressLabel.Content = finalAddressString;
 
-            LeftArrow.Visibility = _p.PrevPacket == null ? Visibility.Collapsed : Visibility.Visible;
-            RightArrow.Visibility = _p.NextPacket == null ? Visibility.Collapsed : Visibility.Visible;
+            LeftArrow.Visibility = _p.PrevPacket == null 
+                ? Visibility.Collapsed 
+                : Visibility.Visible;
+
+            RightArrow.Visibility = _p.NextPacket == null 
+                ? Visibility.Collapsed 
+                : Visibility.Visible;
         }
 
-        Brush GetBrush(bool isError) 
+        private Brush GetBrush(bool isError) 
         {
             if (isError)
             {
@@ -105,9 +103,7 @@ namespace StarMeter.View
             }
             else
             {
-
                 var converter = new System.Windows.Media.BrushConverter();
-
                return (Brush)converter.ConvertFromString("#6699ff");
             }
         }
