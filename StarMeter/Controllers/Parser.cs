@@ -56,6 +56,7 @@ namespace StarMeter.Controllers
                     packet.Address = PacketHandler.GetAddressArray(packet.FullPacket);
                     packet.Crc = PacketHandler.GetCrc(packet.FullPacket);
                     packet.SequenceNum = PacketHandler.GetSequenceNumber(packet);
+                    packet.ErrorType = ErrorType.None;
                     if (packet.ProtocolId == 1)
                     {
                         packet = RmapPacketHandler.CreateRmapPacket(packet);
