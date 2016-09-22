@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Threading;
+using System.Reflection;
+using System.ComponentModel;
 
 
 namespace StarMeter.View
@@ -164,13 +166,15 @@ namespace StarMeter.View
             #endregion
         }
 
-        private Button GetPacketButton(Packet p) 
+        public Button GetPacketButton(Packet p, string nameToSet) 
         {
             #region Create Button for the packet
             string sty = "";
             
             var b = new Button();
             b.Click += OpenPopup;
+
+            string nameOutput = nameToSet.Replace('.', 'M').Replace(':','_');
 
             var lab = new Label();
 
@@ -204,6 +208,11 @@ namespace StarMeter.View
             }
 
             b.SetResourceReference(Control.StyleProperty, sty);
+
+            b.Name = "btn" + nameOutput;
+            
+            StackPanel stackPan = GetPanelToUse(p.PortNumber);
+            
             return b;
             #endregion
 
@@ -226,11 +235,21 @@ namespace StarMeter.View
                     _previous[p.PortNumber - 1] = p.DateRecieved.TimeOfDay;
                 }
             }
-            
+
+
+            TimeSpan[] times = _timespans.ToArray();
+
+            var temp_timespans = new List<KeyValuePair<int, TimeSpan>>();
+
+
+            for (int i = 0; i < times.Length; i++)
+            {
+                temp_timespans.Add(new KeyValuePair<int, TimeSpan>(i, times[i]));
+            }
 
             foreach (var p in packets) 
             {
-                AddPacket(p);
+                AddPacket(p, temp_timespans);
             }
 
             int start, end, total;
@@ -243,18 +262,20 @@ namespace StarMeter.View
             {
                 end = total;
             }
-
-
+            
             lblNumShowing.Content = "Showing " + start + " - "  + end + " of " + total + " packets";
 
         }
 
         private TimeSpan[] _previous = new TimeSpan[8];
 
-        private void AddPacket(Packet p) 
+
+        List<List<Guid>[]> _timeSpanOccupied = new List<List<Guid>[]>();
+
+        private void AddPacket(Packet p, List<KeyValuePair<int, TimeSpan>> temp_timespans) 
         {
-            var temp_timespans = _timespans.ToList();
-            var b = GetPacketButton(p);
+
+           // var temp_timespans = _timespans.ToList();
             var packet_timespan = p.DateRecieved.TimeOfDay;
             var sp = GetPanelToUse(p.PortNumber);
 
@@ -267,11 +288,10 @@ namespace StarMeter.View
                 index = temp_timespans.Count/2;
                 
 
-                if (temp_timespans[index] >= packet_timespan)
+                if (temp_timespans[index].Value >= packet_timespan)
                 {
-                    if ((temp_timespans[index].Add(half_section) < packet_timespan))
+                    if ((temp_timespans[index].Value.Add(half_section) < packet_timespan))
                     {
-
                         found = true;
                     }
                     else
@@ -282,7 +302,7 @@ namespace StarMeter.View
                 }
                 else
                 {
-                    if ((temp_timespans[index].Add(section) > packet_timespan))
+                    if ((temp_timespans[index].Value.Add(section) > packet_timespan))
                     {
                         found = true;
                     }
@@ -293,30 +313,90 @@ namespace StarMeter.View
                     }
                 }
             }
+            _timeSpanOccupied[temp_timespans[index].Key][p.PortNumber].Add(p.PacketId);
+            var currentNumber = _timeSpanOccupied[temp_timespans[index].Key][p.PortNumber].Count;
 
-            var diff = (temp_timespans[index] - _previous[p.PortNumber - 1]);
-
-            int spaces = 0;
-
-
-
-            while(diff.CompareTo(new TimeSpan(0,0,0,0,interval)) > 0)
+            if (currentNumber > 1) 
             {
-                diff = diff.Add(negative_section);
-                spaces++;
-            }
+                Console.WriteLine("CLASH " + temp_timespans[index].Key);
 
-            for (int i = 0; i < spaces; i++)
+                var childObjs = GetPanelToUse(p.PortNumber).Children;
+                
+                string toFind = "btn" + temp_timespans[index].Value.ToString().Replace('.', 'M').Replace(':', '_');
+
+
+
+                StackPanel stackPan = GetPanelToUse(p.PortNumber);
+
+                //for (int i = 0; i < childObjs.Count; i++)
+                //{
+                //    try
+                //    {
+                //        if (((Button)childObjs[i]).Name == toFind)
+                //        {
+                //            ((Button)childObjs[i]).Background = Brushes.Yellow;
+                //            break;
+                //        }
+                //    }
+                //    catch (InvalidCastException) { }
+                //}
+                
+                var existingBtn = (Button) sp.FindName(toFind);
+
+
+
+                var btn = (Button)LogicalTreeHelper.FindLogicalNode(stackPan, toFind);
+
+                btn.Background = Brushes.Yellow;
+
+
+                // clear all event handlers here
+
+                btn.Click -= OpenPopup;
+                btn.Click -= ViewMultiplePackets;
+                btn.Click -= ViewMultiplePackets;
+                btn.Click -= ViewMultiplePackets;
+                btn.Click -= ViewMultiplePackets;
+                btn.Click -= ViewMultiplePackets;
+                btn.Click -= ViewMultiplePackets;   // may have been assigned multiple times - just make sure!
+
+                btn.Tag = temp_timespans[index].Key + "@" + p.PortNumber;
+
+                btn.Click += ViewMultiplePackets;
+
+                Label l = (Label)btn.Content;
+                btn.Tag = temp_timespans[index].Key + "@" + p.PortNumber;
+                l.Content = currentNumber;
+
+            }
+            else
             {
-                Label lbl = new Label();
-                lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
-                sp.Children.Add(lbl);
+
+                var diff = (temp_timespans[index].Value - _previous[p.PortNumber - 1]);
+
+                int spaces = 0;
+
+                while (diff.CompareTo(new TimeSpan(0, 0, 0, 0, interval)) > 0)
+                {
+                    diff = diff.Add(negative_section);
+                    spaces++;
+                }
+
+                for (int i = 0; i < spaces; i++)
+                {
+                    Label lbl = new Label();
+                    lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
+                    sp.Children.Add(lbl);
+                }
+
+
+                var b = GetPacketButton(p, temp_timespans[index].Value.ToString());
+
+                sp.Children.Add(b);
+                
+                _previous[p.PortNumber - 1] = temp_timespans[index].Value;
             }
-            sp.Children.Add(b);
-
-            _previous[p.PortNumber - 1] = temp_timespans[index];
-
-
+            
         }
 
         //This function will remove all packets from the screen which are being displayed.
@@ -427,7 +507,27 @@ namespace StarMeter.View
 
         }
         #endregion
-        
+
+        void ViewMultiplePackets(object sender, RoutedEventArgs e) 
+        {
+            MultiplePacketPopup mpp = new MultiplePacketPopup(controller);
+
+            string[] split = ((Button)sender).Tag.ToString().Split('@');
+
+            var id = int.Parse(split[0]);
+            var port = int.Parse(split[1]);
+
+            List<Guid> guids = _timeSpanOccupied[id][port];
+            List<Packet> ps = new List<Packet>();
+
+            foreach (Guid g in guids) 
+            {
+                ps.Add(FindPacket(g));
+            }
+
+            mpp.CreateElements(ps);
+            mpp.ShowDialog();
+        }
 
         //This will allow us to read the files or remove the files later.
         private readonly List<Grid> _fileGrids = new List<Grid>();
@@ -456,7 +556,7 @@ namespace StarMeter.View
                     Name = "grid_" + actualName, //remove file extension for name
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Stretch,
-                    Height = 30,
+                    Height = 60,
                     Margin = new Thickness(0, 0, 0, 5),
                     Background = Brushes.White
                 };
@@ -537,14 +637,20 @@ namespace StarMeter.View
             pageIndex = 0;
             PrevPageBtn.Visibility = System.Windows.Visibility.Hidden;
             var search = addressSearch.Text;
+
+            var packList = new List<Packet>();
+
             foreach (var packet in sortedPackets)
             {
                 var packetAddress = packet.Address;
                 if (packetAddress != null && packetAddress.GetValue(0).ToString() == search)
                 {
-                    AddPacket(packet);
+                    packList.Add(packet);
                 }
             }
+
+            AddPacketCollection(packList.ToArray());
+
         }
 
         private void SearchForProtocol(object sender, RoutedEventArgs e)
@@ -553,15 +659,21 @@ namespace StarMeter.View
             pageIndex = 0;
             PrevPageBtn.Visibility = System.Windows.Visibility.Hidden;
             var search = protocolSearch.Text;
+
+            var packList = new List<Packet>();
+
             foreach (var packet in sortedPackets)
             {
                 var packetProtocol = packet.ProtocolId;
                 if (packetProtocol.ToString() == search)
                 {
-                    AddPacket(packet);
+                    packList.Add(packet);
                 }
             }
-            protocolSearch.Text = "";
+
+            AddPacketCollection(packList.ToArray());
+
+            //protocolSearch.Text = "";
         }
 
         Packet FindPacket(Guid guid) 
@@ -902,8 +1014,6 @@ namespace StarMeter.View
                 FiltersPane.Width = new GridLength(3, GridUnitType.Star);
                 FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
 
-                bool changed = false;
-
                 RemoveAllPackets();
 
                 var packets = controller.ParsePackets().ToList();
@@ -953,6 +1063,8 @@ namespace StarMeter.View
 
         void CreateAllTimeLabels(Packet[] packets)
         {
+            _timeSpanOccupied.Clear();
+
             var timelist = new List<TimeSpan>();
             var tStart = packets[0].DateRecieved.TimeOfDay;
             var tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
@@ -974,13 +1086,32 @@ namespace StarMeter.View
             var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
             timelist.Add(curr);
 
+            var list = new List<Guid>[8];
+
+            for(int j = 0; j < list.Length; j++) 
+            {
+                list[j] = new List<Guid>();
+            }
+
+            _timeSpanOccupied.Add(list);
+
+
             while (curr <= tEnd)
             {
                 i++;
                 CreateTimeLabel(curr);
 
                 curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
-                timelist.Add(curr);
+                timelist.Add(curr); 
+                
+                var list2 = new List<Guid>[8];
+
+                for (int j = 0; j < list2.Length; j++)
+                {
+                    list2[j] = new List<Guid>();
+                }
+
+                _timeSpanOccupied.Add(list2);
             }
             _timespans = timelist.ToArray();
         }
@@ -988,15 +1119,19 @@ namespace StarMeter.View
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
+
+            var packList = new List<Packet>();
+            
             foreach (var packs in controller.packets.Values) 
             {
                 Packet p = (Packet)packs;
                 if (p.IsError) 
                 {
-                    AddPacket(p);
+                    packList.Add(p);
                 }
             }
 
+            AddPacketCollection(packList.ToArray());
           
             CreateDataRateGraph(controller.packets.Values.ToArray());
         }
