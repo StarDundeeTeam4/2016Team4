@@ -4,5 +4,6 @@
     {
         string ReadLine();
         int Peek();
+        void Close();
     }
 }

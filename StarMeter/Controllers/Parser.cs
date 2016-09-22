@@ -19,6 +19,7 @@ namespace StarMeter.Controllers
             _prevPacket = null;
             var r = new StreamReaderWrapper(filePath);
             PacketDict = ParsePackets(r);
+            r.Close();
             return PacketDict;
         }
 
@@ -63,10 +64,6 @@ namespace StarMeter.Controllers
                     {
                         packet = _rmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
                     }
-                    else
-                    {
-                        packet.ErrorType = GetErrorType(packet);
-                    }
                 }
                 else
                 {
@@ -76,14 +73,15 @@ namespace StarMeter.Controllers
                     {
                         packet.ErrorType = ErrorTypes.Disconnect;
                     }
-                    ErrorDetector errorDetector = new ErrorDetector();
-                    var previousPacket = GetPrevPacket(packet);
-                    var previousPreviousPacket = GetPrevPacket(previousPacket);
-                    previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
-                    previousPacket.IsError = true;
-                }
 
-                
+                    if (PacketDict.Count > 2) { 
+                        ErrorDetector errorDetector = new ErrorDetector();
+                        var previousPacket = GetPrevPacket(packet);
+                        var previousPreviousPacket = GetPrevPacket(previousPacket);
+                        previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
+                        previousPacket.IsError = true;
+                    }
+                }
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
@@ -113,20 +111,6 @@ namespace StarMeter.Controllers
             Packet previousPacket;
             PacketDict.TryGetValue(prevPacketId, out previousPacket);
             return previousPacket;
-        }
-
-        public ErrorTypes GetErrorType(Packet packet)
-        {
-            bool CrcValid;
-            if (packet.GetType() == typeof(RmapPacket))
-            {
-                CrcValid = RmapPacketHandler.CheckRmapCrc((RmapPacket)packet);
-            }
-            else
-            {
-                CrcValid = CRC.CheckCrcForPacket(packet.FullPacket);
-            }
-            return !CrcValid ? ErrorTypes.DataError : ErrorTypes.None;
         }
 
     }
