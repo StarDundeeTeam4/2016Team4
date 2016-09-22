@@ -21,5 +21,10 @@ namespace StarMeter.Controllers
         {
             return _streamReader.Peek();
         }
+
+        public void Close()
+        {
+            _streamReader.Close();
+        }
     }
 }
