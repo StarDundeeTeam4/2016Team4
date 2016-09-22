@@ -11,7 +11,7 @@
     </Window.Background>
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="PacketList"/>
+            <StackPanel Name="PacketList" Margin="0,3,0,0"/>
         </ScrollViewer>
     </Grid>
 </Window>

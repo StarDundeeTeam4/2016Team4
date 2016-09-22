@@ -203,6 +203,13 @@
   <ItemGroup>
     <Resource Include="Resources\rocket.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\left-arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\right-arrow.png" />
+    <Resource Include="Resources\help.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
