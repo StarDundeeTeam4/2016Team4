@@ -60,7 +60,6 @@ namespace StarMeter.Controllers
         public byte GetCrc(byte[] fullPacket)
         {
             return fullPacket.Last();
-            //return (byte)Convert.ToInt32(fullPacket[fullPacket.Length - 1], 16);
         }
 
         public int GetProtocolId(byte[] fullPacket, int logicalIndex)
@@ -85,7 +84,6 @@ namespace StarMeter.Controllers
 
                 Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
                 Array.Reverse(sequence); //damn little-endian-ness
-
 
                 return BitConverter.ToUInt16(sequence, 0);
             }
