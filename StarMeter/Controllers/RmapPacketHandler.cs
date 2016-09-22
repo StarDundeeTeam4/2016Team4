@@ -5,9 +5,9 @@ using StarMeter.Models;
 
 namespace StarMeter.Controllers
 {
-    public class RmapPacketHandler
+    public static class RmapPacketHandler
     {
-        public RmapPacket CreateRmapPacket(Packet packet)
+        public static RmapPacket CreateRmapPacket(Packet packet)
         {
             int addressIndex = PacketHandler.GetLogicalAddressIndex(packet.FullPacket);
             var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
@@ -60,7 +60,7 @@ namespace StarMeter.Controllers
             return result.ToArray();
         }
 
-        private static int GetRmapLogicalAddressLength(byte rmapCommandByte)
+        public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
             var finalArray = new BitArray(new[] { getBit(rmapCommandByte, 1), getBit(rmapCommandByte, 2), false, false, false, false, false, false });
             var result = new int[1];
@@ -69,7 +69,7 @@ namespace StarMeter.Controllers
             return final * 4;
         }
 
-        private static bool getBit(byte cmdByte, int index)
+        public static bool getBit(byte cmdByte, int index)
         {
             var bit = (cmdByte & (1 << index - 1)) != 0;
             return bit;
@@ -124,7 +124,5 @@ namespace StarMeter.Controllers
             int addressIndex = PacketHandler.GetLogicalAddressIndex(fullPacket);
             return fullPacket[addressIndex + 3];
         }
-
-       
     }
 }

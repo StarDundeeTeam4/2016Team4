@@ -8,11 +8,10 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class RmapPacketHandlerTests
     {
-        private PacketHandler _packetHandler;
         [TestInitialize]
         public void Initialize()
         {
-            _packetHandler = new PacketHandler();
+            
         }
 
         [TestMethod]
@@ -43,7 +42,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read Reply",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p);
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -61,7 +60,7 @@ namespace StarMeter.Tests.Controllers
                 ProtocolId = 1,
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p);
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -79,7 +78,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p);
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsTrue(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -98,7 +97,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read Reply",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p);
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsTrue(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -116,7 +115,7 @@ namespace StarMeter.Tests.Controllers
                 PacketType = "Read Reply",
                 FullPacket = packetData,
             };
-            p.Cargo = _packetHandler.GetCargoArray(p);
+            p.Cargo = PacketHandler.GetCargoArray(p);
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(p));
         }
@@ -156,8 +155,7 @@ namespace StarMeter.Tests.Controllers
         [TestCleanup]
         public void Cleanup()
         {
-            _packetHandler = null;
+            
         }
-
     }
 }

@@ -9,16 +9,14 @@ using System.Collections;
 
 namespace StarMeter.Controllers
 {
-    public class PacketHandler
+    public static class PacketHandler
     {
-        private Guid? _prevPacket;
-
-        public bool IsPType(string packetType)
+        public static bool IsPType(string packetType)
         {
             return string.CompareOrdinal(packetType, "P") == 0;
         }
 
-        public bool ParseDateTime(string stringDateTime, out DateTime result)
+        public static bool ParseDateTime(string stringDateTime, out DateTime result)
         {
             return DateTime.TryParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null, DateTimeStyles.None, out result);
         }
@@ -32,7 +30,7 @@ namespace StarMeter.Controllers
             return -1;
         }
 
-        public byte[] GetCargoArray(Packet packet)
+        public static byte[] GetCargoArray(Packet packet)
         {
             int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
             byte[] cargo;
@@ -56,7 +54,7 @@ namespace StarMeter.Controllers
             return cargo;
         }
 
-        public byte[] GetAddressArray(byte[] fullPacket)
+        public static byte[] GetAddressArray(byte[] fullPacket)
         {
             int logicalIndex = GetLogicalAddressIndex(fullPacket);
             byte[] addressArray = new byte[logicalIndex + 1];
@@ -64,13 +62,13 @@ namespace StarMeter.Controllers
             return addressArray;
         }
 
-        public byte GetCrc(byte[] fullPacket)
+        public static byte GetCrc(byte[] fullPacket)
         {
             return fullPacket.Last();
             //return (byte)Convert.ToInt32(fullPacket[fullPacket.Length - 1], 16);
         }
 
-        public int GetProtocolId(byte[] fullPacket)
+        public static int GetProtocolId(byte[] fullPacket)
         {
             try
             {
@@ -84,7 +82,7 @@ namespace StarMeter.Controllers
             }
         }
 
-        public int GetSequenceNumber(Packet packet)
+        public static int GetSequenceNumber(Packet packet)
         {
             try
             {
