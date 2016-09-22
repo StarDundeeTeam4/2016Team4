@@ -204,6 +204,10 @@
     <Resource Include="Resources\rocket.gif" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\left-arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\right-arrow.png" />
     <Resource Include="Resources\help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

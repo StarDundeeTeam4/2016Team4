@@ -38,9 +38,55 @@
             <ColumnDefinition Width="3*" Name="FileSelectedPane"/>
             <ColumnDefinition Width="0*" Name="FiltersPane"/>
             <ColumnDefinition Width="10*" />
-            <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
+            <ColumnDefinition Width="0*" Name="RightButtonColumn"/>
+            <ColumnDefinition Width="3*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
+        <Canvas Name="HelpPanel" Visibility="Hidden" Grid.RowSpan="2" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
+
+            <Grid Height="172" Width="168">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".8*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height=".8*"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Colours -->
+                <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+
+                <!-- Labels -->
+                <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
+                <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
+                <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+
+            </Grid>
+        </Canvas>
+        
+        <Image MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Column="4" Grid.Row="1" Source="/StarMeter;component/Resources/help.png" Margin="40, 40, 60, 0" VerticalAlignment="Bottom">
+            <Image.OpacityMask>
+                <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
+            </Image.OpacityMask>
+        </Image>
+        
+        <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <DVC:Chart.Series >
+                <DVC:PieSeries Title="Experience" 
+                        IndependentValueBinding="{Binding Path=Key}"
+                        DependentValueBinding="{Binding Path=Value}" Background="Black">
+                </DVC:PieSeries>
+            </DVC:Chart.Series>
+
+        </DVC:Chart>
+        
         <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/left chevron.png" Stretch="Uniform"/>
@@ -57,6 +103,12 @@
         <Button Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
+            </Button.Background>
+        </Button>
+
+        <Button Grid.Row="1" Grid.Column="3"  Height="50" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch">
+            <Button.Background>
+                <ImageBrush ImageSource="pack://application:,,,/Resources/right-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
         </Button>
 
@@ -233,7 +285,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="2.6*" />
                 </Grid.ColumnDefinitions>
-                
+
                 <Image Name="LoadingIcon" Visibility="Hidden" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch"/>
                 <Label Name="LoadingMessage" Visibility="Hidden" Margin="10, 0, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..."/>
 
@@ -365,7 +417,6 @@
 
         </Grid>
 
-
         <Grid Grid.Column="3" Grid.Row="1">
 
             <Grid.RowDefinitions>
@@ -374,50 +425,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Image MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Row="2" Source="/StarMeter;component/Resources/help.png" Margin="40, 40, 60, 0" VerticalAlignment="Bottom">
-                <Image.OpacityMask>
-                    <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
-                </Image.OpacityMask>
 
-            </Image>
-
-            <DVC:Chart Name="mcChart" Height="300" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <DVC:Chart.Series >
-                    <DVC:PieSeries Title="Experience" 
-                        IndependentValueBinding="{Binding Path=Key}"
-                        DependentValueBinding="{Binding Path=Value}" Background="Black">
-                    </DVC:PieSeries>
-                </DVC:Chart.Series>
-
-            </DVC:Chart>
-            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.RowSpan="2" Grid.Row ="1" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
-
-                <Grid Height="172" Width="168">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height=".8*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height=".8*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="3*" />
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Colours -->
-                    <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                    <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                    <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-
-                    <!-- Labels -->
-                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
-                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
-                    <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
-
-                </Grid>
-            </Canvas>
+            
 
         </Grid>
 
