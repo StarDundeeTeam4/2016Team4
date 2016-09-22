@@ -87,6 +87,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controllers\ErrorDetector.cs" />
+    <Compile Include="Controllers\PacketHandler.cs" />
     <Compile Include="Controllers\RmapPacketHandler.cs" />
     <Compile Include="Models\ObjectFinder.cs" />
     <Compile Include="View\MultiplePacketPopup.xaml.cs">

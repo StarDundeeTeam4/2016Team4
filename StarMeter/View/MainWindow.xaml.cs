@@ -1381,11 +1381,11 @@ namespace StarMeter.View
             DateTime endTime = new DateTime();
             if(start != "")
             {
-                startTime = DateTime.ParseExact(start, "dd-MM-yyyy hh:mm:ss.fff", null);
+                startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
             }
             if(end != "")
             {
-                endTime = DateTime.ParseExact(end, "dd-MM-yyyy hh:mm:ss.fff", null);
+                endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
             }
             if(start != "" && end != "")
             {

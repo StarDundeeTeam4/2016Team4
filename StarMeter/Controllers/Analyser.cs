@@ -95,8 +95,6 @@ namespace StarMeter.Controllers
 
         public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets) 
         {
-            var sortedPackets = from pair in packets orderby pair.DateRecieved ascending select pair;
-
             List<KeyValuePair<string, int>> returnedData = new List<KeyValuePair<string, int>>();
             List<KeyValuePair<string, int>> errorData = new List<KeyValuePair<string, int>>();
 
