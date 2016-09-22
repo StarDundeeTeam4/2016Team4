@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StarMeter.Models;
 using System.Globalization;
 using System.Collections;
@@ -11,8 +8,6 @@ namespace StarMeter.Controllers
 {
     public class PacketHandler
     {
-        private Guid? _prevPacket;
-
         public bool IsPType(string packetType)
         {
             return string.CompareOrdinal(packetType, "P") == 0;

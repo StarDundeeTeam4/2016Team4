@@ -63,10 +63,6 @@ namespace StarMeter.Controllers
                     {
                         packet = _rmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
                     }
-                    else
-                    {
-                        packet.ErrorType = GetErrorType(packet);
-                    }
                 }
                 else
                 {
@@ -85,8 +81,6 @@ namespace StarMeter.Controllers
                         previousPacket.IsError = true;
                     }
                 }
-
-                
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
@@ -116,20 +110,6 @@ namespace StarMeter.Controllers
             Packet previousPacket;
             PacketDict.TryGetValue(prevPacketId, out previousPacket);
             return previousPacket;
-        }
-
-        public ErrorTypes GetErrorType(Packet packet)
-        {
-            bool CrcValid;
-            if (packet.GetType() == typeof(RmapPacket))
-            {
-                CrcValid = RmapPacketHandler.CheckRmapCrc((RmapPacket)packet);
-            }
-            else
-            {
-                CrcValid = CRC.CheckCrcForPacket(packet.FullPacket);
-            }
-            return !CrcValid ? ErrorTypes.DataError : ErrorTypes.None;
         }
 
     }
