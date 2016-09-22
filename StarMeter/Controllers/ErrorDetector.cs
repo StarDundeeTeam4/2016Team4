@@ -33,11 +33,9 @@ namespace StarMeter.Controllers
 
         public bool IsDataError(Packet previousPacket, Packet currentPacket)
         {
-            //var isCrcCorrect = CRC.CheckCrcForPacket(currentPacket.FullPacket);
             var isCrcCorrect = IsCrcError(currentPacket);
             var isBabblingIdiot = CheckForBabblingIdiot(currentPacket, previousPacket);
 
-            //return !isCrcCorrect || isBabblingIdiot;
             return isBabblingIdiot || !isCrcCorrect;
         }
 
