@@ -52,17 +52,15 @@ namespace StarMeter.Controllers
 
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
-                    
-                    var logicalAddressIndex = _packetHandler.GetLogicalAddressIndex(packet.FullPacket);
 
-                    packet.ProtocolId = _packetHandler.GetProtocolId(packet.FullPacket, logicalAddressIndex);
-                    packet.Cargo = _packetHandler.GetCargoArray(packet, logicalAddressIndex);
-                    packet.Address = _packetHandler.GetAddressArray(packet.FullPacket, logicalAddressIndex);
+                    packet.ProtocolId = _packetHandler.GetProtocolId(packet.FullPacket);
+                    packet.Cargo = _packetHandler.GetCargoArray(packet);
+                    packet.Address = _packetHandler.GetAddressArray(packet.FullPacket);
                     packet.Crc = _packetHandler.GetCrc(packet.FullPacket);
-                    packet.SequenceNum = _packetHandler.GetSequenceNumber(packet, logicalAddressIndex);
+                    packet.SequenceNum = _packetHandler.GetSequenceNumber(packet);
                     if (packet.ProtocolId == 1)
                     {
-                        packet = _rmapPacketHandler.CreateRmapPacket(packet, logicalAddressIndex);
+                        packet = _rmapPacketHandler.CreateRmapPacket(packet);
                     }
                     else
                     {

@@ -7,13 +7,15 @@ namespace StarMeter.Controllers
 {
     public class RmapPacketHandler
     {
-        public RmapPacket CreateRmapPacket(Packet packet, int addressIndex)
+        public RmapPacket CreateRmapPacket(Packet packet)
         {
-            var rmapCommandByte = new BitArray(new[] { packet.FullPacket[addressIndex + 2] });
-            var rmapPacketType = GetRmapType(rmapCommandByte);
-            var addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
-            var sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength, addressIndex);
-            var destinationKey = GetDestinationKey(packet.FullPacket, addressIndex);
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet.FullPacket);
+            var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
+            int addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
+
+            string rmapPacketType = GetRmapType(rmapCommandByte);
+            byte[] sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength);
+            byte destinationKey = GetDestinationKey(packet.FullPacket);
             var rmapPacket = new RmapPacket
             {
                 CommandByte = rmapCommandByte,
@@ -38,10 +40,11 @@ namespace StarMeter.Controllers
             return rmapPacket;
         }
 
-        public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength, int logicalAddressIndex)
+        public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength)
         {
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
             var result = new List<byte>();
-            var sourceAddressIndex = logicalAddressIndex + 4;
+            var sourceAddressIndex = addressIndex + 4;
             try
             {
                 for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
@@ -116,9 +119,10 @@ namespace StarMeter.Controllers
             return result;
         }
 
-        public static byte GetDestinationKey(byte[] packetData, int logicalAddressIndex)
+        public static byte GetDestinationKey(byte[] fullPacket)
         {
-            return packetData[logicalAddressIndex + 3];
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(fullPacket);
+            return fullPacket[addressIndex + 3];
         }
 
        
