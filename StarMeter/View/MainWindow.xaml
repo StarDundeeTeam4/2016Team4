@@ -69,6 +69,8 @@
 
             <Grid Grid.Row="2" IsHitTestVisible="false">
 
+                <!--<Canvas Background="Aquamarine" MouseDown="CanvasClicked" Margin="10,0,-0.4,-176" Grid.ColumnSpan="1" HorizontalAlignment="Left"  Grid.Row="0" VerticalAlignment="Top" Width="1300" Height="200"/>-->
+                
                 <!-- Chart for displaying the data rates, assigned to the bottom row -->
                 <DVC:Chart Visibility="Visible" Background="Transparent" Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
                     <DVC:LineSeries  DependentValuePath="Value" 
@@ -190,6 +192,7 @@
             <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" />
         </Grid>
 
+        
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="2"/>
 
 
@@ -235,7 +238,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <Image Name="LoadingIcon" Visibility="Hidden" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch"/>
-                <Label Name="LoadingMessage" Visibility="Hidden" Margin="10, 0, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..."/>
+                <Label Name="LoadingMessage" Visibility="Hidden" Margin="10, 0, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..." FontSize="16"/>
 
             </Grid>
 
@@ -246,18 +249,18 @@
             <Grid Name="FiltersGrid" Grid.Row="4">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height=".2*" Name="Heading"/>
-                    <RowDefinition Height=".25*" Name="ErrorsOnly"/>
-                    <RowDefinition Height="0.45*" Name="PortInfoButtons"/>
+                    <RowDefinition Height=".3*" Name="Heading"/>
+                    <RowDefinition Height=".3*" Name="ErrorsOnly"/>
+                    <RowDefinition Height="0.7*" Name="PortInfoButtons"/>
                     <RowDefinition Height="1.25*" Name="PortChecks"/>
-                    <RowDefinition Height=".8*" Name="AddressSearch"/>
-                    <RowDefinition Height=".8*" Name="ProtocolSearch"/>
-                    <RowDefinition Height="1*" Name="TimeFilters"/>
-                    <RowDefinition Height=".20*" Name="ResetBit"></RowDefinition>
+                    <RowDefinition Height=".85*" Name="AddressSearch"/>
+                    <RowDefinition Height=".85*" Name="ProtocolSearch"/>
+                    <RowDefinition Height="1.1*" Name="TimeFilters"/>
+                    <RowDefinition Height=".3*" Name="ResetBit"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Label Name ="FiltersHeading" Grid.Row="0" HorizontalAlignment="Center" Content="Filters" Foreground="White" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" />
-                <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly"/>
+                <Label Name ="FiltersHeading" Grid.Row="0" HorizontalAlignment="Center" Content="Filters" Foreground="White" VerticalAlignment="Stretch" FontWeight="Bold" FontSize="16" VerticalContentAlignment="Top"/>
+                <CheckBox Margin="5,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly"/>
 
                 <Grid Grid.Row="3" Margin="40,5.2,30,0" Grid.ColumnSpan="2">
                     <Grid.RowDefinitions>
@@ -272,14 +275,14 @@
                     </Grid.ColumnDefinitions>
 
 
-                    <CheckBox Name="Check1A" Grid.Row="0" Grid.Column="0" Checked="DisplayPort1A" Unchecked="HidePort1A" Content="Port 1A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check1B" Grid.Row="0" Grid.Column="1" Checked="DisplayPort1B" Unchecked="HidePort1B" Content="Port 1B" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check2A" Grid.Row="1" Grid.Column="0" Checked="DisplayPort2A" Unchecked="HidePort2A" Content="Port 2A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check2B" Grid.Row="1" Grid.Column="1" Checked="DisplayPort2B" Unchecked="HidePort2B" Content="Port 2B" HorizontalAlignment="Left"  VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check3A" Grid.Row="2" Grid.Column="0" Checked="DisplayPort3A" Unchecked="HidePort3A" Content="Port 3A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check3B" Grid.Row="2" Grid.Column="1" Checked="DisplayPort3B" Unchecked="HidePort3B" Content="Port 3B" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check4A" Grid.Row="3" Grid.Column="0" Checked="DisplayPort4A" Unchecked="HidePort4A" Content="Port 4A" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check4B" Grid.Row="3" Grid.Column="1" Checked="DisplayPort4B" Unchecked="HidePort4B" Content="Port 4B" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check1A" Grid.Row="0" Grid.Column="0" Checked="DisplayPort1A" Unchecked="HidePort1A" Content="Port 1A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True" />
+                    <CheckBox Name="Check1B" Grid.Row="0" Grid.Column="1" Checked="DisplayPort1B" Unchecked="HidePort1B" Content="Port 1B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check2A" Grid.Row="1" Grid.Column="0" Checked="DisplayPort2A" Unchecked="HidePort2A" Content="Port 2A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check2B" Grid.Row="1" Grid.Column="1" Checked="DisplayPort2B" Unchecked="HidePort2B" Content="Port 2B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check3A" Grid.Row="2" Grid.Column="0" Checked="DisplayPort3A" Unchecked="HidePort3A" Content="Port 3A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check3B" Grid.Row="2" Grid.Column="1" Checked="DisplayPort3B" Unchecked="HidePort3B" Content="Port 3B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check4A" Grid.Row="3" Grid.Column="0" Checked="DisplayPort4A" Unchecked="HidePort4A" Content="Port 4A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                    <CheckBox Name="Check4B" Grid.Row="3" Grid.Column="1" Checked="DisplayPort4B" Unchecked="HidePort4B" Content="Port 4B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
 
                 </Grid>
 
@@ -292,10 +295,10 @@
                             <RowDefinition Height="1.5*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40*" />
-                            <ColumnDefinition Width="108*"/>
-                            <ColumnDefinition Width="32*" />
-                            <ColumnDefinition Width="113*"/>
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="11*"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="11*"/>
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.ColumnSpan="4" Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="Display Port Info For..." Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
