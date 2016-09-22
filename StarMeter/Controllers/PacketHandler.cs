@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StarMeter.Models;
 using System.Globalization;
 using System.Collections;
@@ -65,7 +62,6 @@ namespace StarMeter.Controllers
         public static byte GetCrc(byte[] fullPacket)
         {
             return fullPacket.Last();
-            //return (byte)Convert.ToInt32(fullPacket[fullPacket.Length - 1], 16);
         }
 
         public static int GetProtocolId(byte[] fullPacket)
@@ -92,7 +88,6 @@ namespace StarMeter.Controllers
 
                 Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
                 Array.Reverse(sequence); //damn little-endian-ness
-
 
                 return BitConverter.ToUInt16(sequence, 0);
             }
