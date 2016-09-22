@@ -76,11 +76,11 @@ namespace StarMeter.Controllers
                     {
                         packet.ErrorType = ErrorTypes.Disconnect;
                     }
-                    ErrorDetector errorDetector = new ErrorDetector();
-                    var previousPacket = GetPrevPacket(packet);
-                    var previousPreviousPacket = GetPrevPacket(previousPacket);
-                    previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
-                    previousPacket.IsError = true;
+//                    ErrorDetector errorDetector = new ErrorDetector();
+//                    var previousPacket = GetPrevPacket(packet);
+//                    var previousPreviousPacket = GetPrevPacket(previousPacket);
+//                    previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
+//                    previousPacket.IsError = true;
                 }
 
                 
