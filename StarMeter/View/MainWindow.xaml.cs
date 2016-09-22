@@ -181,6 +181,38 @@ namespace StarMeter.View
             try
             {
                 lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
+
+                var addressArray = p.Address;
+                var finalAddressString = "";
+
+                if (addressArray != null)
+                {
+                    if (addressArray.Length > 1)
+                    {
+                        finalAddressString += "Physical Path: ";
+                        for (var i = 0; i < addressArray.Length - 1; i++)
+                            finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
+                    }
+                    else
+                        finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
+                }
+                else
+                {
+                    finalAddressString = "No Address";
+                }
+
+                lab.Content = finalAddressString;
+
+                var protocolId = p.ProtocolId;
+
+                if (protocolId == 1)
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId + " (RMAP)";
+                }
+                else
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId;
+                }
             }
             catch (Exception e)
             {

@@ -369,7 +369,7 @@
         </Grid>
 
 
-        <DVC:Chart Name="mcChart" Height="300" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <DVC:Chart.Series >
                 <DVC:PieSeries Title="Experience" 
                     IndependentValueBinding="{Binding Path=Key}"
