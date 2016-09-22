@@ -8,6 +8,16 @@ namespace StarMeter.Controllers
 {
     public static class PacketHandler
     {
+        public static void SetPacketInformation(Packet packet)
+        {
+            packet.ProtocolId = GetProtocolId(packet.FullPacket);
+            packet.Cargo = GetCargoArray(packet);
+            packet.Address = GetAddressArray(packet.FullPacket);
+            packet.Crc = GetCrc(packet.FullPacket);
+            packet.SequenceNum = GetSequenceNumber(packet);
+            packet.ErrorType = ErrorType.None;
+        }
+        
         public static bool IsPType(string packetType)
         {
             return string.CompareOrdinal(packetType, "P") == 0;

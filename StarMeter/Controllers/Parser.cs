@@ -50,13 +50,7 @@ namespace StarMeter.Controllers
 
                     var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
-
-                    packet.ProtocolId = PacketHandler.GetProtocolId(packet.FullPacket);
-                    packet.Cargo = PacketHandler.GetCargoArray(packet);
-                    packet.Address = PacketHandler.GetAddressArray(packet.FullPacket);
-                    packet.Crc = PacketHandler.GetCrc(packet.FullPacket);
-                    packet.SequenceNum = PacketHandler.GetSequenceNumber(packet);
-                    packet.ErrorType = ErrorType.None;
+                    PacketHandler.SetPacketInformation(packet);
                     if (packet.ProtocolId == 1)
                     {
                         packet = RmapPacketHandler.CreateRmapPacket(packet);

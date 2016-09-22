@@ -50,16 +50,13 @@ namespace StarMeter.Controllers
             {
                 filePaths.RemoveAt(index);
             }
-
             return index;
         }
 
         public Packet[] ParsePackets() 
         {
             packets.Clear();
-
             Parser parser = new Parser();
-                        
             foreach (var file in filePaths) 
             {
                 var packetDict = (parser.ParseFile(file));
@@ -68,7 +65,6 @@ namespace StarMeter.Controllers
                     packets.Add(p.Key, p.Value);
                 }
             }
-
             return packets.Values.ToArray();
         }
             

@@ -62,14 +62,14 @@ namespace StarMeter.Controllers
 
         public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
-            var finalArray = new BitArray(new[] { getBit(rmapCommandByte, 1), getBit(rmapCommandByte, 2), false, false, false, false, false, false });
+            var finalArray = new BitArray(new[] { GetBit(rmapCommandByte, 1), GetBit(rmapCommandByte, 2), false, false, false, false, false, false });
             var result = new int[1];
             finalArray.CopyTo(result, 0);
             var final = result[0];
             return final * 4;
         }
 
-        public static bool getBit(byte cmdByte, int index)
+        public static bool GetBit(byte cmdByte, int index)
         {
             var bit = (cmdByte & (1 << index - 1)) != 0;
             return bit;
