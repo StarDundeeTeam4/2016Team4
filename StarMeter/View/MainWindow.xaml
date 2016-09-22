@@ -15,11 +15,8 @@
 
 
     <!-- The main grid to seperate the Left Panel, the Port info, and the DVS-->
-    <Grid                    
-              MouseDown="Grid_MouseDown"
-            MouseUp="Grid_MouseUp"
-            MouseMove="Grid_MouseMove"
-             x:Name="MainGrid"
+    <Grid 
+        x:Name="MainGrid"
         >
 
 
@@ -190,7 +187,7 @@
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
+            <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" />
         </Grid>
 
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="2"/>
@@ -203,8 +200,7 @@
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="15*" />
                 <RowDefinition Height="3*" />
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="1.5*" />
+                <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
 
             <ScrollViewer Grid.Row="2" Background="#33E5E5E5" VerticalScrollBarVisibility="Auto">
@@ -232,8 +228,16 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
-            <Image Visibility="Hidden" Name="LoadingIcon" HorizontalAlignment="Left" Height="112" Margin="76,0.4,0,-20.4" Grid.Row="4" Grid.RowSpan="2" VerticalAlignment="Top" Width="116"/>
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2.6*" />
+                </Grid.ColumnDefinitions>
+                
+                <Image Name="LoadingIcon" Visibility="Hidden" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch"/>
+                <Label Name="LoadingMessage" Visibility="Hidden" Margin="10, 0, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..."/>
 
+            </Grid>
 
         </Grid>
 
@@ -354,7 +358,7 @@
 
                     <Button Click="SearchForPacketsByTime" Grid.Row="2" Content="Search for times" HorizontalAlignment="Stretch" Margin="10,9,10,9"/>
                 </Grid>
-                <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="5"></Button>
+                <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="10, 3, 10, 3"></Button>
 
             </Grid>
 
@@ -409,7 +413,7 @@
 
                     <!-- Labels -->
                     <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
-                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packet close together</TextBlock>
+                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
                     <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
 
                 </Grid>
