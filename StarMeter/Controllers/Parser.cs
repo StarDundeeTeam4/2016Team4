@@ -19,6 +19,7 @@ namespace StarMeter.Controllers
             _prevPacket = null;
             var r = new StreamReaderWrapper(filePath);
             PacketDict = ParsePackets(r);
+            r.Close();
             return PacketDict;
         }
 
