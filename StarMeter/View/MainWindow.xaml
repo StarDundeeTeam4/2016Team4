@@ -15,11 +15,8 @@
 
 
     <!-- The main grid to seperate the Left Panel, the Port info, and the DVS-->
-    <Grid                    
-              MouseDown="Grid_MouseDown"
-            MouseUp="Grid_MouseUp"
-            MouseMove="Grid_MouseMove"
-             x:Name="MainGrid"
+    <Grid 
+        x:Name="MainGrid"
         >
 
 
@@ -190,7 +187,7 @@
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" Grid.RowSpan="2"/>
+            <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" />
         </Grid>
 
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="2"/>
@@ -203,8 +200,7 @@
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="15*" />
                 <RowDefinition Height="3*" />
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="1.5*" />
+                <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
 
             <ScrollViewer Grid.Row="2" Background="#33E5E5E5" VerticalScrollBarVisibility="Auto">
@@ -232,8 +228,16 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
-            <Image Visibility="Hidden" Name="LoadingIcon" HorizontalAlignment="Left" Height="112" Margin="76,0.4,0,-20.4" Grid.Row="4" Grid.RowSpan="2" VerticalAlignment="Top" Width="116"/>
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2.6*" />
+                </Grid.ColumnDefinitions>
+                
+                <Image Name="LoadingIcon" Visibility="Hidden" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch"/>
+                <Label Name="LoadingMessage" Visibility="Hidden" Margin="10, 0, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..."/>
 
+            </Grid>
 
         </Grid>
 
@@ -354,7 +358,7 @@
 
                     <Button Click="SearchForPacketsByTime" Grid.Row="2" Content="Search for times" HorizontalAlignment="Stretch" Margin="10,9,10,9"/>
                 </Grid>
-                <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="5"></Button>
+                <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="10, 3, 10, 3"></Button>
 
             </Grid>
 
@@ -362,17 +366,61 @@
         </Grid>
 
 
-        <DVC:Chart Name="mcChart" Height="300" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <DVC:Chart.Series >
-                <DVC:PieSeries Title="Experience" 
-                    IndependentValueBinding="{Binding Path=Key}"
-                    DependentValueBinding="{Binding Path=Value}" Background="Black">
-                </DVC:PieSeries>
+        <Grid Grid.Column="3" Grid.Row="1">
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            </DVC:Chart.Series>
+            <Image MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Row="2" Source="/StarMeter;component/Resources/help.png" Margin="40, 40, 60, 0" VerticalAlignment="Bottom">
+                <Image.OpacityMask>
+                    <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
+                </Image.OpacityMask>
 
-        </DVC:Chart>
+            </Image>
+
+            <DVC:Chart Name="mcChart" Height="300" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <DVC:Chart.Series >
+                    <DVC:PieSeries Title="Experience" 
+                        IndependentValueBinding="{Binding Path=Key}"
+                        DependentValueBinding="{Binding Path=Value}" Background="Black">
+                    </DVC:PieSeries>
+                </DVC:Chart.Series>
+
+            </DVC:Chart>
+            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.RowSpan="2" Grid.Row ="1" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
+
+                <Grid Height="172" Width="168">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".8*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height=".8*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Colours -->
+                    <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+
+                    <!-- Labels -->
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
+                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
+                    <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+
+                </Grid>
+            </Canvas>
+
+        </Grid>
+
     </Grid>
 
 </Window>

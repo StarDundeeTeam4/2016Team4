@@ -109,7 +109,6 @@ namespace StarMeter.View
 
             var s = new Size(selectionBox.Width, selectionBox.Height);
 
-            FiltersHeading.Content = s.ToString();
 
             // TODO: 
             //
@@ -235,16 +234,26 @@ namespace StarMeter.View
                     _previous[p.PortNumber - 1] = p.DateRecieved.TimeOfDay;
                 }
             }
-
-
-            TimeSpan[] times = _timespans.ToArray();
-
             var temp_timespans = new List<KeyValuePair<int, TimeSpan>>();
-
-
-            for (int i = 0; i < times.Length; i++)
+            if (packets.Length > 1)
             {
-                temp_timespans.Add(new KeyValuePair<int, TimeSpan>(i, times[i]));
+
+                TimeSpan[] times = _timespans.ToArray();
+
+                temp_timespans = new List<KeyValuePair<int, TimeSpan>>();
+
+
+                for (int i = 0; i < times.Length; i++)
+                {
+                    temp_timespans.Add(new KeyValuePair<int, TimeSpan>(i, times[i]));
+                }
+            }
+            else 
+            {
+                if(packets.Length > 0)
+                {
+                    temp_timespans.Add(new KeyValuePair<int, TimeSpan>(0, packets[0].DateRecieved.TimeOfDay));
+                }
             }
 
             foreach (var p in packets) 
@@ -347,7 +356,14 @@ namespace StarMeter.View
 
                 var btn = (Button)LogicalTreeHelper.FindLogicalNode(stackPan, toFind);
 
-                btn.Background = Brushes.Yellow;
+                if (btn.Background == Brushes.Red || p.IsError) 
+                {
+                    btn.Background = Brushes.Red;
+                }
+                else
+                {
+                    btn.Background = Brushes.Yellow;
+                }
 
 
                 // clear all event handlers here
@@ -534,6 +550,9 @@ namespace StarMeter.View
 
         private void FileSelection(object sender, RoutedEventArgs e) 
         {
+            LoadingIcon.Visibility = System.Windows.Visibility.Visible;
+            LoadingMessage.Visibility = System.Windows.Visibility.Visible;
+
             var ofd = new OpenFileDialog
             {
                 // only allow .rec files
@@ -597,6 +616,8 @@ namespace StarMeter.View
                 _fileGrids.Add(g);
 
             }
+            LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
+            LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
         }
 
         void CancelUpload(object sender, RoutedEventArgs e)
@@ -1065,6 +1086,17 @@ namespace StarMeter.View
         {
             _timeSpanOccupied.Clear();
 
+
+            var l = new List<Guid>[8];
+
+            for (int j = 0; j < l.Length; j++)
+            {
+                l[j] = new List<Guid>();
+            }
+
+            _timeSpanOccupied.Add(l);
+
+
             var timelist = new List<TimeSpan>();
             var tStart = packets[0].DateRecieved.TimeOfDay;
             var tEnd = packets[packets.Length - 1].DateRecieved.TimeOfDay;
@@ -1072,48 +1104,61 @@ namespace StarMeter.View
 
             var timeDiff = tEnd - tStart;
 
-            var milli = (int)timeDiff.TotalMilliseconds;
-            
-            interval = milli / packets.Length /2;
-            //interval = 300;
-            
-
-            section = new TimeSpan(0, 0, 0, 0, interval);
-            negative_section = section.Negate();
-            half_section = new TimeSpan(0, 0, 0, 0, -interval / 2);
-            var i = 0;
-
-            var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
-            timelist.Add(curr);
-
-            var list = new List<Guid>[8];
-
-            for(int j = 0; j < list.Length; j++) 
+            if (timeDiff.TotalMilliseconds == 0) 
             {
-                list[j] = new List<Guid>();
-            }
-
-            _timeSpanOccupied.Add(list);
-
-
-            while (curr <= tEnd)
-            {
-                i++;
-                CreateTimeLabel(curr);
-
-                curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
-                timelist.Add(curr); 
-                
-                var list2 = new List<Guid>[8];
-
-                for (int j = 0; j < list2.Length; j++)
+                if (packets.Length > 0) 
                 {
-                    list2[j] = new List<Guid>();
+                    var list = new List<KeyValuePair<int, TimeSpan>>();
+                    list.Add(new KeyValuePair<int, TimeSpan>(0, packets[0].DateRecieved.TimeOfDay));
+                    CreateTimeLabel(packets[0].DateRecieved.TimeOfDay);
+                    //AddPacket(packets[0], list);
+                }
+            }
+            else
+            {
+                var milli = (int)timeDiff.TotalMilliseconds;
+
+                interval = milli / packets.Length / 2;
+                //interval = 300;
+
+
+                section = new TimeSpan(0, 0, 0, 0, interval);
+                negative_section = section.Negate();
+                half_section = new TimeSpan(0, 0, 0, 0, -interval / 2);
+                var i = 0;
+
+                var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
+                timelist.Add(curr);
+
+                var list = new List<Guid>[8];
+
+                for (int j = 0; j < list.Length; j++)
+                {
+                    list[j] = new List<Guid>();
                 }
 
-                _timeSpanOccupied.Add(list2);
+                _timeSpanOccupied.Add(list);
+
+
+                while (curr <= tEnd)
+                {
+                    i++;
+                    CreateTimeLabel(curr);
+
+                    curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(interval * i)));
+                    timelist.Add(curr);
+
+                    var list2 = new List<Guid>[8];
+
+                    for (int j = 0; j < list2.Length; j++)
+                    {
+                        list2[j] = new List<Guid>();
+                    }
+
+                    _timeSpanOccupied.Add(list2);
+                }
+                _timespans = timelist.ToArray();
             }
-            _timespans = timelist.ToArray();
         }
         
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -1131,6 +1176,9 @@ namespace StarMeter.View
                 }
             }
 
+            CreateAllTimeLabels(packList.ToArray());
+            
+            
             AddPacketCollection(packList.ToArray());
           
             CreateDataRateGraph(controller.packets.Values.ToArray());
@@ -1153,6 +1201,7 @@ namespace StarMeter.View
                 else { break; }
             }
 
+            CreateAllTimeLabels(packets);
             AddPacketCollection(packets);
             CreateDataRateGraph(packets);
         }
@@ -1487,6 +1536,17 @@ namespace StarMeter.View
                 AddPacketCollection(firstHundredPackets);
             }
         }
+
+        private void Image_MouseEnter(object sender, MouseEventArgs e)
+        {
+            HelpPanel.Visibility = Visibility.Visible;
+        }
+
+        private void Image_MouseLeave(object sender, MouseEventArgs e)
+        {
+            HelpPanel.Visibility = Visibility.Hidden;
+        }
+
     }
 
 
