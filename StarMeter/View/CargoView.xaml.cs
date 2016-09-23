@@ -28,8 +28,8 @@ namespace StarMeter.View
 
         public void SetupElements(Brush brush, Packet p)
         {
-            Packet = p; 
-            
+            Packet = p;
+
             foreach (byte cargoByte in p.Cargo)// byte
             {
 
@@ -44,23 +44,41 @@ namespace StarMeter.View
             int i = 0;
             MainCargoContent.Text = null;
 
-            foreach (byte cargoByte in Packet.Cargo)// byte
+            try
             {
-               
-
-                if( i.Equals( change-1))
+              
+                foreach (byte cargoByte in Packet.Cargo)// byte
                 {
 
-                    i = 0;
-                    MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + Environment.NewLine;
+                    if (change >= 30)
+                    {
+
+                        change = 30;
+
+                        ColumnChange.Text = "30";
+
+                    }
+
+
+                    if (i.Equals(change - 1))
+                    {
+
+                        i = 0;
+                        MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + Environment.NewLine;
+                    }
+                    else
+                    {
+                        i++;
+                        MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + "  ";
+                    }
                 }
-                else
-                {
-                    i++;
-                    MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + "  ";
-                }
+                CargoData = MainCargoContent.Text;
+
             }
-            CargoData = MainCargoContent.Text;          
+            catch (Exception)
+            {
+            
+            }
 
         }
 
