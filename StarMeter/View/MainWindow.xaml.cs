@@ -591,7 +591,7 @@ namespace StarMeter.View
             LoadingMessage.Content = "Selecting File";
 
             // display file name
-            List<string> filesAdded = controller.AddFileNames(ofd.FileNames);
+            List<string> filesAdded = _controller.AddFileNames(ofd.FileNames);
 
             foreach (string fileName in filesAdded)
             {
@@ -651,7 +651,7 @@ namespace StarMeter.View
             LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
             LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
 
-            _LoadingTimer.Stop();
+            _loadingTimer.Stop();
 
         }
 
@@ -1550,7 +1550,7 @@ namespace StarMeter.View
                 ShowPacketsFromTime(startTime);
             }
 
-            if (sortedPackets.Count < 100)
+            if (SortedPackets.Count < 100)
             {
                 lblNumShowing.Content = "No packets to display";
 			}
