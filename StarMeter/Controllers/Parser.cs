@@ -12,6 +12,11 @@ namespace StarMeter.Controllers
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
         private Guid? _prevPacket;
 
+        /// <summary>
+        /// Send a file specified by filePath to be parsed
+        /// </summary>
+        /// <param name="filePath">The path of the file to parse</param>
+        /// <returns>A Dictionary of Packets paired with their IDs of the file's contents</returns>
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
             _prevPacket = null;
@@ -22,6 +27,11 @@ namespace StarMeter.Controllers
             return PacketDict;
         }
 
+        /// <summary>
+        /// Parse input from an IStreamReader
+        /// </summary>
+        /// <param name="r">The reader to read from</param>
+        /// <returns>A Dictionary of Packets paired with their IDs of the file's contents</returns>
         public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)
         {
             string line;
@@ -92,6 +102,11 @@ namespace StarMeter.Controllers
             return PacketDict;
         }
 
+        /// <summary>
+        /// Sets the packet's previous guid and the previous packet's next packet
+        /// </summary>
+        /// <param name="packet">The packet for which the previous should be set</param>
+        /// <returns>The updated packet</returns>
         public Packet SetPrevPacket(Packet packet)
         {
             //set previous packet's next packet as this packet
@@ -107,6 +122,11 @@ namespace StarMeter.Controllers
             return packet;
         }
 
+        /// <summary>
+        /// Gets the non-nullable previous packet from the nullable variable
+        /// </summary>
+        /// <param name="packet">The packet for which the previous should be returned</param>
+        /// <returns>The previous packet</returns>
         private Packet GetPrevPacket(Packet packet)
         {
             Guid prevPacketId = (Guid)packet.PrevPacket;

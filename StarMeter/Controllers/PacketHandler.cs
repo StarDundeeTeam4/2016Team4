@@ -8,6 +8,11 @@ namespace StarMeter.Controllers
 {
     public static class PacketHandler
     {
+        /// <summary>
+        /// Sets the core information of the packet from the data array
+        /// </summary>
+        /// <param name="packet">The packet for which the information is set</param>
+        /// <returns>The updated packet</returns>
         public static Packet SetPacketInformation(Packet packet)
         {
             try
@@ -30,16 +35,33 @@ namespace StarMeter.Controllers
             return packet;
         }
         
+        /// <summary>
+        /// Checks whether the packet is a P (packet type) or E (Error type) or other
+        /// </summary>
+        /// <param name="packetType">The packet type to check</param>
+        /// <returns>Whether the packet is a P type</returns>
         public static bool IsPType(string packetType)
         {
+            //TODO: why compare ordinal?
             return string.CompareOrdinal(packetType, "P") == 0;
         }
 
+        /// <summary>
+        /// Parses the datestring into a DateTime object
+        /// </summary>
+        /// <param name="stringDateTime">The datestring to parse</param>
+        /// <param name="result">The datetime object the result should be written to</param>
+        /// <returns>Whether the operation was successful</returns>
         public static bool ParseDateTime(string stringDateTime, out DateTime result)
         {
             return DateTime.TryParseExact(stringDateTime, "dd-MM-yyyy HH:mm:ss.fff", null, DateTimeStyles.None, out result);
         }
 
+        /// <summary>
+        /// Calculates the end position of the address in the packet data
+        /// </summary>
+        /// <param name="fullPacket">The packet's data</param>
+        /// <returns>The end index of the address bytes</returns>
         public static int GetLogicalAddressIndex(byte[] fullPacket)
         {
             for (int i = 0; i < fullPacket.Length; i++)
@@ -49,6 +71,11 @@ namespace StarMeter.Controllers
             return -1;
         }
 
+        /// <summary>
+        /// Retrieves the cargo from the full packet data
+        /// </summary>
+        /// <param name="packet">The packet for which the cargo should be returned</param>
+        /// <returns>Packet's cargo</returns>
         public static byte[] GetCargoArray(Packet packet)
         {
             int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
@@ -87,6 +114,11 @@ namespace StarMeter.Controllers
             }
         }
 
+        /// <summary>
+        /// Calculates the destination address of the packet
+        /// </summary>
+        /// <param name="fullPacket">The packet's data</param>
+        /// <returns>The byte array of the address</returns>
         public static byte[] GetAddressArray(byte[] fullPacket)
         {
             int logicalIndex = GetLogicalAddressIndex(fullPacket);
@@ -95,11 +127,21 @@ namespace StarMeter.Controllers
             return addressArray;
         }
 
+        /// <summary>
+        /// Returns the last byte of the packet which should be the CRC byte
+        /// </summary>
+        /// <param name="fullPacket">The packet's data</param>
+        /// <returns>The CRC byte</returns>
         public static byte GetCrc(byte[] fullPacket)
         {
             return fullPacket.Last();
         }
 
+        /// <summary>
+        /// Calculates the packet's protocol ID
+        /// </summary>
+        /// <param name="fullPacket">The packet's data to calculate the protocol ID from</param>
+        /// <returns>The protocol ID</returns>
         public static int GetProtocolId(byte[] fullPacket)
         {
             try
@@ -108,12 +150,17 @@ namespace StarMeter.Controllers
                 return fullPacket[logicalIndex + 1];
             }
 
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException)
             {
                 return -1;
             }
         }
 
+        /// <summary>
+        /// Calculates the packet's sequence number
+        /// </summary>
+        /// <param name="packet">The packet for which the sequence number should be calculated</param>
+        /// <returns>The sequence number</returns>
         public static int GetSequenceNumber(Packet packet)
         {
             try
@@ -127,7 +174,7 @@ namespace StarMeter.Controllers
 
                 return BitConverter.ToUInt16(sequence, 0);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return -1;
             }
