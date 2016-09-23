@@ -16,6 +16,7 @@ namespace StarMeter.Controllers
         {
             _prevPacket = null;
             var r = new StreamReaderWrapper(filePath);
+            PacketDict.Clear();
             PacketDict = ParsePackets(r);
             r.Close();
             return PacketDict;
@@ -23,16 +24,17 @@ namespace StarMeter.Controllers
 
         public Dictionary<Guid, Packet> ParsePackets(IStreamReader r)
         {
-            PacketDict.Clear();
             string line;
             r.ReadLine();
-            var strPortNumber = r.ReadLine();
-            var portNumber = int.Parse(strPortNumber);
+
+            string strPortNumber = r.ReadLine();
+            int portNumber = int.Parse(strPortNumber);
+
             r.ReadLine();
             while ((line = r.ReadLine()) != null && r.Peek() > -1)
             {
-                var packetId = Guid.NewGuid();
-                var packet = new Packet {PortNumber = portNumber, PacketId = packetId};
+                Guid packetId = Guid.NewGuid();
+                Packet packet = new Packet {PortNumber = portNumber, PacketId = packetId};
 
                 DateTime tempDate;
                 if (PacketHandler.ParseDateTime(line, out tempDate))
@@ -40,44 +42,53 @@ namespace StarMeter.Controllers
                     packet.DateRecieved = tempDate;
                 }
 
-                var packetType = r.ReadLine();
-                packet = SetPrevPacket(packet);
+                string packetType = r.ReadLine();
+
                 if (PacketHandler.IsPType(packetType))
                 {
-                    //read cargo line and convert to byte array
-                    var packetHexData = r.ReadLine().Split(' ');
-                    packet.FullPacket = packetHexData.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
+                    packet = SetPrevPacket(packet);
 
-                    var endingState = r.ReadLine();
-                    packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
-                    PacketHandler.SetPacketInformation(packet);
+                    //read cargo line and convert to byte array
+                    string[] packetAsStrings = r.ReadLine().Split(' ');
+                    packet.FullPacket = packetAsStrings.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
+
+                    packet = PacketHandler.SetPacketInformation(packet);
+
                     if (packet.ProtocolId == 1)
                     {
                         packet = RmapPacketHandler.CreateRmapPacket(packet);
                     }
+
+                    string endingState = r.ReadLine();
+                    packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }
                 else
                 {
+                    packet.PrevPacket = _prevPacket;
+
                     packet.IsError = true;
-                    var error = r.ReadLine();
+
+                    string error = r.ReadLine();
                     if (error == "Disconnect")
                     {
                         packet.ErrorType = ErrorType.Disconnect;
                     }
 
-                    if (PacketDict.Count > 2) { 
+                    if (PacketDict.Count > 2) {
                         ErrorDetector errorDetector = new ErrorDetector();
                         var previousPacket = GetPrevPacket(packet);
                         var previousPreviousPacket = GetPrevPacket(previousPacket);
                         previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
                         previousPacket.IsError = true;
                     }
+                    r.ReadLine();
+                    continue;
                 }
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
-            PacketDict.Remove(PacketDict.Keys.Last());
+            _prevPacket = null;
             return PacketDict;
         }
 
