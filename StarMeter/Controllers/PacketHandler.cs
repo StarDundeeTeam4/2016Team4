@@ -62,11 +62,11 @@ namespace StarMeter.Controllers
         /// </summary>
         /// <param name="fullPacket">The packet's data</param>
         /// <returns>The end index of the address bytes</returns>
-        public static int GetLogicalAddressIndex(byte[] fullPacket)
+        public static int GetLogicalAddressIndex(Packet packet)
         {
-            for (int i = 0; i < fullPacket.Length; i++)
+            for (int i = 0; i < packet.FullPacket.Length; i++)
             {
-                if (fullPacket[i] >= 32) return i;
+                if (packet.FullPacket[i] >= 32) return i;
             }
             return -1;
         }
@@ -78,7 +78,7 @@ namespace StarMeter.Controllers
         /// <returns>Packet's cargo</returns>
         public static byte[] GetCargoArray(Packet packet)
         {
-            int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
+            int logicalIndex = GetLogicalAddressIndex(packet);
             byte[] cargo;
 
             try
@@ -89,7 +89,7 @@ namespace StarMeter.Controllers
                 {
                     string type =
                         RmapPacketHandler.GetRmapType(
-                            new BitArray(new[] {packet.FullPacket[GetLogicalAddressIndex(packet.FullPacket) + 2]}));
+                            new BitArray(new[] {packet.FullPacket[GetLogicalAddressIndex(packet) + 2]}));
 
                     if (type.EndsWith("Reply"))
                     {
@@ -165,7 +165,7 @@ namespace StarMeter.Controllers
         {
             try
             {
-                int logicalIndex = GetLogicalAddressIndex(packet.FullPacket);
+                int logicalIndex = GetLogicalAddressIndex(packet);
                 if (packet.GetType() != typeof(RmapPacket)) return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
                 byte[] sequence = new byte[2];
 
