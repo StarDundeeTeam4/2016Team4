@@ -155,14 +155,15 @@ namespace StarMeter.Controllers
         {
             try
             {
-                int logicalIndex = GetLogicalAddressIndex(packet);
-                if (packet.GetType() != typeof(RmapPacket)) return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
-                byte[] sequence = new byte[2];
-
-                Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
-                Array.Reverse(sequence); //damn little-endian-ness
-
-                return BitConverter.ToUInt16(sequence, 0);
+                if (packet.ProtocolId == 1)
+                {
+                    return RmapPacketHandler.GetRmapSequenceNumber(packet);
+                }
+                else
+                {
+                    int logicalIndex = GetLogicalAddressIndex(packet);
+                    return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
+                }
             }
             catch (Exception)
             {

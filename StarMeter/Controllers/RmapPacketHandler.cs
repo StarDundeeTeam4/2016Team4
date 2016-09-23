@@ -200,5 +200,21 @@ namespace StarMeter.Controllers
             var addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
             return packet.FullPacket[addressIndex + 3];
         }
+
+        /// <summary>
+        /// Calculates the RMAP packet's sequence number
+        /// </summary>
+        /// <param name="packet">The packet for which the sequence number should be calculated</param>
+        /// <returns>The sequence number</returns>
+        public static int GetRmapSequenceNumber(Packet packet)
+        {
+            int logicalIndex = PacketHandler.GetLogicalAddressIndex(packet);
+            byte[] sequence = new byte[2];
+
+            Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
+            Array.Reverse(sequence); //damn little-endian-ness
+
+            return BitConverter.ToUInt16(sequence, 0);
+        }
     }
 }
