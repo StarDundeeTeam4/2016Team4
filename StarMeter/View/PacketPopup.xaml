@@ -41,12 +41,13 @@
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.5*" />
+                <RowDefinition Height=".9*" />
+                <RowDefinition Height=".5*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="1.8*" />
+                <RowDefinition Height="1.4*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -58,12 +59,14 @@
             <Image x:Name="RightArrow" Grid.Row="0" Grid.Column="3"  Source="/StarMeter;component/Resources/right chevron.png" HorizontalAlignment="Right" MouseLeftButtonDown="NextPacket" MouseRightButtonDown="RightArrow_MouseRightButtonDown" Margin="0"></Image>
 
 
-            <Label x:Name="TimeLabel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic" FontFamily="Gill Sans MT"/>
-            <Label x:Name="ProtocolLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
-            <Label x:Name="SequenceNumberLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
-            <Label x:Name="AddressLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
+            <Label Grid.Column="1" Foreground="White" FontFamily="Gill Sans MT" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="10" Content="(Right Click Arrows to open Packet in new Window)"/>
 
-            <Button Grid.Row="5" Grid.Column="1" Content="View Cargo" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="18" Click="ViewCargo" Margin="10,15,10,5" BorderBrush="{x:Null}"/>
+            <Label x:Name="TimeLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic" FontFamily="Gill Sans MT"/>
+            <Label x:Name="ProtocolLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
+            <Label x:Name="SequenceNumberLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
+            <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
+
+            <Button Grid.Row="6" Grid.Column="1" Content="View Cargo" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="18" Click="ViewCargo" Margin="10,5,10,5" BorderBrush="{x:Null}" Name="CargoButton"/>
 
         </Grid>
         <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Width="200" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="18" Click="ShowRmapProperties" Margin="0,2,0,2" BorderBrush="{x:Null}"/>
