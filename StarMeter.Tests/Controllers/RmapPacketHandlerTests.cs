@@ -15,6 +15,21 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void CreateRmapPacketRangeException()
+        {
+            byte[] data = {0x00};
+            Packet packet = new Packet()
+            {
+                FullPacket = data,
+            };
+
+            RmapPacket result = RmapPacketHandler.CreateRmapPacket(packet);
+
+            Assert.IsTrue(result.IsError);
+            Assert.AreEqual(result.ErrorType, ErrorType.DataError);
+        }
+
+        [TestMethod]
         public void GetDestinationKeyFromRmap()
         {
             byte[] packetData =
@@ -70,6 +85,7 @@ namespace StarMeter.Tests.Controllers
 
             Assert.IsFalse(RmapPacketHandler.CheckRmapCrc(packet));
         }
+
         [TestMethod]
         public void TestCheckRmapCrcCargoError()
         {
@@ -174,6 +190,26 @@ namespace StarMeter.Tests.Controllers
             const string expectedValue = "Read Reply";
             var actual = RmapPacketHandler.GetRmapType(new BitArray(new[] { 0x0c }));
             Assert.AreEqual(expectedValue, actual);
+        }
+
+        [TestMethod]
+        public void GetRmapTypeReadModifyWrite()
+        {
+            const string expectedValue = "Read Modify Write";
+            var actual = RmapPacketHandler.GetRmapType(new BitArray(new[] { 0x5c }));
+            Assert.AreEqual(expectedValue, actual);
+        }
+
+        [TestMethod]
+        public void GetSourceAddressRmapException()
+        {
+            byte[] data = new byte[0];
+            Packet packet = new Packet()
+            {
+                FullPacket = data,
+            };
+            byte[] result = RmapPacketHandler.GetSourceAddressRmap(packet);
+            CollectionAssert.AreEqual(data, result);
         }
 
         [TestCleanup]
