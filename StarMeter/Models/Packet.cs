@@ -16,7 +16,7 @@ namespace StarMeter.Models
         public Guid      PacketId     { get; set; }
         public byte[]    Cargo        { get; set; }
         public byte[]    Address      { get; set; }
-        public DateTime  DateRecieved { get; set; }
+        public DateTime  DateReceived { get; set; }
         public bool      IsError      { get; set; }
         public ErrorType ErrorType    { get; set; }
         public int       SequenceNum  { get; set; }
@@ -37,7 +37,7 @@ namespace StarMeter.Models
             PacketId = Guid.NewGuid();
             Cargo = cargo;
             Address = address;
-            DateRecieved = date;
+            DateReceived = date;
             PortNumber = port;
         }
     }

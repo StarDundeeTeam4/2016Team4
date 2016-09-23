@@ -44,7 +44,7 @@ namespace StarMeter.Controllers
             }
 
             rmapPacket.PacketId     = packet.PacketId;
-            rmapPacket.DateRecieved = packet.DateRecieved;
+            rmapPacket.DateReceived = packet.DateReceived;
             rmapPacket.PrevPacket   = packet.PrevPacket;
             rmapPacket.PacketType   = rmapPacketType;
 

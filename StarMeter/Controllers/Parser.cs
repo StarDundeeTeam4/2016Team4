@@ -50,7 +50,7 @@ namespace StarMeter.Controllers
                 DateTime tempDate;
                 if (PacketHandler.ParseDateTime(line, out tempDate))
                 {
-                    packet.DateRecieved = tempDate;
+                    packet.DateReceived = tempDate;
                 }
 
                 string packetType = r.ReadLine();

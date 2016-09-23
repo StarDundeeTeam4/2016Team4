@@ -51,7 +51,7 @@ namespace StarMeter.View
 
             IconBG.Background = br;
             ErrorIcon.Source = logo;
-            TimeLabel.Content = p.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
+            TimeLabel.Content = p.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = p.ProtocolId;
 
             if (protocolId == 1)
