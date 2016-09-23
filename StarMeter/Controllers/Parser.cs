@@ -44,10 +44,10 @@ namespace StarMeter.Controllers
 
                 string packetType = r.ReadLine();
 
-                packet = SetPrevPacket(packet);
-
                 if (PacketHandler.IsPType(packetType))
                 {
+                    packet = SetPrevPacket(packet);
+
                     //read cargo line and convert to byte array
                     string[] packetAsStrings = r.ReadLine().Split(' ');
                     packet.FullPacket = packetAsStrings.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
@@ -64,6 +64,8 @@ namespace StarMeter.Controllers
                 }
                 else
                 {
+                    packet.PrevPacket = _prevPacket;
+
                     packet.IsError = true;
 
                     string error = r.ReadLine();
@@ -72,19 +74,20 @@ namespace StarMeter.Controllers
                         packet.ErrorType = ErrorType.Disconnect;
                     }
 
-                    if (PacketDict.Count > 2) { 
+                    if (PacketDict.Count > 2) {
                         ErrorDetector errorDetector = new ErrorDetector();
                         var previousPacket = GetPrevPacket(packet);
                         var previousPreviousPacket = GetPrevPacket(previousPacket);
                         previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
                         previousPacket.IsError = true;
                     }
+                    r.ReadLine();
+                    continue;
                 }
 
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
-            PacketDict.Remove(PacketDict.Keys.Last());
             return PacketDict;
         }
 

@@ -34,6 +34,8 @@ namespace StarMeter.Controllers
 
             try
             {
+                int start = logicalIndex + 1; //increment anyway
+
                 if (packet.ProtocolId == 1)
                 {
                     string type =
@@ -42,24 +44,24 @@ namespace StarMeter.Controllers
 
                     if (type.EndsWith("Reply"))
                     {
-                        int start = logicalIndex + 12;
-                        int cargoLength = packet.FullPacket.Length - start;
-                        cargo = new byte[cargoLength];
-                        Array.Copy(packet.FullPacket, start, cargo, 0, cargoLength);
-                        return cargo;
+                        start += 12 - 1; //skip header, but -1 due to increment above
                     }
                 }
-                logicalIndex++;
-                int length = packet.FullPacket.Length - logicalIndex;
+
+                int length = packet.FullPacket.Length - start;
+                if (length < 0)
+                {
+                    start = 0;
+                    length = packet.FullPacket.Length; //overflow handling
+                }
                 cargo = new byte[length];
-                Array.Copy(packet.FullPacket, logicalIndex, cargo, 0, length);
+                Array.Copy(packet.FullPacket, start, cargo, 0, length);
 
                 return cargo;
             }
             catch (IndexOutOfRangeException)
             {
                 return null;
-                //need to set incomplete packet error?
             }
         }
 
