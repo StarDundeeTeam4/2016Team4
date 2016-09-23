@@ -93,6 +93,7 @@
     <Compile Include="Controllers\PacketHandler.cs" />
     <Compile Include="Controllers\RmapPacketHandler.cs" />
     <Compile Include="Models\ObjectFinder.cs" />
+    <Compile Include="View\Helpers\PacketLabelCreator.cs" />
     <Compile Include="View\MultiplePacketPopup.xaml.cs">
       <DependentUpon>MultiplePacketPopup.xaml</DependentUpon>
     </Compile>
@@ -213,6 +214,7 @@
     <Resource Include="Resources\right-arrow.png" />
     <Resource Include="Resources\help.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
