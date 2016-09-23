@@ -113,17 +113,17 @@ namespace StarMeter.Controllers
         }
 
         /// <summary>
-        /// Method to extract a bit at a specific index from a given byte
-        /// 
-        /// Method taken from KeithS on StackOverflow - http://stackoverflow.com/a/4854257
+        /// Returns requested bit in byte indicated by index
+        /// Explanation of use of bitwise operators - http://stackoverflow.com/questions/4854207/get-a-specific-bit-from-byte
+        /// Authors - KeithS, Josh Petrie, PierrOz, Aliostad
         /// </summary>
-        /// <param name="cmdByte">The byte from which the bit is to be extracted</param>
-        /// <param name="index">The index of the bit within the byte</param>
-        /// <returns>The value of the chosen bit</returns>
-        public static bool GetBit(byte cmdByte, int index)
+        /// <param name="">The command byte to calculate from</param>
+        /// <param name="myByte">byte whose bit is to be extracted</param>
+        /// <param name="index">which bit to return</param>
+        /// <returns>the bit requested</returns>
+        public static bool GetBit(byte myByte, int index)
         {
-            //uses a bitwise AND to compare the byte with 2^index, calculated via a bitshift
-            var bit = (cmdByte & (1 << index - 1)) != 0;
+            var bit = (myByte & (1 << index - 1)) != 0;
             return bit;
         }
 
