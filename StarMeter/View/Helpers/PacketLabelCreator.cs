@@ -38,9 +38,9 @@ namespace StarMeter.View.Helpers
         {
             if (protocolId == 1)
             {
-                return Environment.NewLine + "Protocol: " + protocolId + " (RMAP)";
+                return "Protocol: " + protocolId + " (RMAP)";
             }
-            return Environment.NewLine + "Protocol: " + protocolId;
+            return "Protocol: " + protocolId;
         }
     }
 }

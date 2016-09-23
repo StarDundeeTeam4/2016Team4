@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using StarMeter.Controllers;
+using StarMeter.View.Helpers;
 
 namespace StarMeter.View
 {
@@ -52,15 +53,7 @@ namespace StarMeter.View
             ErrorIcon.Source = logo;
             TimeLabel.Content = packet.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = packet.ProtocolId;
-
-            if (protocolId == 1)
-            {
-                ProtocolLabel.Content = "Protocol: " + protocolId + " (RMAP)";
-            }
-            else
-            {
-                ProtocolLabel.Content = "Protocol: " + protocolId;
-            }
+            ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
 
             if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
             {
