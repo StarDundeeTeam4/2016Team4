@@ -49,6 +49,25 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void GetTransactionIdentifier()
+        {
+            byte[] packetData =
+            {
+                0x03, 0x02, 0xfe, 0x01, 0x0d, 0x00, 0xfe, 0x00, 0x05, 0x00, 0x00, 0x00, 0x04, 0xe7, 0x09, 0xb0, 0x1c, 0xe3, 0xb3
+            };
+            var packet = new RmapPacket
+            {
+                FullPacket = packetData
+                
+            };
+            var expected = 5;
+
+            var actual = RmapPacketHandler.GetTransactionIdentifier(packet, 2);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void TestCheckRmapCrcTwoErrors()
         {
             byte[] packetData =

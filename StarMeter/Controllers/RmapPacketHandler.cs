@@ -7,8 +7,6 @@ namespace StarMeter.Controllers
 {
     public static class RmapPacketHandler
     {
-        /// <summary>
-        /// Creates an RMAP packet from a normal packet
         /// </summary>
         /// <param name="packet">The packet to use as a base for the RMAP packet</param>
         /// <returns>The new RmapPacket</returns>
@@ -21,7 +19,7 @@ namespace StarMeter.Controllers
             byte destinationKey = 0x00;
             string rmapPacketType = "";
             byte[] sourceAddress = null;
-
+            int sequenceNumber = 0;
             int addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
 
             try
@@ -36,6 +34,7 @@ namespace StarMeter.Controllers
 
                 rmapPacketType = GetRmapType(rmapCommandByte);
                 sourceAddress = GetSourceAddressRmap(packet);
+                sequenceNumber = GetTransactionIdentifier(packet, addressIndex);
             }
             catch (IndexOutOfRangeException)
             {
@@ -50,7 +49,7 @@ namespace StarMeter.Controllers
 
             rmapPacket.PortNumber   = packet.PortNumber;
             rmapPacket.ProtocolId   = packet.ProtocolId;
-            rmapPacket.SequenceNum  = packet.SequenceNum;
+            rmapPacket.SequenceNum = sequenceNumber;
 
             rmapPacket.CommandByte       = rmapCommandByte;
             rmapPacket.DestinationKey    = destinationKey;
@@ -65,6 +64,21 @@ namespace StarMeter.Controllers
             }
 
             return rmapPacket;
+        }
+        /// <summary>
+        /// Calculate transaction identifier
+        /// </summary>
+        /// <param name="packet">The packet</param>
+        /// <param name="addressIndex">the index of the destination logical address</param>
+        /// <returns>The Transaction Identifier of this rmap packet</returns>
+        public static int GetTransactionIdentifier(Packet packet, int addressIndex)
+        {
+            var fullPacket = packet.FullPacket;
+            //Location of transaction Identifier according to protocol specification
+            var transactionBytes = new byte[] {fullPacket[addressIndex + 6], fullPacket[addressIndex + 5]};
+            //Convert back to unsigned 16 bit integer (byte + byte = 16 bits.) 
+            var final = BitConverter.ToUInt16(transactionBytes, 0);
+            return final;
         }
 
         /// <summary>
