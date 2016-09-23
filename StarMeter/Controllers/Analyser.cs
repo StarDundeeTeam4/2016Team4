@@ -123,6 +123,11 @@ namespace StarMeter.Controllers
             return errorRate;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packets"></param>
+        /// <returns></returns>
         public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets) 
         {
             var returnedData = new List<KeyValuePair<string, int>>();
