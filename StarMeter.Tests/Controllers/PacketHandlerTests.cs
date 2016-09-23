@@ -295,7 +295,8 @@ namespace StarMeter.Tests.Controllers
 
             var packet = new RmapPacket
             {
-                FullPacket = cargo
+                ProtocolId = 1,
+                FullPacket = cargo,
             };
 
             const int expectedResult = 0;
@@ -312,6 +313,7 @@ namespace StarMeter.Tests.Controllers
 
             var packet = new RmapPacket
             {
+                ProtocolId = 1,
                 FullPacket = cargo
             };
 
