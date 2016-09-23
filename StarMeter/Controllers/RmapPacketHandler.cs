@@ -11,6 +11,7 @@ namespace StarMeter.Controllers
         /// Creates an RMAP packet from a normal packet
         /// </summary>
         /// <param name="packet">The packet to use as a base for the RMAP packet</param>
+
         /// <returns>The new RmapPacket</returns>
         public static RmapPacket CreateRmapPacket(Packet packet)
         {
@@ -72,19 +73,19 @@ namespace StarMeter.Controllers
         /// </summary>
         /// <param name="rmapFullPacket">The packet's data</param>
         /// <returns>The source address byte array</returns>
-        public static byte[] GetSourceAddressRmap(Packet rmapPacket)
+        public static byte[] GetSourceAddressRmap(Packet rmapFullPacket)
         {
-            var addressIndex = PacketHandler.GetLogicalAddressIndex(rmapPacket);
-            var rmapCommandByte = rmapPacket.FullPacket[addressIndex + 2];
-            var addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
-            var sourceAddressIndex = addressIndex + 4;
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
+            byte rmapCommandByte = rmapFullPacket.FullPacket[addressIndex + 2];
+            int addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
+            int sourceAddressIndex = addressIndex + 4;
 
-            var sourceAddress = new List<byte>();
+            var result = new List<byte>();
             try
             {
-                for (var i = 0; i < addressLength; i++)
+                for (int i = 0; i < addressLength; i++)
                 {
-                    sourceAddress.Add(rmapPacket.FullPacket[sourceAddressIndex + i]);
+                    result.Add(rmapFullPacket.FullPacket[sourceAddressIndex + i]);
                 }
             }
             catch (IndexOutOfRangeException e)
@@ -93,11 +94,9 @@ namespace StarMeter.Controllers
                 System.Diagnostics.Trace.WriteLine(e);
             }
 
-            return sourceAddress.ToArray();
+            return result.ToArray();
 
         }
-
-
 
         /// <summary>
         /// Calculates the length of the packet's source address bytes.
@@ -121,7 +120,7 @@ namespace StarMeter.Controllers
 
         /// <summary>
         /// Returns requested bit in byte indicated by index
-        /// Explanation of use of bitwise operators && all authors listed below - http://stackoverflow.com/questions/4854207/get-a-specific-bit-from-byte
+        /// Explanation of use of bitwise operators - http://stackoverflow.com/questions/4854207/get-a-specific-bit-from-byte
         /// Authors - KeithS, Josh Petrie, PierrOz, Aliostad
         /// </summary>
         /// <param name="">The command byte to calculate from</param>
@@ -133,6 +132,7 @@ namespace StarMeter.Controllers
             var bit = (myByte & (1 << index - 1)) != 0;
             return bit;
         }
+
         /// <summary>
         /// Checks that the calculated CRC(s) for an RMAP packet are as provided
         /// </summary>
