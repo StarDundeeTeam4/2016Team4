@@ -1,27 +1,19 @@
 ﻿using StarMeter.Controllers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization;
 using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Controls.DataVisualization.Charting.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace StarMeter.View
 {
     /// <summary>
     /// Interaction logic for Statisticspage.xaml
     /// </summary>
-    public partial class Statisticspage : Window
+    public partial class Statisticspage
     {
         public Statisticspage()
         {
@@ -32,13 +24,11 @@ namespace StarMeter.View
         {
             Analyser a = new Analyser();
             double errRate = .5;
-
             
             ((PieSeries)mcChart.Series[0]).ItemsSource =
             new KeyValuePair<string, double>[]{
             new KeyValuePair<string, double>("Error", errRate),
             new KeyValuePair<string, double>("Success", 1-errRate) };
-
 
             mcChart.Series[0].LegendItems.Clear();
 
@@ -91,22 +81,19 @@ namespace StarMeter.View
                 legend.BorderBrush = new SolidColorBrush(Colors.Transparent);
             }
 
-            
-
-
-            System.Windows.Controls.DataVisualization.ResourceDictionaryCollection pieSeriesPalette = new System.Windows.Controls.DataVisualization.ResourceDictionaryCollection();
+            ResourceDictionaryCollection pieSeriesPalette = new ResourceDictionaryCollection();
 
             Brush currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
             Brush currentBrush2 = new SolidColorBrush(Color.FromRgb(200, 20, 20)); //Red
 
-            System.Windows.ResourceDictionary pieDataPointStyles = new ResourceDictionary();
+            ResourceDictionary pieDataPointStyles = new ResourceDictionary();
             Style stylePie = new Style(typeof(PieDataPoint));
-            stylePie.Setters.Add(new Setter(PieDataPoint.BackgroundProperty, currentBrush));
+            stylePie.Setters.Add(new Setter(BackgroundProperty, currentBrush));
             pieDataPointStyles.Add("DataPointStyle", stylePie);
 
-            System.Windows.ResourceDictionary pieDataPointStyles2 = new ResourceDictionary();
+            ResourceDictionary pieDataPointStyles2 = new ResourceDictionary();
             Style stylePie2 = new Style(typeof(PieDataPoint));
-            stylePie2.Setters.Add(new Setter(PieDataPoint.BackgroundProperty, currentBrush2));
+            stylePie2.Setters.Add(new Setter(BackgroundProperty, currentBrush2));
             pieDataPointStyles2.Add("DataPointStyle", stylePie2);
 
             pieSeriesPalette.Add(pieDataPointStyles2);
@@ -115,30 +102,22 @@ namespace StarMeter.View
             mcChart.Palette = pieSeriesPalette;
         }
 
-
         private static Style GetNewDataPointStyle()
         {
-
-
-
-
-
             Color background = Color.FromRgb(20, 20, 20);
             Style style = new Style(typeof(DataPoint));
-            Setter st1 = new Setter(DataPoint.BackgroundProperty,
+            Setter st1 = new Setter(BackgroundProperty,
                                         new SolidColorBrush(background));
-            Setter st2 = new Setter(DataPoint.BorderBrushProperty,
+            Setter st2 = new Setter(BorderBrushProperty,
                                         new SolidColorBrush(Colors.White));
-            Setter st3 = new Setter(DataPoint.BorderThicknessProperty, new Thickness(0.1));
+            Setter st3 = new Setter(BorderThicknessProperty, new Thickness(0.1));
 
-            Setter st4 = new Setter(DataPoint.TemplateProperty, null);
+            Setter st4 = new Setter(TemplateProperty, null);
             style.Setters.Add(st1);
             style.Setters.Add(st2);
             style.Setters.Add(st3);
             style.Setters.Add(st4);
             return style;
         }
-
-
     }
 }

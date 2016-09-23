@@ -12,11 +12,10 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class PacketHandlerTests
     {
-        private PacketHandler _packetHandler;
         [TestInitialize]
         public void Initialize()
         {
-            _packetHandler = new PacketHandler();
+            
         }
 
         [TestMethod]
@@ -30,7 +29,7 @@ namespace StarMeter.Tests.Controllers
             };
             byte[] expectedCargo = { 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
 
-            byte[] cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(data));
+            byte[] cargo = PacketHandler.GetCargoArray(p);
 
             CollectionAssert.AreEqual(cargo, expectedCargo);
         }
@@ -46,7 +45,7 @@ namespace StarMeter.Tests.Controllers
                 FullPacket = data,
             };
 
-            byte[] cargo = _packetHandler.GetCargoArray(p, _packetHandler.GetLogicalAddressIndex(data));
+            byte[] cargo = PacketHandler.GetCargoArray(p);
 
             CollectionAssert.AreEqual(cargo, expectedCargo);
         }
@@ -57,7 +56,7 @@ namespace StarMeter.Tests.Controllers
             const string stringDateTime = "08-09-2016 14:27:53.726";
             DateTime result;
 
-            Assert.IsTrue(_packetHandler.ParseDateTime(stringDateTime, out result));
+            Assert.IsTrue(PacketHandler.ParseDateTime(stringDateTime, out result));
             Assert.IsInstanceOfType(result, typeof(DateTime));
             Assert.AreEqual(result, new DateTime(2016, 09, 08, 14, 27, 53, 726));
         }
@@ -69,7 +68,7 @@ namespace StarMeter.Tests.Controllers
                 {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e};
             const int expected = 0;
 
-            var actual = _packetHandler.GetLogicalAddressIndex(cargoParam);
+            var actual = PacketHandler.GetLogicalAddressIndex(cargoParam);
 
             Assert.AreEqual(expected, actual);
         }
@@ -98,7 +97,7 @@ namespace StarMeter.Tests.Controllers
             };
             const int expected = 2;
 
-            var actual = _packetHandler.GetLogicalAddressIndex(cargoParam);
+            var actual = PacketHandler.GetLogicalAddressIndex(cargoParam);
 
             Assert.AreEqual(expected, actual);
         }
@@ -126,8 +125,7 @@ namespace StarMeter.Tests.Controllers
                 0xeb
             };
 
-            var logicalIndex = _packetHandler.GetLogicalAddressIndex(cargoParam);
-            var addressArray = _packetHandler.GetAddressArray(cargoParam, logicalIndex);
+            var addressArray = PacketHandler.GetAddressArray(cargoParam);
             var expectedPathValues = new[] { 0x00, 0x04, 0xfe };
 
             Assert.AreEqual(expectedPathValues[1], addressArray[1]);
@@ -140,8 +138,7 @@ namespace StarMeter.Tests.Controllers
                 {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e};
             var expectedPathValues = new[] { 0x57 };
 
-            var logicalIndex = _packetHandler.GetLogicalAddressIndex(cargoParam);
-            var physicalPathValues = _packetHandler.GetAddressArray(cargoParam, logicalIndex);
+            var physicalPathValues = PacketHandler.GetAddressArray(cargoParam);
 
             Assert.AreEqual(expectedPathValues[0], physicalPathValues[0]);
         }
@@ -153,7 +150,7 @@ namespace StarMeter.Tests.Controllers
                 {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e};
             var expected = (byte)Convert.ToInt32("3e", 16);
 
-            var actual = _packetHandler.GetCrc(cargoParam);
+            var actual = PacketHandler.GetCrc(cargoParam);
 
             Assert.AreEqual(expected, actual);
         }
@@ -165,8 +162,7 @@ namespace StarMeter.Tests.Controllers
                 {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e};
             const int expected = 1;
 
-            var logicalIndex = _packetHandler.GetLogicalAddressIndex(cargoParam);
-            var actual = _packetHandler.GetProtocolId(cargoParam, logicalIndex);
+            var actual = PacketHandler.GetProtocolId(cargoParam);
             Assert.AreEqual(expected, actual);
         }
 
@@ -199,8 +195,7 @@ namespace StarMeter.Tests.Controllers
 
             const int expectedSequenceNumber = 15;
 
-            int logicalIndex = _packetHandler.GetLogicalAddressIndex(cargoParam);
-            int sequenceNumber = _packetHandler.GetSequenceNumber(p, logicalIndex);
+            int sequenceNumber = PacketHandler.GetSequenceNumber(p);
 
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
@@ -238,8 +233,7 @@ namespace StarMeter.Tests.Controllers
             };
             const int expectedSequenceNumber = 0;
 
-            int logicalIndex = _packetHandler.GetLogicalAddressIndex(cargoParam);
-            int sequenceNumber = _packetHandler.GetSequenceNumber(p, logicalIndex);
+            int sequenceNumber = PacketHandler.GetSequenceNumber(p);
 
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
@@ -260,9 +254,7 @@ namespace StarMeter.Tests.Controllers
                 FullPacket = packetData,
             };
 
-            int logicalIndex = _packetHandler.GetLogicalAddressIndex(packetData);
-
-            Assert.AreEqual(expected, _packetHandler.GetSequenceNumber(p, logicalIndex));
+            Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(p));
         }
 
         [TestMethod]
@@ -278,15 +270,13 @@ namespace StarMeter.Tests.Controllers
                 FullPacket = packetData,
             };
 
-            int logicalIndex = _packetHandler.GetLogicalAddressIndex(packetData);
-
-            Assert.AreEqual(expected, _packetHandler.GetSequenceNumber(p, logicalIndex));
+            Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(p));
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            _packetHandler = null;
+            
         }
     }
 }

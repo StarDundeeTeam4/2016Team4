@@ -30,7 +30,7 @@ namespace StarMeter.Tests.Controllers
                 SequenceNum = 02
             };
 
-            var expectedResult = ErrorTypes.DataError;
+            var expectedResult = ErrorType.DataError;
 
             var actualResult = _errorDetector.GetErrorType(packet1, packet2);
 
@@ -53,7 +53,7 @@ namespace StarMeter.Tests.Controllers
                 SequenceNum = 65530
             };
 
-            var expectedResult = ErrorTypes.SequenceError;
+            var expectedResult = ErrorType.SequenceError;
 
             var actualResult = _errorDetector.GetErrorType(packet1, packet2);
 
@@ -76,7 +76,7 @@ namespace StarMeter.Tests.Controllers
                 SequenceNum = 65530
             };
 
-            var expectedResult = ErrorTypes.Timeout;
+            var expectedResult = ErrorType.Timeout;
 
             var actualResult = _errorDetector.GetErrorType(packet1, packet2);
 
@@ -99,7 +99,7 @@ namespace StarMeter.Tests.Controllers
 //                SequenceNum = 32
 //            };
 //
-//            var expectedResult = ErrorTypes.DataError;
+//            var expectedResult = ErrorType.DataError;
 //
 //            var actualResult = _errorDetector.GetErrorType(packet1, packet2);
 //
