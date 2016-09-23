@@ -57,7 +57,9 @@ namespace StarMeter.Controllers
                 return result.ToArray();
             }
 
+            
             return result.ToArray();
+
         }
 
         public static int GetRmapLogicalAddressLength(byte rmapCommandByte)

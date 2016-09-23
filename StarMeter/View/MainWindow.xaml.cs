@@ -68,7 +68,7 @@ namespace StarMeter.View
                 dottage += ".";
             }
 
-            Console.WriteLine(_animCount);
+			
             LoadingMessage.Content = split[0] + dottage;
         }
 
@@ -198,7 +198,7 @@ namespace StarMeter.View
                             finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
                     }
                     else
-                        finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
+                        finalAddressString = Convert.ToInt32(addressArray[0]).ToString();
                 }
                 else
                 {
@@ -308,6 +308,10 @@ namespace StarMeter.View
             else
             {
                 lblNumShowing.Content = "Showing " + start + " - " + end + " of " + total + " packets";
+
+                StartTimeTextBox.Text = packets[0].DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                EndTimeTextBox.Text = packets[packets.Length - 1].DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
+
             }
         }
 
@@ -603,7 +607,7 @@ namespace StarMeter.View
                 };
                 var cd = new ColumnDefinition();
                 var cd2 = new ColumnDefinition();
-                cd.Width = new GridLength(8, GridUnitType.Star);
+                cd.Width = new GridLength(6, GridUnitType.Star);
                 cd2.Width = new GridLength(1, GridUnitType.Star);
 
                 g.ColumnDefinitions.Add(cd);
@@ -624,6 +628,8 @@ namespace StarMeter.View
                 };
 
                 b.Click += CancelUpload;
+                b.FontFamily = new FontFamily("Gill Sans MT");
+                b.FontSize = 14;
                 b.Background = Brushes.Red;
                 b.Foreground = Brushes.White;
                 b.HorizontalContentAlignment = HorizontalAlignment.Center;
@@ -644,6 +650,9 @@ namespace StarMeter.View
 
             LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
             LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
+
+            _loadingTimer.Stop();
+
         }
 
         private void CancelUpload(object sender, RoutedEventArgs e)
@@ -908,6 +917,8 @@ namespace StarMeter.View
             style.Setters.Add(new Setter(ForegroundProperty, Brushes.White));
             style.Setters.Add(new Setter(BackgroundProperty, Brushes.Red));
             style.Setters.Add(new Setter(HeightProperty, val));
+            
+
 
             return style;
         }
@@ -1362,7 +1373,8 @@ namespace StarMeter.View
             new KeyValuePair<string, double>("Success", 1-errRate) };
 
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(2.5, GridUnitType.Star);
+
         }
 
         private void Reset(object sender, RoutedEventArgs e)
@@ -1511,7 +1523,6 @@ namespace StarMeter.View
                 catch
                 {
                     MessageBox.Show("You have entered an invalid time for the start date.");
-                    return;
                 }
             }
             if (end != "")
@@ -1524,7 +1535,6 @@ namespace StarMeter.View
                 catch
                 {
                     MessageBox.Show("You have entered an invalid time for the end date.");
-                    return;
                 }
             }
             if (start != "" && end != "")
@@ -1540,6 +1550,10 @@ namespace StarMeter.View
                 ShowPacketsFromTime(startTime);
             }
 
+            if (SortedPackets.Count < 100)
+            {
+                lblNumShowing.Content = "No packets to display";
+			}
             NextPageBtn.Visibility = SortedPackets.Count < 100 
                 ? Visibility.Hidden 
                 : Visibility.Visible;
