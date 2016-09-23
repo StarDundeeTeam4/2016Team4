@@ -15,22 +15,14 @@ namespace StarMeter.Controllers
         /// <returns>The updated packet</returns>
         public static Packet SetPacketInformation(Packet packet)
         {
-            try
-            {
-                packet.ErrorType = ErrorType.None;
-                packet.Crc = GetCrc(packet); //can't fail unless everything is fucked
+            packet.ErrorType = ErrorType.None;
+            packet.Crc = GetCrc(packet); //can't fail unless everything is fucked
 
-                //next four lines must be done in order as if packet ends early, everything before will work and everything after will fail anyway
-                packet.Address = GetAddressArray(packet);
-                packet.ProtocolId = GetProtocolId(packet);
-                packet.SequenceNum = GetSequenceNumber(packet);
-                packet.Cargo = GetCargoArray(packet);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                packet.IsError = true;
-                packet.ErrorType = ErrorType.DataError; //Incomplete packet is DataError?
-            }
+            //next four lines must be done in order as if packet ends early, everything before will work and everything after will fail anyway
+            packet.Address = GetAddressArray(packet);
+            packet.ProtocolId = GetProtocolId(packet);
+            packet.SequenceNum = GetSequenceNumber(packet);
+            packet.Cargo = GetCargoArray(packet);
 
             return packet;
         }
@@ -78,7 +70,6 @@ namespace StarMeter.Controllers
         public static byte[] GetCargoArray(Packet packet)
         {
             var logicalIndex = GetLogicalAddressIndex(packet);
-            byte[] cargo;
 
             try
             {
@@ -102,7 +93,7 @@ namespace StarMeter.Controllers
                     start = 0;
                     length = packet.FullPacket.Length; //overflow handling
                 }
-                cargo = new byte[length];
+                byte[] cargo = new byte[length];
                 Array.Copy(packet.FullPacket, start, cargo, 0, length);
 
                 return cargo;

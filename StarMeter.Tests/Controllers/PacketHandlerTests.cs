@@ -19,20 +19,6 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
-        public void SetPacketInformationFail()
-        {
-            byte[] data = new byte[0];
-            byte[] moreData = { 0x00 };
-            Packet p = new Packet()
-            {
-                FullPacket = moreData,
-            };
-            Packet result = PacketHandler.SetPacketInformation(p);
-            Assert.IsTrue(result.IsError);
-            Assert.AreEqual(result.ErrorType, ErrorType.DataError);
-        }
-
-        [TestMethod]
         public void SplitCargoFromNonRmapPacket()
         {
             byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
@@ -61,6 +47,35 @@ namespace StarMeter.Tests.Controllers
             var cargo = PacketHandler.GetCargoArray(packet);
 
             CollectionAssert.AreEqual(cargo, expectedCargo);
+        }
+
+        [TestMethod]
+        public void GetCargoArrayFail()
+        {
+            byte[] data = new byte[0];
+            Packet p = new Packet()
+            {
+                FullPacket = data,
+                ProtocolId = 1,
+            };
+
+            byte[] result = PacketHandler.GetCargoArray(p);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetCargoArrayOverflow()
+        {
+            byte[] data = {0x02, 0xfe, 0x01, 0x0d, 0x00, 0xfe, 0x00};
+
+            Packet p = new Packet()
+            {
+                FullPacket = data,
+                ProtocolId = 1,
+            };
+
+            byte[] result = PacketHandler.GetCargoArray(p);
+            CollectionAssert.AreEqual(data, result);
         }
 
         [TestMethod]
