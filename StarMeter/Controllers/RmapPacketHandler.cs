@@ -49,19 +49,15 @@ namespace StarMeter.Controllers
 
             rmapPacket.PortNumber   = packet.PortNumber;
             rmapPacket.ProtocolId   = packet.ProtocolId;
-            rmapPacket.SequenceNum = sequenceNumber;
+            rmapPacket.SequenceNum  = packet.SequenceNum;
+            rmapPacket.Crc          = packet.Crc;
+
 
             rmapPacket.CommandByte       = rmapCommandByte;
             rmapPacket.DestinationKey    = destinationKey;
             rmapPacket.SourcePathAddress = sourceAddress;
             rmapPacket.Cargo             = packet.Cargo;
             rmapPacket.FullPacket        = packet.FullPacket;
-
-            if (!CheckRmapCrc(rmapPacket))
-            {
-                rmapPacket.IsError = true;
-                rmapPacket.ErrorType = ErrorType.DataError;
-            }
 
             return rmapPacket;
         }
