@@ -80,6 +80,32 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expectedResult, actualResult);  
         }
 
+        [TestMethod]
+        public void TestCrcErrorWithRmapPacket()
+            {
+            byte[] data = { 0x4a, 0x01, 0x3c, 0x00, 0x4c, 0x00, 0x1f, 0x4b };
+            byte[] data2 = { 0x4a, 0x01, 0x3c, 0x04, 0x4c, 0x00, 0x20, 0x67 };
+            var packet1 = new RmapPacket
+            {
+                FullPacket = data,
+                SequenceNum = 31,
+                PacketType = "Write Reply"
+            };
+            packet1.Cargo = PacketHandler.GetCargoArray(packet1);
+            var packet2 = new RmapPacket
+            {
+                FullPacket = data2,
+                SequenceNum = 32,
+                PacketType = "Write Reply"
+            };
+            packet2.Cargo = PacketHandler.GetCargoArray(packet2);
+
+            const ErrorType expectedResult = ErrorType.DataError;
+            var actualResult = _errorDetector.GetErrorType(packet1, packet2);
+
+            Assert.AreEqual(expectedResult, actualResult);  
+        }
+
         [TestCleanup]
         public void Cleanup()
         {
