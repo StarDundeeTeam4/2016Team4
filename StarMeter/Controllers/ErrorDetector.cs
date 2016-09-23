@@ -30,11 +30,9 @@ namespace StarMeter.Controllers
             {
                 return ErrorType.DataError;
             }
-            if (IsSequenceError(previousPacket, currentPacket))
-            {
-                return ErrorType.SequenceError;
-            }
-            return ErrorType.Disconnect;
+            return IsSequenceError(previousPacket, currentPacket) 
+                ? ErrorType.SequenceError 
+                : ErrorType.Disconnect;
         }
 
         /// <summary>
