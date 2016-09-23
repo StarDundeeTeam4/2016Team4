@@ -1,13 +1,24 @@
 ﻿using System.Windows;
 using System.Windows.Media;
+
 class ObjectFinder
 {
+    // TAKEN FROM http://stackoverflow.com/questions/15184501/how-to-give-style-to-wpf-toolkit-chart
+
+    /// <summary>
+    /// Loop through all child items in the parent, looking for an object of the required type/name
+    /// </summary>
+    /// <typeparam name="T">The data type of the object being searched for</typeparam>
+    /// <param name="parent">The container to search in</param>
+    /// <param name="childName">The name of the child to find</param>
+    /// <returns></returns>
     public static T FindChild<T>(DependencyObject parent, string childName) where T : DependencyObject
     {
         if (parent == null) return null;
 
         T foundChild = null;
 
+        // loop through all children 
         int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
         for (int i = 0; i < childrenCount; i++)
         {
@@ -15,6 +26,7 @@ class ObjectFinder
             T childType = child as T;
             if (childType == null)
             {
+                // recursive
                 foundChild = FindChild<T>(child, childName);
                 if (foundChild != null) break;
             }
