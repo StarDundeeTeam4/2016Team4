@@ -1134,11 +1134,35 @@ namespace StarMeter.View
 
                 FiltersPane.Width = new GridLength(3, GridUnitType.Star);
                 FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
-
+                
                 RemoveAllPackets();
+
+                //Adds the files being displayed to the right side panel             
 
                 var packets = _controller.ParsePackets().ToList();
 
+                SelectedFiles2.Children.Clear();
+
+                 //List<string> filesAdded = _controller.AddFileNames(s);
+               
+
+                foreach (var s in _controller.filePaths)
+                {                                                       
+                    string actualName2 = (s.Split('\\').Last());
+
+                    Label l = new Label()
+                    {
+                        Style = (Style)Application.Current.Resources["FileSelected"],
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        Height = 60,
+                        Margin = new Thickness(0, 0, 0, 5),
+                    };
+                    
+                    l.Content = actualName2;                
+                    SelectedFiles2.Children.Add(l);                   
+
+                }
                 //packets = controller.packets.Values.ToList();
 
                 SortedPackets = (from pair in _controller.packets orderby pair.Value.DateRecieved ascending select pair.Value).ToList();
@@ -1163,6 +1187,7 @@ namespace StarMeter.View
                 AddPacketCollection(firstLoad);
                 CreateChart();
                 DataVisButton2.Visibility = Visibility.Visible;
+
                 CreateDataRateGraph(SortedPackets.ToArray());
 
                 if (SortedPackets.Count < 100) { NextPageBtn.Visibility = Visibility.Hidden; } else { NextPageBtn.Visibility = Visibility.Visible; }
@@ -1373,7 +1398,7 @@ namespace StarMeter.View
             new KeyValuePair<string, double>("Success", 1-errRate) };
 
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(2.5, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
 
         }
 

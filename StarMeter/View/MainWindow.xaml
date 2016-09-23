@@ -44,12 +44,20 @@
 
         <Grid Grid.Row="1" Grid.Column="4">
             <Grid.RowDefinitions>
+                <RowDefinition Height="0.25*" />
                 <RowDefinition Height="2*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
+            <Label Background="White" HorizontalAlignment="Stretch" Content="Files Being Displayed"  VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,0,35,0" ></Label>
+            <ScrollViewer Grid.Row="1"  Grid.Column="4" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,35,0">
+              
+                <StackPanel Name="SelectedFiles2">
 
-            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.Row ="2" Grid.Column="4" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
+                </StackPanel>
+            </ScrollViewer>
+            
+            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
 
                 <Grid Height="172" Width="168">
                     <Grid.RowDefinitions>
@@ -78,13 +86,17 @@
                 </Grid>
             </Canvas>
 
-            <Image HorizontalAlignment="Stretch" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Row="2" Source="/StarMeter;component/Resources/help.png" Height="35" VerticalAlignment="Bottom">
+            
+
+                <Image HorizontalAlignment="Stretch" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Row="3" Source="/StarMeter;component/Resources/help.png" Height="35" VerticalAlignment="Bottom">
                 <Image.OpacityMask>
                     <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
                 </Image.OpacityMask>
             </Image>
 
-            <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+
+            
+                <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                 <DVC:Chart.Series >
                     <DVC:PieSeries Title="Experience" 
                         IndependentValueBinding="{Binding Path=Key}"
@@ -102,7 +114,7 @@
                 <ImageBrush ImageSource="/StarMeter;component/Resources/left chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
-        <Button BorderThickness="0" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
+        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/right chevron.png" Stretch="Uniform"/>
             </Button.Background>
