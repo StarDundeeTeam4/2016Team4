@@ -42,51 +42,61 @@
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
-        <Canvas Name="HelpPanel" Visibility="Hidden" Grid.RowSpan="2" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
+        <Grid Grid.Row="1" Grid.Column="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
 
-            <Grid Height="172" Width="168">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height=".8*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height=".8*"/>
-                </Grid.RowDefinitions>
+            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.Row ="2" Grid.Column="4" HorizontalAlignment="Center" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 0, 50" Background="#7F000000">
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="3*" />
-                </Grid.ColumnDefinitions>
+                <Grid Height="172" Width="168">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.2*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height=".8*"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Colours -->
-                <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Labels -->
-                <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
-                <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
-                <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+                    <!-- Colours -->
+                    <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
 
-            </Grid>
-        </Canvas>
-        
-        <Image MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Column="4" Grid.Row="1" Source="/StarMeter;component/Resources/help.png" Margin="40, 40, 60, 0" VerticalAlignment="Bottom">
-            <Image.OpacityMask>
-                <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
-            </Image.OpacityMask>
-        </Image>
-        
-        <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <DVC:Chart.Series >
-                <DVC:PieSeries Title="Experience" 
+                    <!-- Labels -->
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
+                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
+                    <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+
+                </Grid>
+            </Canvas>
+
+            <Image HorizontalAlignment="Stretch" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" Grid.Row="2" Source="/StarMeter;component/Resources/help.png" Height="35" VerticalAlignment="Bottom">
+                <Image.OpacityMask>
+                    <ImageBrush Stretch="Uniform" ImageSource="/StarMeter;component/Resources/help.png"/>
+                </Image.OpacityMask>
+            </Image>
+
+            <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <DVC:Chart.Series >
+                    <DVC:PieSeries Title="Experience" 
                         IndependentValueBinding="{Binding Path=Key}"
                         DependentValueBinding="{Binding Path=Value}" Background="Black">
-                </DVC:PieSeries>
-            </DVC:Chart.Series>
+                    </DVC:PieSeries>
+                </DVC:Chart.Series>
 
-        </DVC:Chart>
-        
+            </DVC:Chart>
+
+        </Grid >
+
+
         <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/left chevron.png" Stretch="Uniform"/>
@@ -98,7 +108,7 @@
             </Button.Background>
         </Button>
 
-        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="2" Margin="100,0,0,0">Showing 0 to 0 of 0 results</Label>
+        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="2" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14">Showing 0 to 0 of 0 results</Label>
 
         <Button Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
@@ -122,9 +132,9 @@
             <Grid Grid.Row="2" IsHitTestVisible="false">
 
                 <!--<Canvas Background="Aquamarine" MouseDown="CanvasClicked" Margin="10,0,-0.4,-176" Grid.ColumnSpan="1" HorizontalAlignment="Left"  Grid.Row="0" VerticalAlignment="Top" Width="1300" Height="200"/>-->
-                
+
                 <!-- Chart for displaying the data rates, assigned to the bottom row -->
-                <DVC:Chart Visibility="Visible" Background="Transparent" Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch">
+                <DVC:Chart Visibility="Visible" Background="Transparent" Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14">
                     <DVC:LineSeries  DependentValuePath="Value" 
                     IndependentValuePath="Key" ItemsSource="{Binding}"            
                     IsSelectionEnabled="True"/>
@@ -244,7 +254,7 @@
             <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" />
         </Grid>
 
-        
+
         <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="2"/>
 
 
@@ -258,7 +268,7 @@
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="2" Background="#33E5E5E5" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Row="2" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
                 <StackPanel Name="SelectedFiles">
 
                 </StackPanel>
@@ -267,22 +277,8 @@
             <!-- TEMP to display the size of the rectangle -->
 
             <Button Name="CmdTestData" Grid.Row="4" HorizontalAlignment="Right" Content="Add Test values" Width="91" Click="TestTimeCreation" Height="24" Margin="0,383.6,-0.4,-0.4" Grid.RowSpan="2" VerticalAlignment="Top" Visibility="Hidden"/>
-            <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF9D9D9D" Offset="1"/>
-                        <GradientStop Color="White"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <Button Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click" Margin="5">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF125402" Offset="1"/>
-                        <GradientStop Color="#FF32FF00"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
+            <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="16"></Button>
+            <Button BorderThickness="0" Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click" Margin="5" FontFamily="Gill Sans MT" FontSize="16" Background="#FF37A300"/>
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -296,49 +292,53 @@
 
         </Grid>
 
-        <Grid Name="FiltersPanel" Grid.Row="1" Grid.Column="1">
+        <Grid Name="FiltersPanel" Grid.Row="1" Grid.Column="1" Margin="5,0,5,0">
 
             <Grid Name="FiltersGrid" Grid.Row="4">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height=".3*" Name="Heading"/>
+                    <RowDefinition Height=".1*" Name="Heading"/>
                     <RowDefinition Height=".3*" Name="ErrorsOnly"/>
                     <RowDefinition Height="0.7*" Name="PortInfoButtons"/>
-                    <RowDefinition Height="1.25*" Name="PortChecks"/>
+                    <RowDefinition Height="1*" Name="PortChecks"/>
                     <RowDefinition Height=".85*" Name="AddressSearch"/>
                     <RowDefinition Height=".85*" Name="ProtocolSearch"/>
-                    <RowDefinition Height="1.1*" Name="TimeFilters"/>
+                    <RowDefinition Height="1*" Name="TimeFilters"/>
                     <RowDefinition Height=".3*" Name="ResetBit"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Label Name ="FiltersHeading" Grid.Row="0" HorizontalAlignment="Center" Content="Filters" Foreground="White" VerticalAlignment="Stretch" FontWeight="Bold" FontSize="16" VerticalContentAlignment="Top"/>
-                <CheckBox Margin="5,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly"/>
+                <CheckBox Margin="5,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" Grid.Row="1" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
 
-                <Grid Grid.Row="3" Margin="40,5.2,30,0" Grid.ColumnSpan="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <Grid Background="#4C000000" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,0,4" >
+
+                    <Grid Margin="45,15,35,0">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
 
-                    <CheckBox Name="Check1A" Grid.Row="0" Grid.Column="0" Checked="DisplayPort1A" Unchecked="HidePort1A" Content="Port 1A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True" />
-                    <CheckBox Name="Check1B" Grid.Row="0" Grid.Column="1" Checked="DisplayPort1B" Unchecked="HidePort1B" Content="Port 1B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check2A" Grid.Row="1" Grid.Column="0" Checked="DisplayPort2A" Unchecked="HidePort2A" Content="Port 2A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check2B" Grid.Row="1" Grid.Column="1" Checked="DisplayPort2B" Unchecked="HidePort2B" Content="Port 2B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check3A" Grid.Row="2" Grid.Column="0" Checked="DisplayPort3A" Unchecked="HidePort3A" Content="Port 3A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check3B" Grid.Row="2" Grid.Column="1" Checked="DisplayPort3B" Unchecked="HidePort3B" Content="Port 3B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check4A" Grid.Row="3" Grid.Column="0" Checked="DisplayPort4A" Unchecked="HidePort4A" Content="Port 4A" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
-                    <CheckBox Name="Check4B" Grid.Row="3" Grid.Column="1" Checked="DisplayPort4B" Unchecked="HidePort4B" Content="Port 4B" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" IsChecked="True"/>
+                        <CheckBox Name="Check1A" Grid.Row="0" Grid.Column="0" Checked="DisplayPort1A" Unchecked="HidePort1A" Content="Port 1A" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch" />
+                        <CheckBox Name="Check1B" Grid.Row="0" Grid.Column="1" Checked="DisplayPort1B" Unchecked="HidePort1B" Content="Port 1B" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+                        <CheckBox Name="Check2A" Grid.Row="1" Grid.Column="0" Checked="DisplayPort2A" Unchecked="HidePort2A" Content="Port 2A" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+                        <CheckBox Name="Check2B" Grid.Row="1" Grid.Column="1" Checked="DisplayPort2B" Unchecked="HidePort2B" Content="Port 2B" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+                        <CheckBox Name="Check3A" Grid.Row="2" Grid.Column="0" Checked="DisplayPort3A" Unchecked="HidePort3A" Content="Port 3A" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+                        <CheckBox Name="Check3B" Grid.Row="2" Grid.Column="1" Checked="DisplayPort3B" Unchecked="HidePort3B" Content="Port 3B" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+                        <CheckBox Name="Check4A" Grid.Row="3" Grid.Column="0" Checked="DisplayPort4A" Unchecked="HidePort4A" Content="Port 4A" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+                        <CheckBox Name="Check4B" Grid.Row="3" Grid.Column="1" Checked="DisplayPort4B" Unchecked="HidePort4B" Content="Port 4B" VerticalAlignment="Center" Foreground="White" IsChecked="True" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch"/>
+
+                    </Grid>
 
                 </Grid>
 
-                <Grid Grid.Row="2" Margin="0,6.8,-0.4,8.8" Grid.ColumnSpan="2">
+                <Grid Margin="0,0,0,4" Background="#4C000000" Grid.Row="2" Grid.ColumnSpan="2">
 
 
                     <Grid>
@@ -353,14 +353,14 @@
                             <ColumnDefinition Width="11*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.ColumnSpan="4" Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="Display Port Info For..." Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
-                        <Button Grid.Row="1" Grid.Column="0" Click="SelectAllPorts" Margin="5,0.2,5,0.2" Grid.ColumnSpan="2">Select All</Button>
-                        <Button Grid.Row="1" Grid.Column="2" Click="DeselectAllPorts" Margin="5,0.2,4.6,0" Grid.ColumnSpan="2">Deselect All</Button>
+                        <Label Grid.ColumnSpan="4" Grid.Row="0" Grid.Column="0" x:Name="SizeLabelTest_Copy" Content="PORT FILTERING" Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="16" Margin="5,0,0,0"/>
+                        <Button Grid.Row="1" Grid.Column="0" Click="SelectAllPorts" Margin="5,0.2,5,5" Grid.ColumnSpan="2" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" >Select All</Button>
+                        <Button Grid.Row="1" Grid.Column="2" Click="DeselectAllPorts" Margin="5,0.2,4.6,5" Grid.ColumnSpan="2" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" >Deselect All</Button>
 
                     </Grid>
                 </Grid>
 
-                <Grid Grid.Row="4">
+                <Grid Grid.Row="4" Margin="0,0,0,4" Background="#4C000000">
 
                     <Grid Name="AddressSearching">
                         <Grid.RowDefinitions>
@@ -369,37 +369,36 @@
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
 
-                        <TextBox x:Name="addressSearch" Grid.Row="1" Margin="10,5,10,5" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Stretch"/>
-                        <Label Grid.Row="0" x:Name="SizeLabelTest_Copy1" Content="Address To Search:" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="10,0,10,0"/>
-                        <Button Margin="10,5,10,5" Grid.Row="2" Click="SearchForAddress" Content="Search for address" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Button>
+                        <TextBox x:Name="addressSearch" Grid.Row="1" Margin="10,5,10,5" TextWrapping="Wrap" VerticalAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14"/>
+                        <Label Grid.Row="0" x:Name="SizeLabelTest_Copy1" Content="ADDRESS SEARCHING" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" FontSize="16" FontFamily="Gill Sans MT"/>
+                        <Button BorderThickness="0" Margin="10,5,10,5" Grid.Row="2" Click="SearchForAddress" Content="SEARCH" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="14"/>
                     </Grid>
-
 
                 </Grid>
 
-                <Grid Grid.Row="5">
+                <Grid Grid.Row="5" Background="#4C000000" Margin="0,0,0,4">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="35*"/>
+                        <RowDefinition Height="35.2"/>
+                        <RowDefinition Height="36*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <Label HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0" Content="Protocol To Search:" Foreground="White" VerticalAlignment="Center" />
-                    <TextBox Grid.Row="1" Grid.Column="0" x:Name="protocolSearch" Margin="10,5,10,5"/>
-                    <Button Grid.Row="2" Grid.Column="0" Click="SearchForProtocol" Content="Search for protocol" Margin="10,5,10,5"/>
+                    <Label HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Content="PROTOCOL SEARCHING" Foreground="White" VerticalAlignment="Center" FontSize="16" FontFamily="Gill Sans MT" Margin="10,0,10,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" x:Name="protocolSearch" Margin="10,5,10,5" FontFamily="Gill Sans MT" FontSize="14"/>
+                    <Button BorderThickness="0" Grid.Row="2" Grid.Column="0" Click="SearchForProtocol" Content="SEARCH" Margin="10,5,10,5" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="14"/>
                 </Grid>
 
-                <Grid  Grid.Row="6" Name="TimeFilterSection">
+                <Grid Margin="0,0,0,0" Grid.Row="6" Name="TimeFilterSection" Background="#4C000000">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="1.2*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Row="0" Content="Enter times to search" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Label Margin="10,0,10,0" Grid.Row="0" Content="TIME SEARCHING" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontFamily="Gill Sans MT" FontSize="16" VerticalContentAlignment="Center"/>
 
                     <Grid Name="TimeInput" Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -407,13 +406,21 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox Grid.Column="0" Margin="10,10,10,10"  Name="StartTimeTextBox"/>
-                        <TextBox Grid.Column="1" Margin="10,10,10,10" Name="EndTimeTextBox" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Margin="5,0,5,0" Grid.Column="0" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">Start Time</Label>
+                        <Label Margin="5,0,5,0" Grid.Column="1" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">End Time</Label>
+
+                        <TextBox Grid.Column="0" Grid.Row="1" Margin="10,0,10,0"  Name="StartTimeTextBox" FontFamily="Gill Sans MT" FontSize="14"/>
+                        <TextBox Grid.Column="1" Grid.Row="1" Margin="10,0,10,0" Name="EndTimeTextBox" FontFamily="Gill Sans MT" FontSize="14"/>
                     </Grid>
 
-                    <Button Click="SearchForPacketsByTime" Grid.Row="2" Content="Search for times" HorizontalAlignment="Stretch" Margin="10,9,10,9"/>
+                    <Button BorderThickness="0" Click="SearchForPacketsByTime" Grid.Row="2" Content="SEARCH" HorizontalAlignment="Stretch" Margin="10,9,10,9" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="14"/>
                 </Grid>
-                <Button Grid.Row="7" Click="Reset"  Content="Reset" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="10, 3, 10, 3"></Button>
+                <Button BorderThickness="0" Grid.Row="7" Click="Reset" Content="RESET" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="0,5,0,0" FontFamily="Gill Sans MT" FontSize="14"></Button>
 
             </Grid>
 
@@ -429,7 +436,7 @@
             </Grid.RowDefinitions>
 
 
-            
+
 
         </Grid>
 

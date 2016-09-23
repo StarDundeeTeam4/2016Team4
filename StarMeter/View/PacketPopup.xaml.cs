@@ -151,6 +151,7 @@ namespace StarMeter.View
         private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
             this.Close();
+            this.Owner.Show();
         }
 
         private void ShowRmapProperties(object sender, RoutedEventArgs e)
@@ -162,6 +163,37 @@ namespace StarMeter.View
             cv.SetupElements(br, (RmapPacket)_p);
             cv.Owner = this;
             cv.Show();
+        }
+
+        private void LeftArrow_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            PacketPopup pp = new PacketPopup(); 
+            
+            Packet p = Controller.FindPacket(_p.PrevPacket.GetValueOrDefault());
+            pp.SetupElements(p);
+            pp.Owner = this;
+            pp.Controller = this.Controller;
+            pp.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+            pp.Left = 0;
+
+            pp.Top = (SystemParameters.VirtualScreenHeight / 2) - 250;
+
+            pp.Show();
+        }
+
+        private void RightArrow_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            PacketPopup pp = new PacketPopup();
+
+            Packet p = Controller.FindPacket(_p.NextPacket.GetValueOrDefault());
+            pp.SetupElements(p);
+            pp.Owner = this;
+            pp.Controller = this.Controller;
+            pp.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+            pp.Left = SystemParameters.VirtualScreenWidth - 500;
+
+            pp.Top = (SystemParameters.VirtualScreenHeight / 2) - 250;
+            pp.Show();
         }
     }
 }

@@ -56,7 +56,14 @@ namespace StarMeter.View
 
             try
             {
-                lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
+                if (p.ProtocolId == 1)
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + p.ProtocolId + " (RMAP)";
+                }
+                else
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + p.ProtocolId;
+                }
             }
             catch (Exception e)
             {
