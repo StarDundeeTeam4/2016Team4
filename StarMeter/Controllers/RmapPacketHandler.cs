@@ -7,29 +7,57 @@ namespace StarMeter.Controllers
 {
     public static class RmapPacketHandler
     {
+        /// <summary>
+        /// Creates an RMAP packet from a normal packet
+        /// </summary>
+        /// <param name="packet">The packet to use as a base for the RMAP packet</param>
+
+        /// <returns>The new RmapPacket</returns>
         public static RmapPacket CreateRmapPacket(Packet packet)
         {
-            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet.FullPacket);
-            var rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
-            int addressLength = GetRmapLogicalAddressLength(packet.FullPacket[addressIndex + 2]);
+            RmapPacket rmapPacket = new RmapPacket();
 
-            string rmapPacketType = GetRmapType(rmapCommandByte);
-            byte[] sourceAddress = GetSourceAddressRmap(packet.FullPacket, addressLength);
-            byte destinationKey = GetDestinationKey(packet.FullPacket);
-            var rmapPacket = new RmapPacket
+            //setting vars to be essentially null so packet can be created even if error
+            BitArray rmapCommandByte = null;
+            byte destinationKey = 0x00;
+            string rmapPacketType = "";
+            byte[] sourceAddress = null;
+
+            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
+
+            try
             {
-                CommandByte = rmapCommandByte,
-                PacketType = rmapPacketType,
-                SourcePathAddress = sourceAddress,
-                PacketId = packet.PacketId,
-                DateRecieved = packet.DateRecieved,
-                PortNumber = packet.PortNumber,
-                Cargo = packet.Cargo,
-                ProtocolId = packet.ProtocolId,
-                FullPacket = packet.FullPacket,
-                PrevPacket = packet.PrevPacket,
-                DestinationKey = destinationKey
-            };
+                if (addressIndex == -1)
+                {
+                    throw new IndexOutOfRangeException(); //no logical address so is incomplete or otherwise dataerror
+                }
+
+                rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
+                destinationKey = GetDestinationKey(packet);
+
+                rmapPacketType = GetRmapType(rmapCommandByte);
+                sourceAddress = GetSourceAddressRmap(packet);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                rmapPacket.IsError = true;
+                rmapPacket.ErrorType = ErrorType.DataError;
+            }
+
+            rmapPacket.PacketId     = packet.PacketId;
+            rmapPacket.DateRecieved = packet.DateRecieved;
+            rmapPacket.PrevPacket   = packet.PrevPacket;
+            rmapPacket.PacketType   = rmapPacketType;
+
+            rmapPacket.PortNumber   = packet.PortNumber;
+            rmapPacket.ProtocolId   = packet.ProtocolId;
+            rmapPacket.SequenceNum  = packet.SequenceNum;
+
+            rmapPacket.CommandByte       = rmapCommandByte;
+            rmapPacket.DestinationKey    = destinationKey;
+            rmapPacket.SourcePathAddress = sourceAddress;
+            rmapPacket.Cargo             = packet.Cargo;
+            rmapPacket.FullPacket        = packet.FullPacket;
 
             if (!CheckRmapCrc(rmapPacket))
             {
@@ -40,64 +68,100 @@ namespace StarMeter.Controllers
             return rmapPacket;
         }
 
-        public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket, int addressLength)
+        /// <summary>
+        /// Calculate the source address for the packet
+        /// </summary>
+        /// <param name="rmapFullPacket">The packet's data</param>
+        /// <returns>The source address byte array</returns>
+        public static byte[] GetSourceAddressRmap(Packet rmapFullPacket)
         {
             int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
+            byte rmapCommandByte = rmapFullPacket.FullPacket[addressIndex + 2];
+            int addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
+            int sourceAddressIndex = addressIndex + 4;
+
             var result = new List<byte>();
-            var sourceAddressIndex = addressIndex + 4;
             try
             {
-                for (var i = sourceAddressIndex; i < sourceAddressIndex + addressLength; i++)
+                for (int i = 0; i < addressLength; i++)
                 {
-                    result.Add(rmapFullPacket[i]);
+                    result.Add(rmapFullPacket.FullPacket[sourceAddressIndex + i]);
                 }
             }
             catch (IndexOutOfRangeException e)
             {
-                return result.ToArray();
+                System.Diagnostics.Trace.WriteLine("IndexOutOfRangeException in GetSourceAddressRmap");
+                System.Diagnostics.Trace.WriteLine(e);
             }
 
-            
             return result.ToArray();
 
         }
 
+        /// <summary>
+        /// Calculates the length of the packet's source address bytes.
+        /// Returns the number indicated by the last two bits in the commandbyte and multiplies it by 4 as stated in the RMAP protocol specification
+        /// </summary>
+        /// <param name="rmapCommandByte">The command byte to calculate from</param>
+        /// <returns>The length of the source address in an RMAP packet</returns>
         public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
+            //New BitArray with 0-1 copied from command byte and rest 0
             var finalArray = new BitArray(new[] { GetBit(rmapCommandByte, 1), GetBit(rmapCommandByte, 2), false, false, false, false, false, false });
+            //New Array of integers of length 1
             var result = new int[1];
+            //Put the decimal number indicated by said 0-1 bits into an integer array
             finalArray.CopyTo(result, 0);
+            //Copy that integer into variable
             var final = result[0];
+            //Return the correct address length which is - Number indicated by 0-1 bits multiplied by 4. 
             return final * 4;
         }
 
-        public static bool GetBit(byte cmdByte, int index)
+        /// <summary>
+        /// Returns requested bit in byte indicated by index
+        /// Explanation of use of bitwise operators - http://stackoverflow.com/questions/4854207/get-a-specific-bit-from-byte
+        /// Authors - KeithS, Josh Petrie, PierrOz, Aliostad
+        /// </summary>
+        /// <param name="">The command byte to calculate from</param>
+        /// <param name="myByte">byte whose bit is to be extracted</param>
+        /// <param name="index">which bit to return</param>
+        /// <returns>the bit requested</returns>
+        public static bool GetBit(byte myByte, int index)
         {
-            var bit = (cmdByte & (1 << index - 1)) != 0;
+            var bit = (myByte & (1 << index - 1)) != 0;
             return bit;
         }
 
+        /// <summary>
+        /// Checks that the calculated CRC(s) for an RMAP packet are as provided
+        /// </summary>
+        /// <param name="packet">The packet to check</param>
+        /// <returns>Whether the CRC byte(s) are the same as calculated</returns>
         public static bool CheckRmapCrc(RmapPacket packet)
         {
             if (packet.PacketType.EndsWith("Reply"))
             {
                 //test cargo CRC
-                bool cargo = CRC.CheckCrcForPacket(packet.Cargo);
+                var cargo = CRC.CheckCrcForPacket(packet.Cargo);
 
                 //test header CRC
                 //remove cargo from header and test as if full packet
-                int length = packet.FullPacket.Length - packet.Cargo.Length;
-                byte[] headerBytes = new byte[length];
+                var length = packet.FullPacket.Length - packet.Cargo.Length;
+                var headerBytes = new byte[length];
                 Array.Copy(packet.FullPacket, headerBytes, length);
-                bool header = CRC.CheckCrcForPacket(headerBytes);
+                var header = CRC.CheckCrcForPacket(headerBytes);
 
                 return (header && cargo);
             }
-            if (!CRC.CheckCrcForPacket(packet.FullPacket)) return false;
-
-            return true;
+            return CRC.CheckCrcForPacket(packet.FullPacket);
         }
 
+        /// <summary>
+        /// Calculates the packet's type from the command byte
+        /// </summary>
+        /// <param name="bitArray">The command byte as individual bits</param>
+        /// <returns>The packet type as a string</returns>
         public static string GetRmapType(BitArray bitArray)
         {
             var result = "";
@@ -121,10 +185,15 @@ namespace StarMeter.Controllers
             return result;
         }
 
-        public static byte GetDestinationKey(byte[] fullPacket)
+        /// <summary>
+        /// Calculates the destination key from the packet
+        /// </summary>
+        /// <param name="packet">The packet's data</param>
+        /// <returns>The destination key byte</returns>
+        public static byte GetDestinationKey(Packet packet)
         {
-            int addressIndex = PacketHandler.GetLogicalAddressIndex(fullPacket);
-            return fullPacket[addressIndex + 3];
+            var addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
+            return packet.FullPacket[addressIndex + 3];
         }
     }
 }
