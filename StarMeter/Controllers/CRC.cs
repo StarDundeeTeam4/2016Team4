@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace StarMeter.Controllers
@@ -80,11 +81,18 @@ namespace StarMeter.Controllers
         /// <returns>Whether the provided checksum matches the calculated value</returns>
         public static bool CheckCrcForPacket(byte[] packet)
         {
-            byte[] packetBody = packet.Take(packet.Length - 1).ToArray();
-            ushort crcToCheck = packet.Last();
-            ushort calculatedCrc = RMAP_CalculateCRC(packetBody);
+            try
+            {
+                byte[] packetBody = packet.Take(packet.Length - 1).ToArray();
+                ushort crcToCheck = packet.Last();
+                ushort calculatedCrc = RMAP_CalculateCRC(packetBody);
 
-            return Equals(crcToCheck, calculatedCrc);
+                return Equals(crcToCheck, calculatedCrc);
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
     }
 }

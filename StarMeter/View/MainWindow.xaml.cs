@@ -163,7 +163,7 @@ namespace StarMeter.View
             // create a label for the time
             # region Time label
             Label l = new Label();
-            l.Content = time.ToString();
+            l.Content = time.ToString(@"hh\:mm\:ss\.fff");
             l.SetResourceReference(Control.StyleProperty, "Timestamp");
 
             TimeList.Children.Add(l);
