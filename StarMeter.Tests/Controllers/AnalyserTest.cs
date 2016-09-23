@@ -9,7 +9,15 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class AnalyserTest
     {
-        static readonly byte[] ExampleCargo =
+        private Analyser _analyser;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _analyser = new Analyser();
+        }
+
+        private static readonly byte[] ExampleCargo =
         {
             0x00, 0xfe, 0xfa, 0x00, 0x17, 0x50, 0xb8, 0xf6, 0xca, 0xd3, 0x9e, 0x3c,
             0x52, 0x74, 0x51, 0x9f, 0xef, 0x80, 0xba, 0xf6, 0x75, 0x92, 0xde, 0xc3, 0xaa, 0x62, 0x5f, 0xaa, 0xf0, 0xde,
@@ -61,8 +69,6 @@ namespace StarMeter.Tests.Controllers
                 {Packet2.PacketId, Packet2},
                 {Packet3.PacketId, Packet3}
             };
-
-        private readonly Analyser _analyser = new Analyser();
 
         [TestMethod]
         public void CalculateTotalNoOfDataCharsTest()
@@ -117,6 +123,12 @@ namespace StarMeter.Tests.Controllers
             var actualResult = _analyser.CalculateDataRateBytePerSecond(_packetDict);
 
             Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _analyser = null;
         }
     }
 }
