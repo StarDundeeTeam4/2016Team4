@@ -1425,6 +1425,7 @@ namespace StarMeter.View
 
         private void NextPage(object sender, RoutedEventArgs e)
         {
+            if (SortedPackets.Count == 0) return;
             RemoveAllPackets();
             _pageIndex++;
 
@@ -1444,19 +1445,9 @@ namespace StarMeter.View
 
             Packet[] toLoad;
 
-            if (SortedPackets.Count == 0)
-            {
-                try
-                {
-                    toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, 100).ToArray();
-                }
-                catch (Exception)
-                {
-                    toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
-                }
-            }
-            else
-            {
+           
+
+          
                 try
                 {
                     toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
@@ -1465,7 +1456,7 @@ namespace StarMeter.View
                 {
                     toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
                 }
-            }
+            
             CreateAllTimeLabels(toLoad);
             AddPacketCollection(toLoad);
 
