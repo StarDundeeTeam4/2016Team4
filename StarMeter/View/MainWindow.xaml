@@ -56,19 +56,17 @@
                         <RowDefinition Height="1.2*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
                         <RowDefinition Height=".8*"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="5*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Colours -->
                     <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                    <Label Grid.Row="2" Background="Yellow" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                    <Label Grid.Row="3" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="2" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
 
                     <!-- Labels -->
                     <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
@@ -292,7 +290,7 @@
 
         </Grid>
 
-        <Grid Name="FiltersPanel" Grid.Row="1" Grid.Column="1" Margin="5,0,5,0">
+        <Grid Name="FiltersPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5,0,5,0">
 
             <Grid Name="FiltersGrid" Grid.Row="4">
 
@@ -420,8 +418,16 @@
 
                     <Button BorderThickness="0" Click="SearchForPacketsByTime" Grid.Row="2" Content="SEARCH" HorizontalAlignment="Stretch" Margin="10,9,10,9" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="14"/>
                 </Grid>
-                <Button BorderThickness="0" Grid.Row="7" Click="Reset" Content="RESET" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="0,5,0,0" FontFamily="Gill Sans MT" FontSize="14"></Button>
+                <Grid Grid.Row="7">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button BorderThickness="0" Grid.Row="0" Click="Reset" Content="RESET" HorizontalAlignment="Stretch" Background="#FFE20000" Foreground="White" Margin="5,5,5,0" FontFamily="Gill Sans MT" FontSize="14"></Button>
+                    <Button BorderThickness="0" Grid.Row="0" Grid.Column="1" Click="GoBackToFileSelection"  Content="GO BACK" HorizontalAlignment="Stretch" Background="#FF4A4D54" Foreground="White" Margin="5,5,5,0" FontFamily="Gill Sans MT" FontSize="14"></Button>
 
+                </Grid>
             </Grid>
 
 

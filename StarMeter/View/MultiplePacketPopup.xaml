@@ -10,8 +10,19 @@
         </LinearGradientBrush>
     </Window.Background>
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="PacketList" Margin="0,3,0,0"/>
-        </ScrollViewer>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+        
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
+                <StackPanel Name="PacketList" Margin="0,3,0,0"/>
+            </ScrollViewer>
+            
+            <Button Click="Button_Click" Grid.Row="1" Margin="5" Background="Green" Foreground="White" FontFamily="Gill Sans MT" FontSize="16">OK</Button>
+            
+        </Grid>
     </Grid>
 </Window>
