@@ -74,14 +74,14 @@ namespace StarMeter.Controllers
         /// <returns>The source address byte array</returns>
         public static byte[] GetSourceAddressRmap(byte[] rmapFullPacket)
         {
-            int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
-            byte rmapCommandByte = rmapFullPacket[addressIndex + 2];
-            int addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
-            int sourceAddressIndex = addressIndex + 4;
-
             var result = new List<byte>();
             try
             {
+                int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
+                byte rmapCommandByte = rmapFullPacket[addressIndex + 2];
+                int addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
+                int sourceAddressIndex = addressIndex + 4;
+
                 for (int i = 0; i < addressLength; i++)
                 {
                     result.Add(rmapFullPacket[sourceAddressIndex + i]);
@@ -112,10 +112,17 @@ namespace StarMeter.Controllers
             return final * 4;
         }
 
-        //TODO: Documentation
+        /// <summary>
+        /// Method to extract a bit at a specific index from a given byte
+        /// 
+        /// Method taken from KeithS on StackOverflow - http://stackoverflow.com/a/4854257
+        /// </summary>
+        /// <param name="cmdByte">The byte from which the bit is to be extracted</param>
+        /// <param name="index">The index of the bit within the byte</param>
+        /// <returns>The value of the chosen bit</returns>
         public static bool GetBit(byte cmdByte, int index)
         {
-            //TODO: WHAT DOES THIS DO?
+            //uses a bitwise AND to compare the byte with 2^index, calculated via a bitshift
             var bit = (cmdByte & (1 << index - 1)) != 0;
             return bit;
         }
