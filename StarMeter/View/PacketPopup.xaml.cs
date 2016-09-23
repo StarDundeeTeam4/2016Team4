@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using StarMeter.Controllers;
+using StarMeter.View.Helpers;
 
 namespace StarMeter.View
 {
@@ -15,27 +16,27 @@ namespace StarMeter.View
             InitializeComponent();
         }
 
-        private Packet _p;
+        private Packet _packet;
         public Controller Controller;
 
-        public void SetupElements(Packet p)
+        public void SetupElements(Packet packet)
         {
-            if (!(p is RmapPacket))
+            if (!(packet is RmapPacket))
             {
                 ViewRmapPropertiesButton.Visibility = Visibility.Hidden;
             }
-            Brush br = GetBrush(p.IsError);
+            var br = GetBrush(packet.IsError);
 
-            _p = p;
+            _packet = packet;
             Width = 500;
             Height = 500;
 
             lblErrorMsg.Background = br;
 
-            BitmapImage logo = new BitmapImage();
+            var logo = new BitmapImage();
             logo.BeginInit();
 
-            if (!p.IsError)
+            if (!packet.IsError)
             {
                 logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
                 logo.EndInit();
@@ -43,39 +44,30 @@ namespace StarMeter.View
             }
             else
             {
-
                 logo.UriSource = new Uri("pack://application:,,,/Resources/Error.png");
                 logo.EndInit();
-                lblErrorMsg.Content = "ERROR: " + p.ErrorType;
+                lblErrorMsg.Content = "ERROR: " + packet.ErrorType;
             }
 
             IconBG.Background = br;
             ErrorIcon.Source = logo;
-            TimeLabel.Content = p.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-            var protocolId = p.ProtocolId;
 
-            if (protocolId == 1)
-            {
-                ProtocolLabel.Content = "Protocol: " + protocolId + " (RMAP)";
-            }
-            else
-            {
-                ProtocolLabel.Content = "Protocol: " + protocolId;
-            }
+            TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+            var protocolId = packet.ProtocolId;
+            ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
 
-
-            if (p.ErrorType.Equals(ErrorType.SequenceError)) 
+            if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
             {
                 SequenceNumberLabel.Foreground = Brushes.Red;
             }
-            else if (p.ErrorType.Equals(ErrorType.DataError))
+            else if (packet.ErrorType.Equals(ErrorType.DataError))
             {
                 CargoButton.Background = Brushes.Red;
             }
 
-            SequenceNumberLabel.Content = "Sequence Number: " + p.SequenceNum;
+            SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
 
-            var addressArray = p.Address;
+            var addressArray = packet.Address;
             var finalAddressString = "";
 
             if (addressArray != null)
@@ -87,7 +79,9 @@ namespace StarMeter.View
                         finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
                 }
                 else
+                {
                     finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
+                }
             }
             else
             {
@@ -96,43 +90,40 @@ namespace StarMeter.View
 
             AddressLabel.Content = finalAddressString;
 
-            LeftArrow.Visibility = _p.PrevPacket == null 
+            LeftArrow.Visibility = _packet.PrevPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
 
-            RightArrow.Visibility = _p.NextPacket == null 
+            RightArrow.Visibility = _packet.NextPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
         }
 
-        private Brush GetBrush(bool isError) 
+        private static Brush GetBrush(bool isError) 
         {
             if (isError)
             {
                 return Brushes.Red;
             }
-            else
-            {
-                var converter = new System.Windows.Media.BrushConverter();
-               return (Brush)converter.ConvertFromString("#6699ff");
-            }
+            var converter = new BrushConverter();
+            return (Brush)converter.ConvertFromString("#6699ff");
         }
 
         private void NextPacket(object sender, RoutedEventArgs e)
         {
-            if (_p.NextPacket != null)
+            if (_packet.NextPacket != null)
             {
-                Packet p = Controller.FindPacket(_p.NextPacket.GetValueOrDefault());
-                SetupElements(p);
+                var packet = Controller.FindPacket(_packet.NextPacket.GetValueOrDefault());
+                SetupElements(packet);
             }
         }
 
         private void PrevPacket(object sender, RoutedEventArgs e)
         {
-            if (_p.PrevPacket != null)
+            if (_packet.PrevPacket != null)
             {
-                Packet p = Controller.FindPacket(_p.PrevPacket.GetValueOrDefault());
-                SetupElements(p);
+                var packet = Controller.FindPacket(_packet.PrevPacket.GetValueOrDefault());
+                SetupElements(packet);
             }
         }
 
@@ -141,10 +132,10 @@ namespace StarMeter.View
             var b = (Button)sender;
             var br = b.Background;
 
-            if (_p.Cargo != null)
+            if (_packet.Cargo != null)
             {
-                CargoView cv = new CargoView();
-                cv.SetupElements(br, _p);
+                var cv = new CargoView();
+                cv.SetupElements(br, _packet);
                 cv.Owner = this;
                 cv.Show();
             }
@@ -156,50 +147,51 @@ namespace StarMeter.View
 
         private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
-            this.Close();
-            this.Owner.Show();
+            Close();
+            Owner.Show();
         }
 
         private void ShowRmapProperties(object sender, RoutedEventArgs e)
         {
-            var b = (Button) sender;
-            var br = b.Background;
+            var button = (Button) sender;
+            var br = button.Background;
 
-            var cv = new RmapView();
-            cv.SetupElements(br, (RmapPacket)_p);
-            cv.Owner = this;
-            cv.Show();
+            var rmapView = new RmapView();
+            rmapView.SetupElements(br, (RmapPacket)_packet);
+            rmapView.Owner = this;
+            rmapView.Show();
         }
 
         private void LeftArrow_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            PacketPopup pp = new PacketPopup(); 
-            
-            Packet p = Controller.FindPacket(_p.PrevPacket.GetValueOrDefault());
-            pp.SetupElements(p);
-            pp.Owner = this;
-            pp.Controller = this.Controller;
-            pp.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-            pp.Left = 0;
+            var packetPopup = new PacketPopup();
+            var packet = Controller.FindPacket(_packet.PrevPacket.GetValueOrDefault());
 
-            pp.Top = (SystemParameters.VirtualScreenHeight / 2) - 250;
+            ArrowMouseRightButtonDown(packet, packetPopup);
+            packetPopup.Left = 0;
+            packetPopup.Top = SystemParameters.VirtualScreenHeight / 2 - 250;
 
-            pp.Show();
+            packetPopup.Show();
         }
 
         private void RightArrow_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            PacketPopup pp = new PacketPopup();
+            var packetPopup = new PacketPopup();
+            var packet = Controller.FindPacket(_packet.NextPacket.GetValueOrDefault());
 
-            Packet p = Controller.FindPacket(_p.NextPacket.GetValueOrDefault());
-            pp.SetupElements(p);
-            pp.Owner = this;
-            pp.Controller = this.Controller;
-            pp.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-            pp.Left = SystemParameters.VirtualScreenWidth - 500;
+            ArrowMouseRightButtonDown(packet, packetPopup);
+            packetPopup.Left = SystemParameters.VirtualScreenWidth - 500;
+            packetPopup.Top = SystemParameters.VirtualScreenHeight / 2 - 250;
 
-            pp.Top = (SystemParameters.VirtualScreenHeight / 2) - 250;
-            pp.Show();
+            packetPopup.Show();
+        }
+
+        private void ArrowMouseRightButtonDown(Packet packet, PacketPopup packetPopup)
+        {
+            packetPopup.SetupElements(packet);
+            packetPopup.Owner = this;
+            packetPopup.Controller = Controller;
+            packetPopup.WindowStartupLocation = WindowStartupLocation.Manual;
         }
     }
 }
