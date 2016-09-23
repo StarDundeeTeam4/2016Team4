@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using StarMeter.View.Helpers;
 
 namespace StarMeter.View
 {
@@ -14,125 +15,103 @@ namespace StarMeter.View
     {
         public Controller Controller;
 
-        public MultiplePacketPopup(Controller c)
+        public MultiplePacketPopup(Controller controller)
         {
             InitializeComponent();
-            Controller = c;
+            Controller = controller;
         }
 
         public void CreateElements(List<Packet> packets) 
         {
-            foreach(var p in packets)
+            foreach(var packet in packets)
             {
-                var btn = GetPacketButton(p);
-                btn.Margin = new Thickness(5,2.5,5,3);
-                btn.Height = 50;
-                PacketList.Children.Add(btn);
+                var button = GetPacketButton(packet);
+                button.Margin = new Thickness(5, 2.5, 5, 3);
+                button.Height = 50;
+                PacketList.Children.Add(button);
             }
         }
 
-        public Button GetPacketButton(Packet p)
+        public Button GetPacketButton(Packet packet)
         {
             #region Create Button for the packet
-            string sty = "";
+            string sty;
 
-            var b = new Button();
-            b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-            b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-            b.Click += OpenPopup;
-            
-            var lab = new Label();
-            lab.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-            lab.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-            lab.FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT");
+            var button = new Button
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Center
+            };
+            button.Click += OpenPopup;
+
+            var buttonLabel = new Label
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT")
+            };
 
             try
             {
-                var addressArray = p.Address;
-                var finalAddressString = "";
-
-                if (addressArray != null)
-                {
-                    if (addressArray.Length > 1)
-                    {
-                        finalAddressString += "Physical Path: ";
-                        for (var i = 0; i < addressArray.Length - 1; i++)
-                            finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
-                    }
-                    else
-                        finalAddressString = Convert.ToInt32(addressArray[0]).ToString();
-                }
-                else
-                {
-                    finalAddressString = "No Address";
-                }
-
-                lab.Content = finalAddressString; 
-                
-                var protocolId = p.ProtocolId;
-
-                if (protocolId == 1)
-                {
-                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId + " (RMAP)";
-                }
-                else
-                {
-                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId;
-                }
-            }
-            catch (Exception e)
-            {
-                lab.Content = "Unknown Packet Type";
-            }
-
-            try
-            {
-                b.Tag = p.PacketId;
+                var addressArray = packet.Address;
+                buttonLabel.Content = PacketLabelCreator.GetAddressLabel(addressArray);
+                var protocolId = packet.ProtocolId;
+                buttonLabel.Content += Environment.NewLine + PacketLabelCreator.GetProtocolLabel(protocolId);
             }
             catch (Exception)
             {
-                b.Tag = "";
+                buttonLabel.Content = "Unknown Packet Type";
             }
-
-            b.Content = lab;
 
             try
             {
-                sty = p.IsError ? "Error" : "Success";
+                button.Tag = packet.PacketId;
+            }
+            catch (Exception)
+            {
+                button.Tag = "";
+            }
+
+            button.Content = buttonLabel;
+
+            try
+            {
+                sty = packet.IsError ? "Error" : "Success";
             }
             catch (Exception)
             {
                 sty = "Error";
             }
 
-            b.SetResourceReference(Control.StyleProperty, sty);
-            return b;
+            button.SetResourceReference(StyleProperty, sty);
+            return button;
             #endregion
         }
 
         public void OpenPopup(object sender, RoutedEventArgs e)
         {
-            var b = (Button)sender;
+            var button = (Button)sender;
+            var buttonTag = button.Tag.ToString();
+            var packetId = new Guid(buttonTag);
 
-            var text = b.Tag.ToString();
-            var guid = new Guid(text);
-
-            PacketPopup pp = new PacketPopup();
-            pp.Controller = Controller;
-
-            Packet p = Controller.FindPacket(guid);
-
-            if (p != null)
+            var packetPopup = new PacketPopup
             {
-                pp.SetupElements(p); // send the packet as a parameter, along with the colour to make the header
-                pp.Owner = this;
-                pp.Show();
+                Controller = Controller
+            };
+
+            var packet = Controller.FindPacket(packetId);
+
+            if (packet != null)
+            {
+                packetPopup.SetupElements(packet); // send the packet as a parameter, along with the colour to make the header
+                packetPopup.Owner = this;
+                packetPopup.Show();
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
     }
