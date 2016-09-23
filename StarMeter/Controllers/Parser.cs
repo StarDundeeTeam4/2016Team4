@@ -10,7 +10,7 @@ namespace StarMeter.Controllers
     public class Parser
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
-        private Guid? _prevPacket;
+        public Guid? _prevPacket;
 
         /// <summary>
         /// Send a file specified by filePath to be parsed
@@ -24,6 +24,7 @@ namespace StarMeter.Controllers
             PacketDict.Clear();
             PacketDict = ParsePackets(r);
             r.Close();
+            _prevPacket = null;
             return PacketDict;
         }
 
@@ -60,7 +61,8 @@ namespace StarMeter.Controllers
 
                     //read cargo line and convert to byte array
                     string[] packetAsStrings = r.ReadLine().Split(' ');
-                    packet.FullPacket = packetAsStrings.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
+                    packet.FullPacket =
+                        packetAsStrings.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
                     packet = PacketHandler.SetPacketInformation(packet);
 
@@ -71,6 +73,10 @@ namespace StarMeter.Controllers
 
                     string endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
+                }
+                else if (packetType == null)
+                {
+                    break;
                 }
                 else
                 {
@@ -84,7 +90,8 @@ namespace StarMeter.Controllers
                         packet.ErrorType = ErrorType.Disconnect;
                     }
 
-                    if (PacketDict.Count > 2) {
+                    if (PacketDict.Count >= 2)
+                    {
                         ErrorDetector errorDetector = new ErrorDetector();
                         var previousPacket = GetPrevPacket(packet);
                         var previousPreviousPacket = GetPrevPacket(previousPacket);
@@ -98,7 +105,7 @@ namespace StarMeter.Controllers
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
-            _prevPacket = null;
+            //_prevPacket = null;
             return PacketDict;
         }
 
@@ -127,7 +134,7 @@ namespace StarMeter.Controllers
         /// </summary>
         /// <param name="packet">The packet for which the previous should be returned</param>
         /// <returns>The previous packet</returns>
-        private Packet GetPrevPacket(Packet packet)
+        public Packet GetPrevPacket(Packet packet)
         {
             Guid prevPacketId = (Guid)packet.PrevPacket;
             Packet previousPacket;

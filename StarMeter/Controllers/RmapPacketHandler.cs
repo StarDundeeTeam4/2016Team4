@@ -7,8 +7,9 @@ namespace StarMeter.Controllers
 {
     public static class RmapPacketHandler
     {
-        /// </summary>
+        /// <summary>
         /// <param name="packet">The packet to use as a base for the RMAP packet</param>
+        /// </summary>
         /// <returns>The new RmapPacket</returns>
         public static RmapPacket CreateRmapPacket(Packet packet)
         {
