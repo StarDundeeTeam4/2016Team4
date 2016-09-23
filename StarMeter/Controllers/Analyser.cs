@@ -66,9 +66,9 @@ namespace StarMeter.Controllers
         /// <returns>A double of the total data rate in bytes per second</returns>
         public double CalculateDataRateBytePerSecond(Dictionary<Guid, Packet> packetDictionary)
         {
-            var sortedPackets = from pair in packetDictionary orderby pair.Value.DateRecieved ascending select pair;
+            var sortedPackets = from pair in packetDictionary orderby pair.Value.DateReceived ascending select pair;
 
-            var timeTaken = sortedPackets.Last().Value.DateRecieved - sortedPackets.First().Value.DateRecieved;
+            var timeTaken = sortedPackets.Last().Value.DateReceived - sortedPackets.First().Value.DateReceived;
             var timeTakenInSeconds = TimeSpan.Parse(timeTaken.ToString()).TotalSeconds;
 
             var totalData = CalculateTotalNoOfDataChars(packetDictionary);
@@ -84,9 +84,9 @@ namespace StarMeter.Controllers
         /// <returns>A double of the total packet rate in packets per second</returns>
         public double CalculatePacketRatePerSecond(Dictionary<Guid, Packet> packetDictionary)
         {
-            var sortedPackets = from pair in packetDictionary orderby pair.Value.DateRecieved ascending select pair;
+            var sortedPackets = from pair in packetDictionary orderby pair.Value.DateReceived ascending select pair;
 
-            var timeTaken = sortedPackets.Last().Value.DateRecieved - sortedPackets.First().Value.DateRecieved;
+            var timeTaken = sortedPackets.Last().Value.DateReceived - sortedPackets.First().Value.DateReceived;
             var timeTakenInSeconds = TimeSpan.Parse(timeTaken.ToString()).TotalSeconds;
 
             var totalPackets = CalculateTotalNoOfPackets(packetDictionary);
@@ -135,8 +135,8 @@ namespace StarMeter.Controllers
 
             if (packets.Length > 0)
             {
-                TimeSpan startTime = packets[0].DateRecieved.TimeOfDay;
-                TimeSpan endTime = packets[packets.Length - 1].DateRecieved.TimeOfDay;
+                TimeSpan startTime = packets[0].DateReceived.TimeOfDay;
+                TimeSpan endTime = packets[packets.Length - 1].DateReceived.TimeOfDay;
 
                 TimeSpan timeDifference = endTime - startTime;
 
@@ -154,7 +154,7 @@ namespace StarMeter.Controllers
 
                     foreach (var packet in packets)
                     {
-                        if ((packet.DateRecieved.TimeOfDay >= lowerBound) && (packet.DateRecieved.TimeOfDay <= upperBound))
+                        if ((packet.DateReceived.TimeOfDay >= lowerBound) && (packet.DateReceived.TimeOfDay <= upperBound))
                         {
                             count++;
                             if (packet.IsError)

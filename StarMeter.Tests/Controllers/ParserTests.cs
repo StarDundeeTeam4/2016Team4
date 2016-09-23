@@ -22,6 +22,46 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void TestParsePacketsErrorPacket()
+        {
+            var readerMock = new Mock<IStreamReader>();
+
+            var stockResponses = new Queue<string>();
+            stockResponses.Enqueue("08-09-2016 23:59:27.036");
+            stockResponses.Enqueue("4");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("09-09-2016 00:01:11.031");
+            stockResponses.Enqueue("P");
+            stockResponses.Enqueue("02 fe 01 0d 00 fe 00 09 00 00 00 04 ab 6b d9 40 e5 55");
+            stockResponses.Enqueue("EOP");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("09-09-2016 00:01:12.026");
+            stockResponses.Enqueue("P");
+            stockResponses.Enqueue("02 fe 01 0d 00 fe 00 0a 00 00 00 04 51 3b d3 22 9c 27");
+            stockResponses.Enqueue("EOP");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("09-09-2016 00:01:12.030");
+            stockResponses.Enqueue("P");
+            stockResponses.Enqueue("02 fe 01 0d 00 fe 00");
+            stockResponses.Enqueue("None");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("09-09-2016 00:01:12.032");
+            stockResponses.Enqueue("E");
+            stockResponses.Enqueue("Disconnect");
+            stockResponses.Enqueue("");
+            stockResponses.Enqueue("09-09-2016 00:51:15.176");
+            stockResponses.Enqueue(null);
+            readerMock.Setup(t => t.ReadLine()).Returns(stockResponses.Dequeue);
+
+            readerMock.SetupSequence(t => t.Peek()).Returns(1);
+
+            _parser.ParsePackets(readerMock.Object);
+
+            Guid id = _parser._prevPacket.GetValueOrDefault();
+            Assert.IsTrue(_parser.PacketDict[id].IsError);
+        }
+
+        [TestMethod]
         public void GetRmapPacketFromParserWhenRmapProtocolUsed()
         {
             var readerMock = new Mock<IStreamReader>();
@@ -126,6 +166,43 @@ namespace StarMeter.Tests.Controllers
             var result = _parser.PacketDict.Values.FirstOrDefault();
             Assert.AreEqual(expectedValue.SourcePathAddress.Length, ((RmapPacket)result).SourcePathAddress.Length);
             Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
+        }
+
+        [TestMethod]
+        public void TestSetPrevPacket()
+        {
+            Packet p1 = new Packet()
+            {
+                PacketId = Guid.NewGuid()
+            };
+            Packet p2 = new Packet()
+            {
+                PacketId = Guid.NewGuid()
+            };
+            _parser.PacketDict.Add(p1.PacketId, p1);
+            _parser.PacketDict.Add(p2.PacketId, p2);
+
+            _parser._prevPacket = p1.PacketId;
+
+            Assert.AreEqual(_parser._prevPacket, p1.PacketId);
+            _parser.SetPrevPacket(p2);
+            Assert.AreEqual(_parser._prevPacket, p2.PacketId);
+        }
+
+        [TestMethod]
+        public void TestGetPrevPacket()
+        {
+            Packet prev = new Packet();
+
+            _parser.PacketDict.Add(prev.PacketId, prev);
+
+            Packet p = new Packet()
+            {
+                PrevPacket = prev.PacketId,
+            };
+
+            Packet result = _parser.GetPrevPacket(p);
+            Assert.AreEqual(prev, result);
         }
 
         [TestCleanup]

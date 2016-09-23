@@ -268,7 +268,7 @@ namespace StarMeter.View
             {
                 if (_previous[p.PortNumber - 1] == new TimeSpan())
                 {
-                    _previous[p.PortNumber - 1] = p.DateRecieved.TimeOfDay;
+                    _previous[p.PortNumber - 1] = p.DateReceived.TimeOfDay;
                 }
             }
             var tempTimespans = new List<KeyValuePair<int, TimeSpan>>();
@@ -286,7 +286,7 @@ namespace StarMeter.View
             {
                 if(packets.Length > 0)
                 {
-                    tempTimespans.Add(new KeyValuePair<int, TimeSpan>(0, packets[0].DateRecieved.TimeOfDay));
+                    tempTimespans.Add(new KeyValuePair<int, TimeSpan>(0, packets[0].DateReceived.TimeOfDay));
                 }
             }
 
@@ -312,8 +312,8 @@ namespace StarMeter.View
             {
                 lblNumShowing.Content = "Showing " + start + " - " + end + " of " + total + " packets";
 
-                StartTimeTextBox.Text = packets[0].DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
-                EndTimeTextBox.Text = packets[packets.Length - 1].DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                StartTimeTextBox.Text = packets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                EndTimeTextBox.Text = packets[packets.Length - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
 
             }
         }
@@ -324,13 +324,13 @@ namespace StarMeter.View
 
         private void AddPacket(Packet p, List<KeyValuePair<int, TimeSpan>> tempTimespans)
         {
-            if (_previous[p.PortNumber - 1] != null && (_previous[p.PortNumber - 1].Seconds - p.DateRecieved.Second) >= 30) //if more than 30 seconds have passed between packets.
+            if (_previous[p.PortNumber - 1] != null && (_previous[p.PortNumber - 1].Seconds - p.DateReceived.Second) >= 30) //if more than 30 seconds have passed between packets.
             {
                 var x = 101;
                 //NEW TRANSMISSION
             }
             // var temp_timespans = _timespans.ToList();
-            var packetTimespan = p.DateRecieved.TimeOfDay;
+            var packetTimespan = p.DateReceived.TimeOfDay;
             var sp = GetPanelToUse(p.PortNumber);
             bool found = false;
             int index = 0;
@@ -1255,7 +1255,7 @@ namespace StarMeter.View
                 }
                 //packets = controller.packets.Values.ToList();
 
-                SortedPackets = (from pair in _controller.packets orderby pair.Value.DateRecieved ascending select pair.Value).ToList();
+                SortedPackets = (from pair in _controller.packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
 
                 Packet[] firstLoad;
                 try
@@ -1297,7 +1297,7 @@ namespace StarMeter.View
 
         private void CreateAllTimeLabels(Packet[] packets)
         {
-            packets = (from pair in packets orderby pair.DateRecieved ascending select pair).ToArray();
+            packets = (from pair in packets orderby pair.DateReceived ascending select pair).ToArray();
 
             _timeSpanOccupied.Clear();
             var l = new List<Guid>[8];
@@ -1306,14 +1306,14 @@ namespace StarMeter.View
             var timelist = new List<TimeSpan>();
             try
             {
-                tStart = packets[0].DateRecieved;
+                tStart = packets[0].DateReceived;
             }
             catch
             {
                 return; //This code executes if there are no packets to show.
             }
 
-            DateTime tEnd = packets[packets.Length - 1].DateRecieved;
+            DateTime tEnd = packets[packets.Length - 1].DateReceived;
             var timeDiff = tEnd - tStart;
 
             if (timeDiff.TotalMilliseconds == 0) 
@@ -1322,9 +1322,9 @@ namespace StarMeter.View
                 {
                     var list = new List<KeyValuePair<int, TimeSpan>>
                     {
-                        new KeyValuePair<int, TimeSpan>(0, packets[0].DateRecieved.TimeOfDay)
+                        new KeyValuePair<int, TimeSpan>(0, packets[0].DateReceived.TimeOfDay)
                     };
-                    CreateTimeLabel(packets[0].DateRecieved.TimeOfDay);
+                    CreateTimeLabel(packets[0].DateReceived.TimeOfDay);
                     //AddPacket(packets[0], list);
                 }
             }
@@ -1387,7 +1387,7 @@ namespace StarMeter.View
                 }
             }
 
-            SortedPackets = (from pair in packList orderby pair.DateRecieved ascending select pair).ToList();
+            SortedPackets = (from pair in packList orderby pair.DateReceived ascending select pair).ToList();
 
             CreateAllTimeLabels(packList.ToArray());
             AddPacketCollection(packList.ToArray());
@@ -1409,7 +1409,7 @@ namespace StarMeter.View
                 else { break; }
             }
 
-            SortedPackets = (from pair in packets orderby pair.DateRecieved ascending select pair).ToList();
+            SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
 
 
             CreateAllTimeLabels(packets.ToArray());
@@ -1661,9 +1661,9 @@ namespace StarMeter.View
             SortedPackets.Clear();
             RemoveAllPackets();
 
-            SortedPackets = _controller.packets.Values.Where(p => p.DateRecieved > start).ToList();
+            SortedPackets = _controller.packets.Values.Where(p => p.DateReceived > start).ToList();
 
-            SortedPackets = SortedPackets.OrderBy(p => p.DateRecieved).ToList();
+            SortedPackets = SortedPackets.OrderBy(p => p.DateReceived).ToList();
 
             Packet[] firstHundredPackets;
 
@@ -1683,8 +1683,8 @@ namespace StarMeter.View
             SortedPackets.Clear();
             RemoveAllPackets();
 
-            SortedPackets = _controller.packets.Values.Where(p => p.DateRecieved <= end).ToList();
-            SortedPackets = SortedPackets.OrderBy(p => p.DateRecieved).ToList();
+            SortedPackets = _controller.packets.Values.Where(p => p.DateReceived <= end).ToList();
+            SortedPackets = SortedPackets.OrderBy(p => p.DateReceived).ToList();
 
             Packet[] firstHundredPackets = SortedPackets.Count < 100 
                 ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
@@ -1703,8 +1703,8 @@ namespace StarMeter.View
             SortedPackets.Clear();
             RemoveAllPackets();
 
-            SortedPackets = _controller.packets.Values.Where(p => p.DateRecieved >= start && p.DateRecieved <= end).ToList();
-            SortedPackets = SortedPackets.OrderBy(p => p.DateRecieved).ToList();
+            SortedPackets = _controller.packets.Values.Where(p => p.DateReceived >= start && p.DateReceived <= end).ToList();
+            SortedPackets = SortedPackets.OrderBy(p => p.DateReceived).ToList();
 
             Packet[] firstHundredPackets = SortedPackets.Count < 100 
                 ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 

@@ -51,7 +51,8 @@ namespace StarMeter.View
 
             IconBG.Background = br;
             ErrorIcon.Source = logo;
-            TimeLabel.Content = packet.DateRecieved.ToString("dd-MM-yyyy HH:mm:ss.fff");
+
+            TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = packet.ProtocolId;
             ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
 
