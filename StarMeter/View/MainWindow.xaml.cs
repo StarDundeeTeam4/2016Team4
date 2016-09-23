@@ -850,12 +850,12 @@ namespace StarMeter.View
             if (_isLeftArrow)
             {
                 // GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
             }
             else
             {
                 // GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")))
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")))
                 {
                     //Stretch = Stretch.UniformToFill
                 };
@@ -907,14 +907,14 @@ namespace StarMeter.View
             // Restarts the timer and increments the counter.
             if (_isRightArrow)
             {
-                _count2 += 0.5;
+                _count2 += 0.25;
             }
             else
             {
-                _count2 -= 0.5;
+                _count2 -= 0.25;
             }
 
-            if ((_count2 > 2.5 && _isRightArrow) || (_count2 < 0.5 && !_isRightArrow))
+            if ((_count2 > 2.75 && _isRightArrow) || (_count2 < 0.25 && !_isRightArrow))
             {
                 _t2.Stop();
 
@@ -932,14 +932,14 @@ namespace StarMeter.View
             // Restarts the timer and increments the counter.
             if (_isLeftArrow)
             {
-                _count3 += 0.5;
+                _count3 += 0.25;
             }
             else
             {
-                _count3 -= 0.5;
+                _count3 -= 0.25;
             }
 
-            if ((_count3 > 2.5 && _isLeftArrow) || (_count3 < 0.5 && !_isLeftArrow))
+            if ((_count3 > 2.75 && _isLeftArrow) || (_count3 < 0.25 && !_isLeftArrow))
             {
                 _t3.Stop();
 
@@ -956,10 +956,10 @@ namespace StarMeter.View
         private int _count;
 
         System.Timers.Timer _t2;
-        private double _count2 = 2.5;
+        private double _count2 = 2.75;
 
         System.Timers.Timer _t3;
-        private double _count3 = 2.5;
+        private double _count3 = 2.75;
 
         /// <summary>
         /// set the height of the packet buttons
@@ -1496,13 +1496,7 @@ namespace StarMeter.View
         private void Reset(object sender, RoutedEventArgs e)
         {
             ChkErrorsOnly.IsChecked = false;
-
-            RemoveAllPackets();
-
-            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-            LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
-
+          
             addressSearch.Text = "";
             protocolSearch.Text = "";
 
@@ -1511,7 +1505,6 @@ namespace StarMeter.View
             _count = 2;
             _isUpArrow = false;
             SelectAllPorts(null, null);
-
 
         }
 
@@ -1747,6 +1740,9 @@ namespace StarMeter.View
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+
+            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);       
+            LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
 
             SortedPackets.Clear();
             lblNumShowing.Content = "No Packets to display";
