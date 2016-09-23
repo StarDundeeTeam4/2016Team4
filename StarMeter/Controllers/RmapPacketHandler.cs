@@ -57,7 +57,7 @@ namespace StarMeter.Controllers
                 return result.ToArray();
             }
 
-
+            
             return result.ToArray();
 
         }
