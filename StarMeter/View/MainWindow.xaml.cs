@@ -194,7 +194,7 @@ namespace StarMeter.View
                 {
                     if (addressArray.Length > 1)
                     {
-                        finalAddressString += "Physical Path: ";
+                        finalAddressString += "Path: ";
                         for (var i = 0; i < addressArray.Length - 1; i++)
                             finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
                     }
@@ -212,11 +212,11 @@ namespace StarMeter.View
 
                 if (protocolId == 1)
                 {
-                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId + " (RMAP)";
+                    lab.Content = (lab.Content) + Environment.NewLine + "P: " + protocolId + " (RMAP)";
                 }
                 else
                 {
-                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId;
+                    lab.Content = (lab.Content) + Environment.NewLine + "P: " + protocolId;
                 }
             }
             catch (Exception e)
@@ -817,6 +817,38 @@ namespace StarMeter.View
             DataVisButton2.Background = image;
         }
 
+        private bool _isLeftArrow;
+
+        private void ShowDataVisPopup3(object sender, RoutedEventArgs e)
+        {
+            ImageBrush image;
+
+            if (_isLeftArrow)
+            {
+                // GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
+            }
+            else
+            {
+                // GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")))
+                {
+                    //Stretch = Stretch.UniformToFill
+                };
+
+            }
+
+            if (_t3 == null)
+            {
+                _t3 = new System.Timers.Timer();
+                _t3.Elapsed += TimerEventProcessor3;
+                _t3.Interval = 10;
+                _t3.Start();
+            }
+
+            DataVisButton3.Background = image;
+        }
+
         public delegate void UpdateSlider();
         public delegate void UpdateAnimation();
 
@@ -871,11 +903,39 @@ namespace StarMeter.View
             GraphPanelPie.Dispatcher.Invoke(new UpdateSlider(MoveSlider2));
         }
 
+        private void TimerEventProcessor3(object myObject, EventArgs myEventArgs)
+        {
+            // Restarts the timer and increments the counter.
+            if (_isLeftArrow)
+            {
+                _count3 += 0.5;
+            }
+            else
+            {
+                _count3 -= 0.5;
+            }
+
+            if ((_count3 > 2.5 && _isLeftArrow) || (_count3 < 0.5 && !_isLeftArrow))
+            {
+                _t3.Stop();
+
+                //GraphPanelPie.Dispatcher.Invoke(new UpdateSlider(FixStretch));
+
+                _isLeftArrow = !_isLeftArrow;
+                _t3 = null;
+            }
+
+            FiltersPane.Dispatcher.Invoke(new UpdateSlider(MoveSlider3));
+        }
+
         System.Timers.Timer _t;
         private int _count;
 
         System.Timers.Timer _t2;
         private double _count2 = 2.5;
+
+        System.Timers.Timer _t3;
+        private double _count3 = 2.5;
 
         /// <summary>
         /// set the height of the packet buttons
@@ -888,6 +948,11 @@ namespace StarMeter.View
         private void MoveSlider2()
         {
             GraphPanelPie.Width = new GridLength(_count2, GridUnitType.Star);
+        }
+
+        private void MoveSlider3()
+        {
+            FiltersPane.Width = new GridLength(_count3, GridUnitType.Star);
         }
 
         /// <summary>
@@ -1134,6 +1199,7 @@ namespace StarMeter.View
 
                 FiltersPane.Width = new GridLength(3, GridUnitType.Star);
                 FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
+                LeftSidePanel.Width = new GridLength(0.25, GridUnitType.Star);
                 
                 RemoveAllPackets();
 
@@ -1187,6 +1253,7 @@ namespace StarMeter.View
                 AddPacketCollection(firstLoad);
                 CreateChart();
                 DataVisButton2.Visibility = Visibility.Visible;
+                DataVisButton3.Visibility = Visibility.Visible;
 
                 CreateDataRateGraph(SortedPackets.ToArray());
 
@@ -1408,6 +1475,7 @@ namespace StarMeter.View
 
             RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+            LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
 
             addressSearch.Text = "";
             protocolSearch.Text = "";

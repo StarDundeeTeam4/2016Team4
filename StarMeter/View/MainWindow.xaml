@@ -35,14 +35,15 @@
             <RowDefinition Height="1*" Name="DataVisualisationPopup" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" Name="FileSelectedPane"/>
+            <ColumnDefinition Width="3*" Name="FileSelectedPane"/>            
             <ColumnDefinition Width="0*" Name="FiltersPane"/>
+            <ColumnDefinition Width="0*" Name="LeftSidePanel"/>
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="0*" Name="RightButtonColumn"/>
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="1" Grid.Column="4">
+        <Grid Grid.Row="1" Grid.Column="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.25*" />
                 <RowDefinition Height="2*" />
@@ -77,9 +78,8 @@
                     <Label Grid.Row="2" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
 
                     <!-- Labels -->
-                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>
-                    <TextBlock Margin="5,0,0,0" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextAlignment="Left" Foreground="White">Multiple Packets close together</TextBlock>
-                    <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>                 
+                    <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
 
                 </Grid>
             </Canvas>
@@ -94,7 +94,7 @@
 
 
             
-                <DVC:Chart Name="mcChart" Height="300" Grid.Column="4" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <DVC:Chart Name="mcChart" Height="300" Grid.Column="5" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                 <DVC:Chart.Series >
                     <DVC:PieSeries Title="Experience" 
                         IndependentValueBinding="{Binding Path=Key}"
@@ -120,31 +120,31 @@
 
         <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="2" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14">Showing 0 to 0 of 0 results</Label>
 
-        <Button Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
+        <Button Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
         </Button>
 
-        <Button Grid.Row="1" Grid.Column="3"  Height="50" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch">
+        <Button Grid.Row="1" Grid.Column="4"  Height="50" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/right-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
         </Button>
 
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"       >
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"       >
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="2" IsHitTestVisible="false">
+            <Grid Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" IsHitTestVisible="false">
 
                 <!--<Canvas Background="Aquamarine" MouseDown="CanvasClicked" Margin="10,0,-0.4,-176" Grid.ColumnSpan="1" HorizontalAlignment="Left"  Grid.Row="0" VerticalAlignment="Top" Width="1300" Height="200"/>-->
 
                 <!-- Chart for displaying the data rates, assigned to the bottom row -->
-                <DVC:Chart Visibility="Visible" Background="Transparent" Grid.ColumnSpan="2" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14">
+                <DVC:Chart Visibility="Visible" Background="Transparent" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14">
                     <DVC:LineSeries  DependentValuePath="Value" 
                     IndependentValuePath="Key" ItemsSource="{Binding}"            
                     IsSelectionEnabled="True"/>
@@ -155,7 +155,7 @@
         </Grid>
 
         <!-- The column headers -->
-        <Grid Grid.Row="0" Grid.Column="2" Name="PortHeaders">
+        <Grid Grid.Row="0" Grid.Column="3" Name="PortHeaders">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -183,7 +183,7 @@
             <Label Grid.Row="0" Grid.Column ="8" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 4B</Label>
         </Grid>
 
-        <Grid HorizontalAlignment="Stretch" Grid.Column="2" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
+        <Grid HorizontalAlignment="Stretch" Grid.Column="3" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
 
             <ScrollViewer Name="PacketScroller" IsDeferredScrollingEnabled="true" VerticalScrollBarVisibility="Auto">
 
@@ -261,11 +261,12 @@
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+           
             <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" />
         </Grid>
 
 
-        <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="2"/>
+        <Slider x:Name="HeightScroller" ValueChanged="Slider_ValueChanged" HorizontalAlignment="Left" VerticalAlignment="Top" Height="21" Width="149" Maximum="80" Minimum="30" Margin="0.4,11,0,0" SmallChange="1" LargeChange="3" Value="50" Background="{x:Null}" Foreground="Red" BorderBrush="Red" ToolTip="Scroll To Zoom in or out of the Data" Grid.Column="3"/>
 
 
         <Grid Grid.Column="0" Grid.Row="1" Name="LeftHandPanel">
@@ -277,6 +278,7 @@
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
+            
 
             <ScrollViewer Grid.Row="2" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
                 <StackPanel Name="SelectedFiles">
@@ -300,6 +302,18 @@
 
             </Grid>
 
+          </Grid>
+
+        <Grid Grid.Column="2" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" Name="LeftPanelButton"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Height="50" Content=""  Click="ShowDataVisPopup3" Name="DataVisButton3" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="Collapsed">
+                <Button.Background>
+                    <ImageBrush ImageSource="pack://application:,,,/Resources/left-arrow.png" Stretch="UniformToFill"/>
+                </Button.Background>
+            </Button>
         </Grid>
 
         <Grid Name="FiltersPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5,0,5,0">
@@ -315,7 +329,9 @@
                     <RowDefinition Height=".85*" Name="ProtocolSearch"/>
                     <RowDefinition Height="1*" Name="TimeFilters"/>
                     <RowDefinition Height=".3*" Name="ResetBit"></RowDefinition>
-                </Grid.RowDefinitions>
+                </Grid.RowDefinitions>   
+                
+
 
                 <CheckBox Margin="5,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" Grid.Row="1" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
 
@@ -347,6 +363,7 @@
                     </Grid>
 
                 </Grid>
+                
 
                 <Grid Margin="0,0,0,4" Background="#4C000000" Grid.Row="2" Grid.ColumnSpan="2">
 
