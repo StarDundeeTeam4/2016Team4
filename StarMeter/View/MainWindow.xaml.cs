@@ -259,6 +259,8 @@ namespace StarMeter.View
             return _portStacks[portNum - 1];
         }
 
+        //This function takes a list of packets to display on the screen.
+        //As we use pagination we only send a page worth of packets at one time.
         public void AddPacketCollection(Packet[] packets)
         {
             foreach (Packet p in packets)
@@ -289,7 +291,7 @@ namespace StarMeter.View
 
             foreach (var p in packets)
             {
-                AddPacket(p, tempTimespans);
+                AddPacket(p, tempTimespans); //Places a single packet on the screen.
             }
 
             var total = SortedPackets.Count;
@@ -321,12 +323,20 @@ namespace StarMeter.View
 
         private void AddPacket(Packet p, List<KeyValuePair<int, TimeSpan>> tempTimespans)
         {
+            if (_previous[p.PortNumber - 1] != null && (_previous[p.PortNumber - 1].Seconds - p.DateRecieved.Second) >= 30) //if more than 30 seconds have passed between packets.
+            {
+                    //NEW TRANSMISSION
+            }
             // var temp_timespans = _timespans.ToList();
             var packetTimespan = p.DateRecieved.TimeOfDay;
             var sp = GetPanelToUse(p.PortNumber);
             bool found = false;
             int index = 0;
 
+            //The following is a binary search algorithm to find which timestamp matches the current packet in O(log n) time.
+            //As our display contains a representation of time passing we cut the list in half and traverse through the list until we find
+            //a timestamp which is "close enough." This is done using sections as it is extremely unlikely thatthe packet we have perfectly
+            //matches a timestamp.
             while (found == false && tempTimespans.Count > 0)
             {
                 index = tempTimespans.Count / 2;
@@ -340,7 +350,6 @@ namespace StarMeter.View
                     else
                     {
                         tempTimespans = tempTimespans.GetRange(0, index);
-                        //index = index / 2;
                     }
                 }
                 else
@@ -352,11 +361,13 @@ namespace StarMeter.View
                     else
                     {
                         tempTimespans = tempTimespans.GetRange(index, tempTimespans.Count - index);
-                        //index = index + (index / 2);
                     }
                 }
             }
+
             _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber].Add(p.PacketId);
+
+            //The following code handles the situation where multiple packets fit into the same timestamp.
             var currentNumber = _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber].Count;
             if (currentNumber > 1)
             {
@@ -409,12 +420,14 @@ namespace StarMeter.View
                 btn.Tag = tempTimespans[index].Key + "@" + p.PortNumber;
                 l.Content = currentNumber;
             }
-            else
+            else //we only have one packet to display.
             {
-                var diff = (tempTimespans[index].Value - _previous[p.PortNumber - 1]);
-                int spaces = 0;
+                var diff = (tempTimespans[index].Value - _previous[p.PortNumber - 1]); //This is the difference in time between the last packet and this one.
+                int spaces = 0; 
 
-                while (diff.CompareTo(new TimeSpan(0, 0, 0, 0, _interval)) > 0)
+                //In order to determine how many blank spaces to display, we continually remove a "section" from the difference
+                //incrementing the number of spaces to add by one each time.
+                while (diff.CompareTo(new TimeSpan(0, 0, 0, 0, _interval)) > 0) 
                 {
                     diff = diff.Add(NegativeSection);
                     spaces++;
@@ -422,7 +435,7 @@ namespace StarMeter.View
 
                 for (int i = 0; i < spaces; i++)
                 {
-                    Label lbl = new Label();
+                    Label lbl = new Label(); //Empty label filling the size that one packet takes up.
                     lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
                     sp.Children.Add(lbl);
                 }
@@ -655,6 +668,7 @@ namespace StarMeter.View
 
         }
 
+        //Removes a file from the list of files selected by the user.
         private void CancelUpload(object sender, RoutedEventArgs e)
         {
             Button b = (Button)sender;
@@ -665,6 +679,7 @@ namespace StarMeter.View
             _fileGrids.RemoveAt(id);
         }
 
+        //This opens the PacketPopup.xaml dialog.
         public void OpenPopup(object sender, RoutedEventArgs e)
         {
             var b = (Button)sender;
@@ -684,12 +699,34 @@ namespace StarMeter.View
             }
         }
 
+        //Searches through the packets via a user entered address.
         private void SearchForAddress(object sender, RoutedEventArgs e)
+        {
+            var packList = SearchForAddress2(); 
+            try
+            {
+                CreateAllTimeLabels(packList.Take(100).ToArray());
+                AddPacketCollection(packList.ToArray().Take(100).ToArray());
+            }
+            catch
+            {
+                if (packList.Count > 0)
+                {
+                    CreateAllTimeLabels(packList.Take(packList.Count).ToArray());
+                    AddPacketCollection(packList.ToArray().Take(packList.Count).ToArray());
+                }
+            }
+        }
+        private List<Packet> SearchForAddress2()
         {
             RemoveAllPackets();
             _pageIndex = 0;
             PrevPageBtn.Visibility = Visibility.Hidden;
             var search = addressSearch.Text;
+            if(search == "")
+            {
+                return _controller.packets.Values.ToList();
+            }
             var packList = new List<Packet>();
 
             foreach (var packet in SortedPackets)
@@ -701,19 +738,7 @@ namespace StarMeter.View
                 }
             }
 
-            try
-            {
-                CreateAllTimeLabels(packList.Take(100).ToArray());
-                AddPacketCollection(packList.ToArray().Take(100).ToArray());
-            }
-            catch
-            {
-                if(packList.Count > 0)
-                {
-                    CreateAllTimeLabels(packList.Take(packList.Count).ToArray());
-                    AddPacketCollection(packList.ToArray().Take(packList.Count).ToArray());
-                }
-            }
+            return packList;
 
         }
 

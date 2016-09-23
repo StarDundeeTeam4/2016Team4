@@ -36,7 +36,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" Name="FileSelectedPane"/>
-            <ColumnDefinition Width="0*" Name="FiltersPane"/>
+            <ColumnDefinition Width="3*" Name="FiltersPane"/>
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="0*" Name="RightButtonColumn"/>
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
