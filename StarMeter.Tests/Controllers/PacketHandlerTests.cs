@@ -273,6 +273,15 @@ namespace StarMeter.Tests.Controllers
             Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(p));
         }
 
+        [TestMethod]
+        public void GetSequenceNumberFail()
+        {
+            byte[] data = new byte[0];
+            Packet p = new Packet() {FullPacket = data,};
+            int result = PacketHandler.GetSequenceNumber(p);
+            Assert.AreEqual(-1, result);
+        }
+
         [TestCleanup]
         public void Cleanup()
         {
