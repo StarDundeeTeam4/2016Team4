@@ -192,6 +192,19 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void GetProtocolIdFail()
+        {
+            byte[] data = new byte[0];
+            Packet p = new Packet()
+            {
+                FullPacket = data,
+            };
+
+            int result = PacketHandler.GetProtocolId(p);
+            Assert.AreEqual(-1, result);
+        }
+
+        [TestMethod]
         public void GetSequenceNumberFromNonRmap()
         {
             byte[] cargo =

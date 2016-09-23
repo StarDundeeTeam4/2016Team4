@@ -42,7 +42,7 @@ namespace StarMeter.Controllers
         /// <returns>Whether the packet is a P type</returns>
         public static bool IsPType(string packetType)
         {
-            //TODO: why compare ordinal?
+            //TODO: why compare ordinal? Why not just (packetType == "P")?
             return string.CompareOrdinal(packetType, "P") == 0;
         }
 
