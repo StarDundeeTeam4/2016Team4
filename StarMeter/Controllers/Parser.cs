@@ -88,6 +88,7 @@ namespace StarMeter.Controllers
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
+            _prevPacket = null;
             return PacketDict;
         }
 
