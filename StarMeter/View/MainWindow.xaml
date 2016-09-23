@@ -111,18 +111,18 @@
         </Grid >
 
 
-        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
+        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/left chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
-        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
+        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/right chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
 
-        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="2" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14">Showing 0 to 0 of 0 results</Label>
+        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="3" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14">Showing 0 to 0 of 0 results</Label>
 
         <Button Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton">
             <Button.Background>
