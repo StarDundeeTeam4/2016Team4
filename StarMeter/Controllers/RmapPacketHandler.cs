@@ -107,7 +107,7 @@ namespace StarMeter.Controllers
                 System.Diagnostics.Trace.WriteLine(e);
             }
 
-            return sourceAddress.ToArray();
+           return sourceAddress.ToArray();
 
         }
 
