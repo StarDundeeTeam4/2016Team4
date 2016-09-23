@@ -18,11 +18,11 @@ namespace StarMeter.Controllers
             try
             {
                 packet.ErrorType = ErrorType.None;
-                packet.Crc = GetCrc(packet.FullPacket); //can't fail unless everything is fucked
+                packet.Crc = GetCrc(packet); //can't fail unless everything is fucked
 
                 //next four lines must be done in order as if packet ends early, everything before will work and everything after will fail anyway
-                packet.Address = GetAddressArray(packet.FullPacket);
-                packet.ProtocolId = GetProtocolId(packet.FullPacket);
+                packet.Address = GetAddressArray(packet);
+                packet.ProtocolId = GetProtocolId(packet);
                 packet.SequenceNum = GetSequenceNumber(packet);
                 packet.Cargo = GetCargoArray(packet);
             }
@@ -60,11 +60,11 @@ namespace StarMeter.Controllers
         /// <summary>
         /// Calculates the end position of the address in the packet data
         /// </summary>
-        /// <param name="fullPacket">The packet's data</param>
+        /// <param name="packet">The packet's data</param>
         /// <returns>The end index of the address bytes</returns>
         public static int GetLogicalAddressIndex(Packet packet)
         {
-            for (int i = 0; i < packet.FullPacket.Length; i++)
+            for (var i = 0; i < packet.FullPacket.Length; i++)
             {
                 if (packet.FullPacket[i] >= 32) return i;
             }
@@ -78,16 +78,16 @@ namespace StarMeter.Controllers
         /// <returns>Packet's cargo</returns>
         public static byte[] GetCargoArray(Packet packet)
         {
-            int logicalIndex = GetLogicalAddressIndex(packet);
+            var logicalIndex = GetLogicalAddressIndex(packet);
             byte[] cargo;
 
             try
             {
-                int start = logicalIndex + 1; //increment anyway
+                var start = logicalIndex + 1; //increment anyway
 
                 if (packet.ProtocolId == 1)
                 {
-                    string type =
+                    var type =
                         RmapPacketHandler.GetRmapType(
                             new BitArray(new[] {packet.FullPacket[GetLogicalAddressIndex(packet) + 2]}));
 
@@ -97,7 +97,7 @@ namespace StarMeter.Controllers
                     }
                 }
 
-                int length = packet.FullPacket.Length - start;
+                var length = packet.FullPacket.Length - start;
                 if (length < 0)
                 {
                     start = 0;
@@ -117,37 +117,37 @@ namespace StarMeter.Controllers
         /// <summary>
         /// Calculates the destination address of the packet
         /// </summary>
-        /// <param name="fullPacket">The packet's data</param>
+        /// <param name="packet">The packet's data</param>
         /// <returns>The byte array of the address</returns>
-        public static byte[] GetAddressArray(byte[] fullPacket)
+        public static byte[] GetAddressArray(Packet packet)
         {
-            int logicalIndex = GetLogicalAddressIndex(fullPacket);
-            byte[] addressArray = new byte[logicalIndex + 1];
-            Array.Copy(fullPacket, addressArray, logicalIndex + 1);
+            var logicalIndex = GetLogicalAddressIndex(packet);
+            var addressArray = new byte[logicalIndex + 1];
+            Array.Copy(packet.FullPacket, addressArray, logicalIndex + 1);
             return addressArray;
         }
 
         /// <summary>
         /// Returns the last byte of the packet which should be the CRC byte
         /// </summary>
-        /// <param name="fullPacket">The packet's data</param>
+        /// <param name="packet">The packet's data</param>
         /// <returns>The CRC byte</returns>
-        public static byte GetCrc(byte[] fullPacket)
+        public static byte GetCrc(Packet packet)
         {
-            return fullPacket.Last();
+            return packet.FullPacket.Last();
         }
 
         /// <summary>
         /// Calculates the packet's protocol ID
         /// </summary>
-        /// <param name="fullPacket">The packet's data to calculate the protocol ID from</param>
+        /// <param name="packet">The packet's data to calculate the protocol ID from</param>
         /// <returns>The protocol ID</returns>
-        public static int GetProtocolId(byte[] fullPacket)
+        public static int GetProtocolId(Packet packet)
         {
             try
             {
-                int logicalIndex = GetLogicalAddressIndex(fullPacket);
-                return fullPacket[logicalIndex + 1];
+                var logicalIndex = GetLogicalAddressIndex(packet);
+                return packet.FullPacket[logicalIndex + 1];
             }
 
             catch (IndexOutOfRangeException)
