@@ -325,7 +325,7 @@ namespace StarMeter.View
         {
             if (_previous[p.PortNumber - 1] != null && (_previous[p.PortNumber - 1].Seconds - p.DateRecieved.Second) >= 30) //if more than 30 seconds have passed between packets.
             {
-                    //NEW TRANSMISSION
+                //NEW TRANSMISSION
             }
             // var temp_timespans = _timespans.ToList();
             var packetTimespan = p.DateRecieved.TimeOfDay;
