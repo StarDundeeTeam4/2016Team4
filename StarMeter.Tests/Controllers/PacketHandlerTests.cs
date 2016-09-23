@@ -50,6 +50,35 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void GetCargoArrayFail()
+        {
+            byte[] data = new byte[0];
+            Packet p = new Packet()
+            {
+                FullPacket = data,
+                ProtocolId = 1,
+            };
+
+            byte[] result = PacketHandler.GetCargoArray(p);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void GetCargoArrayOverflow()
+        {
+            byte[] data = {0x02, 0xfe, 0x01, 0x0d, 0x00, 0xfe, 0x00};
+
+            Packet p = new Packet()
+            {
+                FullPacket = data,
+                ProtocolId = 1,
+            };
+
+            byte[] result = PacketHandler.GetCargoArray(p);
+            CollectionAssert.AreEqual(data, result);
+        }
+
+        [TestMethod]
         public void PassingCorrectStringReturnsDateTimeTest()
         {
             const string stringDateTime = "08-09-2016 14:27:53.726";
@@ -192,6 +221,19 @@ namespace StarMeter.Tests.Controllers
         }
 
         [TestMethod]
+        public void GetProtocolIdFail()
+        {
+            byte[] data = new byte[0];
+            Packet p = new Packet()
+            {
+                FullPacket = data,
+            };
+
+            int result = PacketHandler.GetProtocolId(p);
+            Assert.AreEqual(-1, result);
+        }
+
+        [TestMethod]
         public void GetSequenceNumberFromNonRmap()
         {
             byte[] cargo =
@@ -277,6 +319,15 @@ namespace StarMeter.Tests.Controllers
             var actualResult = PacketHandler.GetSequenceNumber(packet);
 
             Assert.AreEqual(expectedResult, actualResult);
+        }
+
+        [TestMethod]
+        public void GetSequenceNumberFail()
+        {
+            byte[] data = new byte[0];
+            Packet p = new Packet() {FullPacket = data,};
+            int result = PacketHandler.GetSequenceNumber(p);
+            Assert.AreEqual(-1, result);
         }
 
         [TestCleanup]

@@ -7,8 +7,6 @@ namespace StarMeter.Controllers
 {
     public static class RmapPacketHandler
     {
-        /// <summary>
-        /// Creates an RMAP packet from a normal packet
         /// </summary>
         /// <param name="packet">The packet to use as a base for the RMAP packet</param>
         /// <returns>The new RmapPacket</returns>
@@ -21,7 +19,7 @@ namespace StarMeter.Controllers
             byte destinationKey = 0x00;
             string rmapPacketType = "";
             byte[] sourceAddress = null;
-
+            int sequenceNumber = 0;
             int addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
 
             try
@@ -36,6 +34,7 @@ namespace StarMeter.Controllers
 
                 rmapPacketType = GetRmapType(rmapCommandByte);
                 sourceAddress = GetSourceAddressRmap(packet);
+                sequenceNumber = GetTransactionIdentifier(packet, addressIndex);
             }
             catch (IndexOutOfRangeException)
             {
@@ -53,6 +52,7 @@ namespace StarMeter.Controllers
             rmapPacket.SequenceNum  = packet.SequenceNum;
             rmapPacket.Crc          = packet.Crc;
 
+
             rmapPacket.CommandByte       = rmapCommandByte;
             rmapPacket.DestinationKey    = destinationKey;
             rmapPacket.SourcePathAddress = sourceAddress;
@@ -60,6 +60,21 @@ namespace StarMeter.Controllers
             rmapPacket.FullPacket        = packet.FullPacket;
 
             return rmapPacket;
+        }
+        /// <summary>
+        /// Calculate transaction identifier
+        /// </summary>
+        /// <param name="packet">The packet</param>
+        /// <param name="addressIndex">the index of the destination logical address</param>
+        /// <returns>The Transaction Identifier of this rmap packet</returns>
+        public static int GetTransactionIdentifier(Packet packet, int addressIndex)
+        {
+            var fullPacket = packet.FullPacket;
+            //Location of transaction Identifier according to protocol specification
+            var transactionBytes = new byte[] {fullPacket[addressIndex + 6], fullPacket[addressIndex + 5]};
+            //Convert back to unsigned 16 bit integer (byte + byte = 16 bits.) 
+            var final = BitConverter.ToUInt16(transactionBytes, 0);
+            return final;
         }
 
         /// <summary>
@@ -69,14 +84,14 @@ namespace StarMeter.Controllers
         /// <returns>The source address byte array</returns>
         public static byte[] GetSourceAddressRmap(Packet rmapPacket)
         {
-            var addressIndex = PacketHandler.GetLogicalAddressIndex(rmapPacket);
-            var rmapCommandByte = rmapPacket.FullPacket[addressIndex + 2];
-            var addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
-            var sourceAddressIndex = addressIndex + 4;
-
             var sourceAddress = new List<byte>();
             try
             {
+                var addressIndex = PacketHandler.GetLogicalAddressIndex(rmapPacket);
+                var rmapCommandByte = rmapPacket.FullPacket[addressIndex + 2];
+                var addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
+                var sourceAddressIndex = addressIndex + 4;
+
                 for (var i = 0; i < addressLength; i++)
                 {
                     sourceAddress.Add(rmapPacket.FullPacket[sourceAddressIndex + i]);
@@ -88,7 +103,7 @@ namespace StarMeter.Controllers
                 System.Diagnostics.Trace.WriteLine(e);
             }
 
-            return sourceAddress.ToArray();
+           return sourceAddress.ToArray();
 
         }
 
@@ -107,11 +122,18 @@ namespace StarMeter.Controllers
             return final * 4;
         }
 
-        //TODO: Documentation
-        public static bool GetBit(byte cmdByte, int index)
+        /// <summary>
+        /// Returns requested bit in byte indicated by index
+        /// Explanation of use of bitwise operators - http://stackoverflow.com/questions/4854207/get-a-specific-bit-from-byte
+        /// Authors - KeithS, Josh Petrie, PierrOz, Aliostad
+        /// </summary>
+        /// <param name="">The command byte to calculate from</param>
+        /// <param name="myByte">byte whose bit is to be extracted</param>
+        /// <param name="index">which bit to return</param>
+        /// <returns>the bit requested</returns>
+        public static bool GetBit(byte myByte, int index)
         {
-            //TODO: WHAT DOES THIS DO?
-            var bit = (cmdByte & (1 << index - 1)) != 0;
+            var bit = (myByte & (1 << index - 1)) != 0;
             return bit;
         }
 
