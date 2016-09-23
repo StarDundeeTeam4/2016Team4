@@ -57,7 +57,7 @@ namespace StarMeter.View
             LoadingIcon.Source = _gifDecoder.Frames[_animCount];
         }
 
-        public void ChangeDots() 
+        public void ChangeDots()
         {
             int dots = _animCount / 6;
             string[] split = LoadingMessage.Content.ToString().Split('.');
@@ -68,7 +68,7 @@ namespace StarMeter.View
                 dottage += ".";
             }
 
-			
+
             LoadingMessage.Content = split[0] + dottage;
         }
 
@@ -186,7 +186,7 @@ namespace StarMeter.View
 
             try
             {
-                
+
                 var addressArray = p.Address;
                 var finalAddressString = "";
 
@@ -282,9 +282,9 @@ namespace StarMeter.View
                     tempTimespans.Add(new KeyValuePair<int, TimeSpan>(i, times[i]));
                 }
             }
-            else 
+            else
             {
-                if(packets.Length > 0)
+                if (packets.Length > 0)
                 {
                     tempTimespans.Add(new KeyValuePair<int, TimeSpan>(0, packets[0].DateReceived.TimeOfDay));
                 }
@@ -304,17 +304,13 @@ namespace StarMeter.View
                 end = total;
             }
 
-            if(packets.Length == 0)
+            if (packets.Length == 0)
             {
                 lblNumShowing.Content = "No packets to display";
             }
             else
             {
                 lblNumShowing.Content = "Showing " + start + " - " + end + " of " + total + " packets";
-
-                StartTimeTextBox.Text = packets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-                EndTimeTextBox.Text = packets[packets.Length - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-
             }
         }
 
@@ -366,8 +362,8 @@ namespace StarMeter.View
                     }
                 }
             }
-            _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber-1].Add(p.PacketId);
-            var currentNumber = _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber-1].Count;
+            _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber - 1].Add(p.PacketId);
+            var currentNumber = _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber - 1].Count;
 
             if (currentNumber > 1)
             {
@@ -392,7 +388,7 @@ namespace StarMeter.View
                 var existingBtn = (Button)sp.FindName(toFind);
                 var btn = (Button)LogicalTreeHelper.FindLogicalNode(stackPan, toFind);
 
-                if (btn.Background == Brushes.Red || p.IsError) 
+                if (btn.Background == Brushes.Red || p.IsError)
                 {
                     btn.Background = Brushes.Red;
                 }
@@ -400,7 +396,7 @@ namespace StarMeter.View
                 // clear all event handlers here
 
                 btn.Click -= OpenPopup;
-                
+
                 btn.Click -= ViewMultiplePackets;
                 btn.Click -= ViewMultiplePackets;
                 btn.Click -= ViewMultiplePackets;
@@ -420,11 +416,11 @@ namespace StarMeter.View
             else //we only have one packet to display.
             {
                 var diff = (tempTimespans[index].Value - _previous[p.PortNumber - 1]); //This is the difference in time between the last packet and this one.
-                int spaces = 0; 
+                int spaces = 0;
 
                 //In order to determine how many blank spaces to display, we continually remove a "section" from the difference
                 //incrementing the number of spaces to add by one each time.
-                while (diff.CompareTo(new TimeSpan(0, 0, 0, 0, _interval)) > 0) 
+                while (diff.CompareTo(new TimeSpan(0, 0, 0, 0, _interval)) > 0)
                 {
                     diff = diff.Add(NegativeSection);
                     spaces++;
@@ -559,7 +555,7 @@ namespace StarMeter.View
             string[] split = ((Button)sender).Tag.ToString().Split('@');
             var id = int.Parse(split[0]);
             var port = int.Parse(split[1]);
-            List<Guid> guids = _timeSpanOccupied[id][port-1];
+            List<Guid> guids = _timeSpanOccupied[id][port - 1];
             List<Packet> ps = new List<Packet>();
 
             foreach (Guid g in guids)
@@ -593,8 +589,8 @@ namespace StarMeter.View
 
             bool? confirmed = ofd.ShowDialog();
 
-            if (confirmed != true) 
-            {              
+            if (confirmed != true)
+            {
                 LoadingIcon.Visibility = Visibility.Hidden;
                 LoadingMessage.Visibility = Visibility.Hidden;
                 return;
@@ -701,7 +697,7 @@ namespace StarMeter.View
         //Searches through the packets via a user entered address.
         private void SearchForAddress(object sender, RoutedEventArgs e)
         {
-            var packList = SearchForAddress2(); 
+            var packList = SearchForAddress2();
             try
             {
                 CreateAllTimeLabels(packList.Take(100).ToArray());
@@ -722,7 +718,7 @@ namespace StarMeter.View
             _pageIndex = 0;
             PrevPageBtn.Visibility = Visibility.Hidden;
             var search = addressSearch.Text;
-            if(search == "")
+            if (search == "")
             {
                 return _controller.packets.Values.ToList();
             }
@@ -1006,7 +1002,7 @@ namespace StarMeter.View
             style.Setters.Add(new Setter(ForegroundProperty, Brushes.White));
             style.Setters.Add(new Setter(BackgroundProperty, Brushes.Red));
             style.Setters.Add(new Setter(HeightProperty, val));
-            
+
 
 
             return style;
@@ -1224,7 +1220,7 @@ namespace StarMeter.View
                 FiltersPane.Width = new GridLength(3, GridUnitType.Star);
                 FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
                 LeftSidePanel.Width = new GridLength(0.25, GridUnitType.Star);
-                
+
                 RemoveAllPackets();
 
                 //Adds the files being displayed to the right side panel             
@@ -1233,11 +1229,11 @@ namespace StarMeter.View
 
                 SelectedFiles2.Children.Clear();
 
-                 //List<string> filesAdded = _controller.AddFileNames(s);
-               
+                //List<string> filesAdded = _controller.AddFileNames(s);
+
 
                 foreach (var s in _controller.filePaths)
-                {                                                       
+                {
                     string actualName2 = (s.Split('\\').Last());
 
                     Label l = new Label()
@@ -1248,9 +1244,9 @@ namespace StarMeter.View
                         Height = 60,
                         Margin = new Thickness(0, 0, 0, 5),
                     };
-                    
-                    l.Content = actualName2;                
-                    SelectedFiles2.Children.Add(l);                   
+
+                    l.Content = actualName2;
+                    SelectedFiles2.Children.Add(l);
 
                 }
                 //packets = controller.packets.Values.ToList();
@@ -1278,15 +1274,19 @@ namespace StarMeter.View
                 CreateChart();
                 DataVisButton2.Visibility = Visibility.Visible;
                 DataVisButton3.Visibility = Visibility.Visible;
+                DataVisButton.Visibility = Visibility.Visible;
 
                 CreateDataRateGraph(SortedPackets.ToArray());
 
                 if (SortedPackets.Count < 100) { NextPageBtn.Visibility = Visibility.Hidden; } else { NextPageBtn.Visibility = Visibility.Visible; }
 
+                StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+
             }
 
             PacketScroller.ScrollToVerticalOffset(0);
-            
+
         }
 
         private int _interval;
@@ -1301,7 +1301,7 @@ namespace StarMeter.View
 
             _timeSpanOccupied.Clear();
             var l = new List<Guid>[8];
-            
+
             var tStart = new DateTime();
             var timelist = new List<TimeSpan>();
             try
@@ -1316,16 +1316,18 @@ namespace StarMeter.View
             DateTime tEnd = packets[packets.Length - 1].DateReceived;
             var timeDiff = tEnd - tStart;
 
-            if (timeDiff.TotalMilliseconds == 0) 
+            if (timeDiff.TotalMilliseconds == 0)
             {
-                if (packets.Length > 0) 
+                if (packets.Length > 0)
                 {
-                    var list = new List<KeyValuePair<int, TimeSpan>>
+                    var list = new List<Guid>[8];
+                    for (int j = 0; j < list.Length; j++)
                     {
-                        new KeyValuePair<int, TimeSpan>(0, packets[0].DateReceived.TimeOfDay)
-                    };
+                        list[j] = new List<Guid>();
+                    }
+
+                    _timeSpanOccupied.Add(list);
                     CreateTimeLabel(packets[0].DateReceived.TimeOfDay);
-                    //AddPacket(packets[0], list);
                 }
             }
             else
@@ -1374,47 +1376,53 @@ namespace StarMeter.View
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            RemoveAllPackets();
+            //RemoveAllPackets();
 
-            var packList = new List<Packet>();
+            //var packList = new List<Packet>();
 
-            foreach (var packs in _controller.packets.Values)
-            {
-                Packet p = (Packet)packs;
-                if (p.IsError)
-                {
-                    packList.Add(p);
-                }
-            }
+            //foreach (var packs in _controller.packets.Values)
+            //{
+            //    Packet p = (Packet)packs;
+            //    if (p.IsError)
+            //    {
+            //        packList.Add(p);
+            //    }
+            //}
 
-            SortedPackets = (from pair in packList orderby pair.DateReceived ascending select pair).ToList();
+            //SortedPackets = (from pair in packList orderby pair.DateRecieved ascending select pair).ToList();
 
-            CreateAllTimeLabels(packList.ToArray());
-            AddPacketCollection(packList.ToArray());
-            CreateDataRateGraph(_controller.packets.Values.ToArray());
+            //CreateAllTimeLabels(packList.ToArray());
+            //AddPacketCollection(packList.ToArray());
+            //CreateDataRateGraph(_controller.packets.Values.ToArray());
+
+            _displayErrorsOnly = true;
+
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            RemoveAllPackets();
+            //RemoveAllPackets();
 
-            List<Packet> packets = new List<Packet>();
+            //List<Packet> packets = new List<Packet>();
 
-            foreach (var p in _controller.packets.Values)
-            {
-                if (packets.Count < 100)
-                {
-                    packets.Add((Packet)p);
-                }
-                else { break; }
-            }
+            //foreach (var p in _controller.packets.Values)
+            //{
+            //    if (packets.Count < 100)
+            //    {
+            //        packets.Add((Packet)p);
+            //    }
+            //    else { break; }
+            //}
 
-            SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
+            //SortedPackets = (from pair in packets orderby pair.DateRecieved ascending select pair).ToList();
 
 
-            CreateAllTimeLabels(packets.ToArray());
-            AddPacketCollection(packets.ToArray());
-            CreateDataRateGraph(packets.ToArray());
+            //CreateAllTimeLabels(packets.ToArray());
+            //AddPacketCollection(packets.ToArray());
+            //CreateDataRateGraph(packets.ToArray());
+
+            _displayErrorsOnly = false;
+
         }
 
         private void CreateChart()
@@ -1496,7 +1504,7 @@ namespace StarMeter.View
         private void Reset(object sender, RoutedEventArgs e)
         {
             ChkErrorsOnly.IsChecked = false;
-          
+
             addressSearch.Text = "";
             protocolSearch.Text = "";
 
@@ -1532,18 +1540,15 @@ namespace StarMeter.View
 
             Packet[] toLoad;
 
-           
+            try
+            {
+                toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
+            }
+            catch (Exception)
+            {
+                toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
+            }
 
-          
-                try
-                {
-                    toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
-                }
-                catch (Exception)
-                {
-                    toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
-                }
-            
             CreateAllTimeLabels(toLoad);
             AddPacketCollection(toLoad);
 
@@ -1562,8 +1567,8 @@ namespace StarMeter.View
                 _previous[i] = new TimeSpan();
             }
 
-            PrevPageBtn.Visibility = _pageIndex == 0 
-                ? Visibility.Hidden 
+            PrevPageBtn.Visibility = _pageIndex == 0
+                ? Visibility.Hidden
                 : Visibility.Visible;
 
             Packet[] toLoad;
@@ -1598,124 +1603,139 @@ namespace StarMeter.View
 
         }
 
-        void SearchForPacketsByTime(object sender, RoutedEventArgs e)
+        //void SearchForPacketsByTime(object sender, RoutedEventArgs e)
+        //{
+        //    RemoveAllPackets();
+
+        //    _pageIndex = 0;
+        //    PrevPageBtn.Visibility = Visibility.Hidden;
+
+        //    var start = StartTimeTextBox.Text;
+        //    var end = EndTimeTextBox.Text;
+        //    DateTime startTime = new DateTime();
+        //    DateTime endTime = new DateTime();
+
+        //    if (start != "")
+        //    {
+        //        try
+        //        {
+        //            startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
+        //        }
+        //        catch
+        //        {
+        //            MessageBox.Show("You have entered an invalid time for the start date.");
+        //        }
+        //    }
+        //    if (end != "")
+        //    {
+        //        try
+        //        {
+        //            endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
+        //        }
+
+        //        catch
+        //        {
+        //            MessageBox.Show("You have entered an invalid time for the end date.");
+        //        }
+        //    }
+        //    if (start != "" && end != "")
+        //    {
+        //        ShowPacketsBetweenTime(startTime, endTime);
+        //    }
+        //    else if (start == "")
+        //    {
+        //        ShowPacketsUntilTime(endTime);
+        //    }
+        //    else if (end == "")
+        //    {
+        //        ShowPacketsFromTime(startTime);
+        //    }
+
+        //    if (SortedPackets.Count < 1)
+        //    {
+        //        lblNumShowing.Content = "No packets to display";
+        //    }
+        //    NextPageBtn.Visibility = SortedPackets.Count < 100 
+        //        ? Visibility.Hidden 
+        //        : Visibility.Visible;
+        //}
+
+        public bool IsAfterTime(Packet p, DateTime dt)
         {
-            RemoveAllPackets();
-
-            _pageIndex = 0;
-            PrevPageBtn.Visibility = Visibility.Hidden;
-
-            var start = StartTimeTextBox.Text;
-            var end = EndTimeTextBox.Text;
-            DateTime startTime = new DateTime();
-            DateTime endTime = new DateTime();
-
-            if (start != "")
-            {
-                try
-                {
-                    startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
-                }
-                catch
-                {
-                    MessageBox.Show("You have entered an invalid time for the start date.");
-                }
-            }
-            if (end != "")
-            {
-                try
-                {
-                    endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
-                }
-                
-                catch
-                {
-                    MessageBox.Show("You have entered an invalid time for the end date.");
-                }
-            }
-            if (start != "" && end != "")
-            {
-                ShowPacketsBetweenTime(startTime, endTime);
-            }
-            else if (start == "")
-            {
-                ShowPacketsUntilTime(endTime);
-            }
-            else if (end == "")
-            {
-                ShowPacketsFromTime(startTime);
-            }
-
-            if (SortedPackets.Count < 100)
-            {
-                lblNumShowing.Content = "No packets to display";
-			}
-            NextPageBtn.Visibility = SortedPackets.Count < 100 
-                ? Visibility.Hidden 
-                : Visibility.Visible;
+            return (p.DateReceived >= dt);
+        }
+        public bool IsBeforeTime(Packet p, DateTime dt)
+        {
+            return (p.DateReceived <= dt);
+        }
+        public bool IsBetweenTimes(Packet p, DateTime start, DateTime end)
+        {
+            return ((p.DateReceived <= end) && (p.DateReceived >= start));
         }
 
+        #region Unneeded I think
         //Shows all packets which were received from the start time onwards
-        public void ShowPacketsFromTime(DateTime start)
-        {
-            SortedPackets.Clear();
-            RemoveAllPackets();
+        //public void ShowPacketsFromTime(DateTime start)
+        //{
+        //    SortedPackets.Clear();
+        //    RemoveAllPackets();
 
-            SortedPackets = _controller.packets.Values.Where(p => p.DateReceived > start).ToList();
+        //    SortedPackets = _controller.packets.Values.Where(p => p.DateRecieved > start).ToList();
 
-            SortedPackets = SortedPackets.OrderBy(p => p.DateReceived).ToList();
+        //    SortedPackets = SortedPackets.OrderBy(p => p.DateRecieved).ToList();
 
-            Packet[] firstHundredPackets;
+        //    Packet[] firstHundredPackets;
 
-            firstHundredPackets = SortedPackets.Count < 100 
-                ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
-                : SortedPackets.GetRange(0, 100).ToArray();
+        //    firstHundredPackets = SortedPackets.Count < 100 
+        //        ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
+        //        : SortedPackets.GetRange(0, 100).ToArray();
 
-            if (firstHundredPackets.Length > 0)
-            {
-                CreateAllTimeLabels(firstHundredPackets);
-                AddPacketCollection(firstHundredPackets);
-            }
-        }
+        //    if (firstHundredPackets.Length > 0)
+        //    {
+        //        CreateAllTimeLabels(firstHundredPackets);
+        //        AddPacketCollection(firstHundredPackets);
+        //    }
+        //}
 
-        private void ShowPacketsUntilTime(DateTime end)
-        {
-            SortedPackets.Clear();
-            RemoveAllPackets();
+        //private void ShowPacketsUntilTime(DateTime end)
+        //{
+        //    SortedPackets.Clear();
+        //    RemoveAllPackets();
 
-            SortedPackets = _controller.packets.Values.Where(p => p.DateReceived <= end).ToList();
-            SortedPackets = SortedPackets.OrderBy(p => p.DateReceived).ToList();
+        //    SortedPackets = _controller.packets.Values.Where(p => p.DateRecieved <= end).ToList();
+        //    SortedPackets = SortedPackets.OrderBy(p => p.DateRecieved).ToList();
 
-            Packet[] firstHundredPackets = SortedPackets.Count < 100 
-                ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
-                : SortedPackets.GetRange(0, 100).ToArray();
+        //    Packet[] firstHundredPackets = SortedPackets.Count < 100 
+        //        ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
+        //        : SortedPackets.GetRange(0, 100).ToArray();
 
-            if (firstHundredPackets.Length > 0)
-            {
-                CreateAllTimeLabels(firstHundredPackets);
-                AddPacketCollection(firstHundredPackets);
-            }
-        }
+        //    if (firstHundredPackets.Length > 0)
+        //    {
+        //        CreateAllTimeLabels(firstHundredPackets);
+        //        AddPacketCollection(firstHundredPackets);
+        //    }
+        //}
 
-        //Shows packets which were received between the start and end time.
-        private void ShowPacketsBetweenTime(DateTime start, DateTime end)
-        {
-            SortedPackets.Clear();
-            RemoveAllPackets();
+        ////Shows packets which were received between the start and end time.
+        //private void ShowPacketsBetweenTime(DateTime start, DateTime end)
+        //{
+        //    SortedPackets.Clear();
+        //    RemoveAllPackets();
 
-            SortedPackets = _controller.packets.Values.Where(p => p.DateReceived >= start && p.DateReceived <= end).ToList();
-            SortedPackets = SortedPackets.OrderBy(p => p.DateReceived).ToList();
+        //    SortedPackets = _controller.packets.Values.Where(p => p.DateRecieved >= start && p.DateRecieved <= end).ToList();
+        //    SortedPackets = SortedPackets.OrderBy(p => p.DateRecieved).ToList();
 
-            Packet[] firstHundredPackets = SortedPackets.Count < 100 
-                ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
-                : SortedPackets.GetRange(0, 100).ToArray();
+        //    Packet[] firstHundredPackets = SortedPackets.Count < 100 
+        //        ? SortedPackets.GetRange(0, SortedPackets.Count).ToArray() 
+        //        : SortedPackets.GetRange(0, 100).ToArray();
 
-            if (firstHundredPackets.Length > 0)
-            {
-                CreateAllTimeLabels(firstHundredPackets);
-                AddPacketCollection(firstHundredPackets);
-            }
-        }
+        //    if (firstHundredPackets.Length > 0)
+        //    {
+        //        CreateAllTimeLabels(firstHundredPackets);
+        //        AddPacketCollection(firstHundredPackets);
+        //    }
+        //}
+        #endregion
 
         private void Image_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -1729,8 +1749,8 @@ namespace StarMeter.View
 
         private void GoBackToFileSelection(object sender, RoutedEventArgs e)
         {
-            _pageIndex = 0;
-           // Reset(null, null);
+
+            // Reset(null, null);
 
             SelectedFiles.Children.Clear();
             _fileGrids.Clear();
@@ -1740,8 +1760,6 @@ namespace StarMeter.View
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
-
-            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);       
             LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
 
             SortedPackets.Clear();
@@ -1749,10 +1767,188 @@ namespace StarMeter.View
 
             NextPageBtn.Visibility = Visibility.Hidden;
             PrevPageBtn.Visibility = Visibility.Hidden;
+            DataVisButton3.Visibility = Visibility.Hidden;
+            DataVisButton2.Visibility = Visibility.Hidden;
+            DataVisButton.Visibility = Visibility.Hidden;
+
 
             RemoveAllPackets();
 
         }
 
+
+        bool _displayErrorsOnly = false;
+
+        List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
+        {
+            List<Packet> packetsFound = new List<Packet>();
+
+            foreach (var p in packets)
+            {
+                #region Time Checks
+                bool validTime = true;
+
+                if (start != new DateTime() && end != new DateTime())
+                {
+                    validTime = IsBetweenTimes(p, start, end);
+                }
+                else if (start == new DateTime())
+                {
+                    validTime = IsBeforeTime(p, end);
+                }
+                else if (end == new DateTime())
+                {
+                    validTime = IsAfterTime(p, start);
+                }
+                #endregion
+
+                #region Error Checks
+                bool matchesError = true;
+                if (!(!_displayErrorsOnly || p.IsError)) { matchesError = false; }
+                #endregion
+
+                #region Protocol checks
+
+                var protoSearch = protocolSearch.Text.Trim();
+
+                bool validProtocol = false;
+                if (protoSearch.Length > 0)
+                {
+                    validProtocol = MatchesProtocolSearch(p, protoSearch);
+                }
+                else
+                {
+                    validProtocol = true;
+                }
+                #endregion
+
+                #region Address checks
+
+                var addrSearch = addressSearch.Text.Trim();
+
+                bool validAddress = false;
+                if (addrSearch.Length > 0)
+                {
+                    validAddress = MatchesAddressSearch(p, addrSearch);
+                }
+                else
+                {
+                    validAddress = true;
+                }
+
+                #endregion
+
+                if (validTime && matchesError && validProtocol && validAddress)
+                {
+                    packetsFound.Add(p);
+                }
+
+            }
+
+            return packetsFound;
+
+        }
+
+        bool MatchesProtocolSearch(Packet p, string search)
+        {
+            if (p.ProtocolId.ToString().Equals(search))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        bool MatchesAddressSearch(Packet p, string search)
+        {
+            byte[] address = p.Address;
+            string finalAddressString = "";
+
+            if (address.Length > 1)
+            {
+                finalAddressString += "Physical Path: ";
+                for (var i = 0; i < address.Length - 1; i++)
+                    finalAddressString += Convert.ToInt32(address[i]) + "  ";
+            }
+            else
+                finalAddressString = Convert.ToInt32(address[0]).ToString();
+
+
+            if (finalAddressString.Equals(search))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        private void cmdApplyFilters_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveAllPackets();
+
+            var start = StartTimeTextBox.Text;
+            var end = EndTimeTextBox.Text;
+            DateTime startTime = new DateTime();
+            DateTime endTime = new DateTime();
+
+            bool apply = true;
+
+            if (start != "")
+            {
+                try
+                {
+                    startTime = DateTime.ParseExact(start, "dd-MM-yyyy HH:mm:ss.fff", null);
+                }
+                catch
+                {
+                    MessageBox.Show("You have entered an invalid time for the start date.");
+                    apply = false;
+                }
+            }
+            if (end != "")
+            {
+                try
+                {
+                    endTime = DateTime.ParseExact(end, "dd-MM-yyyy HH:mm:ss.fff", null);
+                }
+
+                catch
+                {
+                    apply = false;
+                }
+            }
+
+            if (apply)
+            {
+                List<Packet> packets = ApplyFilters(_controller.packets.Values.ToArray(), startTime, endTime);
+
+                SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
+
+
+                Packet[] toLoad;
+
+                try
+                {
+                    toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
+                }
+                catch (Exception)
+                {
+                    toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
+                }
+
+
+
+                CreateAllTimeLabels(toLoad);
+                AddPacketCollection(toLoad);
+                CreateDataRateGraph(SortedPackets.ToArray());
+
+
+            }
+        }
+
+        
     }
+
+
 }
