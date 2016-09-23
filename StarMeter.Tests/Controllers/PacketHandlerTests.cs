@@ -22,14 +22,13 @@ namespace StarMeter.Tests.Controllers
         public void SplitCargoFromNonRmapPacket()
         {
             byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
-            Packet p = new Packet()
+            var packet = new Packet
             {
                 ProtocolId = 42,
                 FullPacket = data,
             };
             byte[] expectedCargo = { 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
-
-            byte[] cargo = PacketHandler.GetCargoArray(p);
+            var cargo = PacketHandler.GetCargoArray(packet);
 
             CollectionAssert.AreEqual(cargo, expectedCargo);
         }
@@ -39,13 +38,13 @@ namespace StarMeter.Tests.Controllers
         {
             byte[] data = { 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
             byte[] expectedCargo = { 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x25 };
-            Packet p = new Packet()
+            var packet = new Packet
             {
                 ProtocolId = 01,
                 FullPacket = data,
             };
 
-            byte[] cargo = PacketHandler.GetCargoArray(p);
+            var cargo = PacketHandler.GetCargoArray(packet);
 
             CollectionAssert.AreEqual(cargo, expectedCargo);
         }
@@ -188,14 +187,13 @@ namespace StarMeter.Tests.Controllers
                 0x27, 0x6a, 0xfd, 0x22, 0x47, 0x90, 0x3e, 0x85, 0xe9, 0x86, 0x02, 0x81, 0x5e, 0x2c, 0x40, 0x82, 0x71,
                 0xf5, 0x27, 0x47, 0xf4, 0x32, 0x56, 0x43, 0x9f, 0x93, 0x4f, 0x43, 0x1b, 0xea, 0x29, 0x52
             };
-            Packet p = new Packet
+            var packet = new Packet
             {
                 FullPacket = nonRmapPacket
             };
 
             const int expectedSequenceNumber = 15;
-
-            int sequenceNumber = PacketHandler.GetSequenceNumber(p);
+            var sequenceNumber = PacketHandler.GetSequenceNumber(packet);
 
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
@@ -227,13 +225,12 @@ namespace StarMeter.Tests.Controllers
                 0x1d, 0xc8, 0x8f, 0x10, 0x7b, 0x25, 0x5a, 0x4d, 0x2b, 0x1c, 0x96, 0x76, 0x62, 0xa8, 0xa7, 0x69, 0x50,
                 0xc2, 0xed, 0x1c, 0xea, 0x1c, 0xa4, 0xea, 0xed, 0x11, 0x08, 0x2a, 0x20
             };
-            Packet p = new Packet
+            var packet = new Packet
             {
                 FullPacket = nonRmapPacket
             };
             const int expectedSequenceNumber = 0;
-
-            int sequenceNumber = PacketHandler.GetSequenceNumber(p);
+            var sequenceNumber = PacketHandler.GetSequenceNumber(packet);
 
             Assert.AreEqual(expectedSequenceNumber, sequenceNumber);
         }
@@ -249,12 +246,12 @@ namespace StarMeter.Tests.Controllers
                 0x00, 0x00, 0x00, 0x04, 0x1c, 0x00, 0x00, 0x1e, 0xb0, 0x94
             };
 
-            Packet p = new RmapPacket()
+            Packet packet = new RmapPacket
             {
                 FullPacket = packetData,
             };
 
-            Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(p));
+            Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(packet));
         }
 
         [TestMethod]
@@ -265,12 +262,12 @@ namespace StarMeter.Tests.Controllers
             byte[] packetData =
                 {0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfd, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0xd6};
 
-            Packet p = new RmapPacket()
+            Packet packet = new RmapPacket
             {
                 FullPacket = packetData,
             };
 
-            Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(p));
+            Assert.AreEqual(expected, PacketHandler.GetSequenceNumber(packet));
         }
 
         [TestCleanup]
