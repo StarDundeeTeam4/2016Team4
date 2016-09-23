@@ -62,24 +62,28 @@
 
                 <Grid Height="172" Width="168">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1.2*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height=".8*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="5*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Colours -->
-                    <Label Grid.Row="1" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
-                    <Label Grid.Row="2" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,4,0,4"></Label>
+                    <Label Grid.Row="0" Background="#FF6699FF" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,0,4" Height="30" Width="150"></Label>
+                    <Label Grid.Row="1" Background="Red" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,0,4" Height="30" Width="150"></Label>
+                    <Label Grid.Row="2" Background="White" FontWeight="Bold" Content="Path:" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,0,4" Height="30" Width="150"></Label>
+                    <Label Grid.Row="3" Background="White" FontWeight="Bold" Content="P: " HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="5,0,0,4" Height="30" ></Label>
 
                     <!-- Labels -->
-                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Successful Packet</Label>                 
-                    <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Foreground="White">Error</Label>
+                    <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" Foreground="White"  >Successful Packet</Label>
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" Foreground="White" >Error</Label>
+                    <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" Foreground="White" >Physical Path Address</Label>
+                    <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" Foreground="White" >Protocol ID </Label>
 
                 </Grid>
             </Canvas>

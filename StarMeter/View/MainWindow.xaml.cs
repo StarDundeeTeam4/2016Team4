@@ -1470,13 +1470,7 @@ namespace StarMeter.View
         private void Reset(object sender, RoutedEventArgs e)
         {
             ChkErrorsOnly.IsChecked = false;
-
-            RemoveAllPackets();
-
-            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-            LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
-
+          
             addressSearch.Text = "";
             protocolSearch.Text = "";
 
@@ -1485,7 +1479,6 @@ namespace StarMeter.View
             _count = 2;
             _isUpArrow = false;
             SelectAllPorts(null, null);
-
 
         }
 
@@ -1730,6 +1723,9 @@ namespace StarMeter.View
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+
+            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);       
+            LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
 
             SortedPackets.Clear();
             lblNumShowing.Content = "No Packets to display";
