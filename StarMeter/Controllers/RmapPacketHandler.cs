@@ -7,11 +7,8 @@ namespace StarMeter.Controllers
 {
     public static class RmapPacketHandler
     {
-        /// <summary>
-        /// Creates an RMAP packet from a normal packet
         /// </summary>
         /// <param name="packet">The packet to use as a base for the RMAP packet</param>
-
         /// <returns>The new RmapPacket</returns>
         public static RmapPacket CreateRmapPacket(Packet packet)
         {
@@ -89,19 +86,19 @@ namespace StarMeter.Controllers
         /// </summary>
         /// <param name="rmapFullPacket">The packet's data</param>
         /// <returns>The source address byte array</returns>
-        public static byte[] GetSourceAddressRmap(Packet rmapFullPacket)
+        public static byte[] GetSourceAddressRmap(Packet rmapPacket)
         {
-            int addressIndex = PacketHandler.GetLogicalAddressIndex(rmapFullPacket);
-            byte rmapCommandByte = rmapFullPacket.FullPacket[addressIndex + 2];
-            int addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
-            int sourceAddressIndex = addressIndex + 4;
-
-            var result = new List<byte>();
+            var sourceAddress = new List<byte>();
             try
             {
-                for (int i = 0; i < addressLength; i++)
+                var addressIndex = PacketHandler.GetLogicalAddressIndex(rmapPacket);
+                var rmapCommandByte = rmapPacket.FullPacket[addressIndex + 2];
+                var addressLength = GetRmapLogicalAddressLength(rmapCommandByte);
+                var sourceAddressIndex = addressIndex + 4;
+
+                for (var i = 0; i < addressLength; i++)
                 {
-                    result.Add(rmapFullPacket.FullPacket[sourceAddressIndex + i]);
+                    sourceAddress.Add(rmapPacket.FullPacket[sourceAddressIndex + i]);
                 }
             }
             catch (IndexOutOfRangeException e)
@@ -110,27 +107,22 @@ namespace StarMeter.Controllers
                 System.Diagnostics.Trace.WriteLine(e);
             }
 
-            return result.ToArray();
+            return sourceAddress.ToArray();
 
         }
 
         /// <summary>
-        /// Calculates the length of the packet's source address bytes.
-        /// Returns the number indicated by the last two bits in the commandbyte and multiplies it by 4 as stated in the RMAP protocol specification
+        /// Calculates the length of the packet's source address bytes
         /// </summary>
         /// <param name="rmapCommandByte">The command byte to calculate from</param>
-        /// <returns>The length of the source address in an RMAP packet</returns>
+        /// <returns>The length of the source address</returns>
         public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
-            //New BitArray with 0-1 copied from command byte and rest 0
+            //TODO: How does it work? Comments?
             var finalArray = new BitArray(new[] { GetBit(rmapCommandByte, 1), GetBit(rmapCommandByte, 2), false, false, false, false, false, false });
-            //New Array of integers of length 1
             var result = new int[1];
-            //Put the decimal number indicated by said 0-1 bits into an integer array
             finalArray.CopyTo(result, 0);
-            //Copy that integer into variable
             var final = result[0];
-            //Return the correct address length which is - Number indicated by 0-1 bits multiplied by 4. 
             return final * 4;
         }
 

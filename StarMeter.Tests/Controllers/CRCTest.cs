@@ -48,6 +48,19 @@ namespace StarMeter.Tests.Controllers
             Assert.IsFalse(CRC.CheckCrcForPacket(packet));
         }
 
+        /// <summary>
+        /// Asserts that an invalid input returns false with no unhandled exception
+        /// </summary>
+        [TestMethod]
+        public void TestCheckCrcForPacketError()
+        {
+            byte[] nullArray = new byte[0];
+            Assert.IsFalse(CRC.CheckCrcForPacket(nullArray));
+        }
+
+        /// <summary>
+        /// Checks that converting a byte to a string outputs correctly
+        /// </summary>
         [TestMethod]
         public void TestByteToHexString()
         {
