@@ -80,23 +80,17 @@ namespace StarMeter.Controllers
         }
         public double CalculateErrorRateFromArray(Packet[] packets)
         {
-            var count = 0;
-
-            foreach (var p in packets) 
-            {
-                if (p.IsError) { count++; }
-            }
-
+            var noOfErrorPackets = packets.Count(p => p.IsError);
             var noOfPackets = packets.Length;
 
-            var errorRate = count / (double)noOfPackets;
+            var errorRate = noOfErrorPackets / (double)noOfPackets;
             return errorRate;
         }
 
         public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets) 
         {
-            List<KeyValuePair<string, int>> returnedData = new List<KeyValuePair<string, int>>();
-            List<KeyValuePair<string, int>> errorData = new List<KeyValuePair<string, int>>();
+            var returnedData = new List<KeyValuePair<string, int>>();
+            var errorData = new List<KeyValuePair<string, int>>();
 
             if (packets.Length > 0)
             {
@@ -122,7 +116,6 @@ namespace StarMeter.Controllers
                         if ((packet.DateRecieved.TimeOfDay >= lowerBound) && (packet.DateRecieved.TimeOfDay <= upperBound))
                         {
                             count++;
-
                             if (packet.IsError)
                             {
                                 errorCount++;

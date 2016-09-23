@@ -17,7 +17,10 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Height" Value="60"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="Background" Value="#a4ed95"/>
+            <Setter Property="Background" Value="#FF67A7CE"/>
+            <Setter Property="FontFamily" Value="Gill Sans MT"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="White"/>
         </Style>
 
         <Style TargetType="StackPanel" x:Key="PortA">

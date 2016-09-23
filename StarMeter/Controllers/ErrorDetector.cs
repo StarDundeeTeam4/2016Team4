@@ -9,7 +9,6 @@ namespace StarMeter.Controllers
         bool IsDataError(Packet previousPacket, Packet currentPacket);
         bool IsSequenceError(Packet previousPacket, Packet currentPacket);
         bool IsTimeoutError(Packet previousPacket, Packet currentPacket);
-        bool IsDisconnectError();
     }
 
     public class ErrorDetector : IErrorDetector
@@ -28,16 +27,14 @@ namespace StarMeter.Controllers
             {
                 return ErrorType.SequenceError;
             }
-            return ErrorType.None;
+            return ErrorType.Disconnect;
         }
 
         public bool IsDataError(Packet previousPacket, Packet currentPacket)
         {
-            //var isCrcCorrect = CRC.CheckCrcForPacket(currentPacket.FullPacket);
             var isCrcCorrect = IsCrcError(currentPacket);
             var isBabblingIdiot = CheckForBabblingIdiot(currentPacket, previousPacket);
 
-            //return !isCrcCorrect || isBabblingIdiot;
             return isBabblingIdiot || !isCrcCorrect;
         }
 
@@ -49,11 +46,6 @@ namespace StarMeter.Controllers
         public bool IsTimeoutError(Packet previousPacket, Packet currentPacket)
         {
             return currentPacket.FullPacket.Length < previousPacket.FullPacket.Length;
-        }
-
-        public bool IsDisconnectError()
-        {
-            return false;
         }
 
         private static bool CheckForBabblingIdiot(Packet currentPacket, Packet previousPacket)

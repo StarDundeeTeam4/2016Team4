@@ -8,6 +8,28 @@ namespace StarMeter.Controllers
 {
     public static class PacketHandler
     {
+        public static Packet SetPacketInformation(Packet packet)
+        {
+            try
+            {
+                packet.ErrorType = ErrorType.None;
+                packet.Crc = GetCrc(packet.FullPacket); //can't fail unless everything is fucked
+
+                //next four lines must be done in order as if packet ends early, everything before will work and everything after will fail anyway
+                packet.Address = GetAddressArray(packet.FullPacket);
+                packet.ProtocolId = GetProtocolId(packet.FullPacket);
+                packet.SequenceNum = GetSequenceNumber(packet);
+                packet.Cargo = GetCargoArray(packet);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                packet.IsError = true;
+                packet.ErrorType = ErrorType.DataError; //Incomplete packet is DataError?
+            }
+
+            return packet;
+        }
+        
         public static bool IsPType(string packetType)
         {
             return string.CompareOrdinal(packetType, "P") == 0;

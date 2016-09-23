@@ -2,31 +2,22 @@
 using StarMeter.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace StarMeter.View
 {
     /// <summary>
     /// Interaction logic for MultiplePacketPopup.xaml
     /// </summary>
-    public partial class MultiplePacketPopup : Window
+    public partial class MultiplePacketPopup
     {
-        Controller controller;
+        private readonly Controller _controller;
 
         public MultiplePacketPopup(Controller c)
         {
             InitializeComponent();
-            controller = c;
+            _controller = c;
         }
 
         public void CreateElements(List<Packet> packets) 
@@ -34,11 +25,8 @@ namespace StarMeter.View
             foreach(var p in packets)
             {
                 var btn = GetPacketButton(p);
-
                 btn.Margin = new Thickness(5,2.5,5,3);
-
                 btn.Height = 50;
-
                 PacketList.Children.Add(btn);
             }
         }
@@ -51,12 +39,18 @@ namespace StarMeter.View
             var b = new Button();
             b.Click += OpenPopup;
             
-
             var lab = new Label();
 
             try
             {
-                lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
+                if (p.ProtocolId == 1)
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + p.ProtocolId + " (RMAP)";
+                }
+                else
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + p.ProtocolId;
+                }
             }
             catch (Exception e)
             {
@@ -84,10 +78,8 @@ namespace StarMeter.View
             }
 
             b.SetResourceReference(Control.StyleProperty, sty);
-            
             return b;
             #endregion
-
         }
 
         public void OpenPopup(object sender, RoutedEventArgs e)
@@ -98,9 +90,9 @@ namespace StarMeter.View
             var guid = new Guid(text);
 
             PacketPopup pp = new PacketPopup();
-            pp.Controller = controller;
+            pp.Controller = _controller;
 
-            Packet p = controller.FindPacket(guid);
+            Packet p = _controller.FindPacket(guid);
 
             if (p != null)
             {
@@ -108,7 +100,6 @@ namespace StarMeter.View
                 pp.Owner = this;
                 pp.Show();
             }
-
         }
 
     }

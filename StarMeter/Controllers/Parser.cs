@@ -52,7 +52,7 @@ namespace StarMeter.Controllers
                     string[] packetAsStrings = r.ReadLine().Split(' ');
                     packet.FullPacket = packetAsStrings.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
 
-                    packet = ParseHexLine(packet);
+                    packet = PacketHandler.SetPacketInformation(packet);
 
                     if (packet.ProtocolId == 1)
                     {
@@ -89,27 +89,6 @@ namespace StarMeter.Controllers
                 r.ReadLine();
             }
             return PacketDict;
-        }
-
-        public Packet ParseHexLine(Packet packet)
-        {
-            try
-            {
-                packet.Crc = PacketHandler.GetCrc(packet.FullPacket); //can't fail unless everything is fucked
-
-                //next four lines must be done in order as if packet ends early, everything before will work and everything after will fail anyway
-                packet.Address = PacketHandler.GetAddressArray(packet.FullPacket);
-                packet.ProtocolId = PacketHandler.GetProtocolId(packet.FullPacket);
-                packet.SequenceNum = PacketHandler.GetSequenceNumber(packet);
-                packet.Cargo = PacketHandler.GetCargoArray(packet);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                packet.IsError = true;
-                packet.ErrorType = ErrorType.DataError; //Incomplete packet is DataError?
-            }
-
-            return packet;
         }
 
         public Packet SetPrevPacket(Packet packet)
