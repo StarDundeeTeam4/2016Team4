@@ -98,25 +98,37 @@ namespace StarMeter.Controllers
         }
 
         /// <summary>
-        /// Calculates the length of the packet's source address bytes
+        /// Calculates the length of the packet's source address bytes.
+        /// Returns the number indicated by the last two bits in the commandbyte and multiplies it by 4 as stated in the RMAP protocol specification
         /// </summary>
         /// <param name="rmapCommandByte">The command byte to calculate from</param>
-        /// <returns>The length of the source address</returns>
+        /// <returns>The length of the source address in an RMAP packet</returns>
         public static int GetRmapLogicalAddressLength(byte rmapCommandByte)
         {
-            //TODO: How does it work? Comments?
+            //New BitArray with 0-1 copied from command byte and rest 0
             var finalArray = new BitArray(new[] { GetBit(rmapCommandByte, 1), GetBit(rmapCommandByte, 2), false, false, false, false, false, false });
+            //New Array of integers of length 1
             var result = new int[1];
+            //Put the decimal number indicated by said 0-1 bits into an integer array
             finalArray.CopyTo(result, 0);
+            //Copy that integer into variable
             var final = result[0];
+            //Return the correct address length which is - Number indicated by 0-1 bits multiplied by 4. 
             return final * 4;
         }
 
-        //TODO: Documentation
-        public static bool GetBit(byte cmdByte, int index)
+        /// <summary>
+        /// Returns requested bit in byte indicated by index
+        /// Explanation of use of bitwise operators - http://stackoverflow.com/questions/4854207/get-a-specific-bit-from-byte
+        /// Authors - KeithS, Josh Petrie, PierrOz, Aliostad
+        /// </summary>
+        /// <param name="">The command byte to calculate from</param>
+        /// <param name="myByte">byte whose bit is to be extracted</param>
+        /// <param name="index">which bit to return</param>
+        /// <returns>the bit requested</returns>
+        public static bool GetBit(byte myByte, int index)
         {
-            //TODO: WHAT DOES THIS DO?
-            var bit = (cmdByte & (1 << index - 1)) != 0;
+            var bit = (myByte & (1 << index - 1)) != 0;
             return bit;
         }
 
