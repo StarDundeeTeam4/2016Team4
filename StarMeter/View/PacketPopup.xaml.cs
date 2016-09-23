@@ -63,6 +63,16 @@ namespace StarMeter.View
                 ProtocolLabel.Content = "Protocol: " + protocolId;
             }
 
+
+            if (p.ErrorType.Equals(ErrorType.SequenceError)) 
+            {
+                SequenceNumberLabel.Foreground = Brushes.Red;
+            }
+            else if (p.ErrorType.Equals(ErrorType.DataError))
+            {
+                CargoButton.Background = Brushes.Red;
+            }
+
             SequenceNumberLabel.Content = "Sequence Number: " + p.SequenceNum;
 
             var addressArray = p.Address;

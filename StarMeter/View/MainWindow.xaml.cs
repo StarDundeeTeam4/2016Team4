@@ -182,10 +182,11 @@ namespace StarMeter.View
 
             var lab = new Label();
 
+            lab.FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT");
+
             try
             {
-                lab.Content = p.DateRecieved.ToString("HH:mm:ss.fff");
-
+                
                 var addressArray = p.Address;
                 var finalAddressString = "";
 
@@ -385,10 +386,6 @@ namespace StarMeter.View
                 {
                     btn.Background = Brushes.Red;
                 }
-                else
-                {
-                    btn.Background = Brushes.Yellow;
-                }
 
                 // clear all event handlers here
 
@@ -407,7 +404,8 @@ namespace StarMeter.View
 
                 Label l = (Label)btn.Content;
                 btn.Tag = tempTimespans[index].Key + "@" + p.PortNumber;
-                l.Content = currentNumber;
+                l.Content = currentNumber + " PACKETS";
+                l.Foreground = Brushes.Yellow;
             }
             else
             {
@@ -557,6 +555,8 @@ namespace StarMeter.View
                 ps.Add(FindPacket(g));
             }
 
+            mpp.Controller = _controller;
+            mpp.Owner = this;
             mpp.CreateElements(ps);
             mpp.ShowDialog();
         }
@@ -1169,6 +1169,8 @@ namespace StarMeter.View
 
             }
 
+            PacketScroller.ScrollToVerticalOffset(0);
+            
         }
 
         private int _interval;
@@ -1381,26 +1383,20 @@ namespace StarMeter.View
         {
             ChkErrorsOnly.IsChecked = false;
 
-            _controller.packets.Clear();
-            _controller.filePaths.Clear();
-
-            SelectedFiles.Children.Clear();
-            _fileGrids.Clear();
-
             RemoveAllPackets();
 
             RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+
+            addressSearch.Text = "";
+            protocolSearch.Text = "";
 
             CreateDataRateGraph(_controller.packets.Values.ToArray());
 
             _count = 2;
             _isUpArrow = false;
-            ShowDataVisPopup(null, null);
             SelectAllPorts(null, null);
 
-            FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
-            FiltersPane.Width = new GridLength(0, GridUnitType.Star);
 
         }
 
@@ -1454,6 +1450,7 @@ namespace StarMeter.View
 
             PrevPageBtn.Visibility = Visibility.Visible;
 
+            PacketScroller.ScrollToVerticalOffset(0);
         }
 
         private void PrevPage(object sender, RoutedEventArgs e)
@@ -1629,6 +1626,27 @@ namespace StarMeter.View
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
             HelpPanel.Visibility = Visibility.Hidden;
+        }
+
+        private void GoBackToFileSelection(object sender, RoutedEventArgs e)
+        {
+            SelectedFiles.Children.Clear();
+            _fileGrids.Clear();
+
+            _controller.packets.Clear();
+            _controller.filePaths.Clear();
+            FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
+            FiltersPane.Width = new GridLength(0, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+
+            SortedPackets.Clear();
+            lblNumShowing.Content = "No Packets to display";
+
+            NextPageBtn.Visibility = Visibility.Hidden;
+            PrevPageBtn.Visibility = Visibility.Hidden;
+
+            RemoveAllPackets();
+
         }
 
     }
