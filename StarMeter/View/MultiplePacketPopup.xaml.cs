@@ -12,12 +12,12 @@ namespace StarMeter.View
     /// </summary>
     public partial class MultiplePacketPopup
     {
-        private readonly Controller _controller;
+        public Controller Controller;
 
         public MultiplePacketPopup(Controller c)
         {
             InitializeComponent();
-            _controller = c;
+            Controller = c;
         }
 
         public void CreateElements(List<Packet> packets) 
@@ -37,19 +37,47 @@ namespace StarMeter.View
             string sty = "";
 
             var b = new Button();
+            b.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
             b.Click += OpenPopup;
             
             var lab = new Label();
+            lab.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            lab.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+            lab.FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT");
 
             try
             {
-                if (p.ProtocolId == 1)
+                var addressArray = p.Address;
+                var finalAddressString = "";
+
+                if (addressArray != null)
                 {
-                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + p.ProtocolId + " (RMAP)";
+                    if (addressArray.Length > 1)
+                    {
+                        finalAddressString += "Physical Path: ";
+                        for (var i = 0; i < addressArray.Length - 1; i++)
+                            finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
+                    }
+                    else
+                        finalAddressString = Convert.ToInt32(addressArray[0]).ToString();
                 }
                 else
                 {
-                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + p.ProtocolId;
+                    finalAddressString = "No Address";
+                }
+
+                lab.Content = finalAddressString; 
+                
+                var protocolId = p.ProtocolId;
+
+                if (protocolId == 1)
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId + " (RMAP)";
+                }
+                else
+                {
+                    lab.Content = (lab.Content) + Environment.NewLine + "Protocol: " + protocolId;
                 }
             }
             catch (Exception e)
@@ -90,9 +118,9 @@ namespace StarMeter.View
             var guid = new Guid(text);
 
             PacketPopup pp = new PacketPopup();
-            pp.Controller = _controller;
+            pp.Controller = Controller;
 
-            Packet p = _controller.FindPacket(guid);
+            Packet p = Controller.FindPacket(guid);
 
             if (p != null)
             {
@@ -100,6 +128,11 @@ namespace StarMeter.View
                 pp.Owner = this;
                 pp.Show();
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
 
     }
