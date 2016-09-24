@@ -22,6 +22,7 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="6*" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height=".5*" />
             <RowDefinition Height="1.5*"/>
             <!--<RowDefinition Height="*" />-->
         </Grid.RowDefinitions>
@@ -47,7 +48,6 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="1.4*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -66,11 +66,23 @@
             <Label x:Name="SequenceNumberLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
             <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
 
-            <Button Grid.Row="6" Grid.Column="1" Content="View Cargo" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="18" Click="ViewCargo" Margin="10,5,10,5" BorderBrush="{x:Null}" Name="CargoButton"/>
+        </Grid>
+
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+
+            <Button Grid.Row="2" Grid.Column="0" Content="View Cargo" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ViewCargo" Margin="15,0,15,0" BorderBrush="{x:Null}" Name="CargoButton"/>
+            <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ShowRmapProperties" Margin="15,0,15,0" BorderBrush="{x:Null}" Grid.Column="1"/>
+
 
         </Grid>
-        <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Width="200" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="18" Click="ShowRmapProperties" Margin="0,2,0,2" BorderBrush="{x:Null}"/>
-        <Button Grid.Row="3" Content="OK" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent" Background="#FF20A600"/>
+
+        <Button Grid.Row="4" Content="OK" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent" Background="#FF20A600"/>
 
     </Grid>
 </Window>
