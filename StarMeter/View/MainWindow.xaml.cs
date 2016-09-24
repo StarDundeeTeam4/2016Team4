@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using StarMeter.View.Helpers;
+using System.Timers;
 
 namespace StarMeter.View
 {
@@ -686,6 +687,7 @@ namespace StarMeter.View
 
         public delegate void UpdateSlider();
         public delegate void UpdateAnimation();
+        public delegate void ResetColour();
 
         // This is the method to run when the timer is raised.
         private void TimerEventProcessor(object myObject, EventArgs myEventArgs)
@@ -1107,7 +1109,7 @@ namespace StarMeter.View
                     b.Background = (Brush)converter.ConvertFromString("#4ca8a8a8");
                     b.BorderThickness = new Thickness(0);
 
-                    b.Tag = p.PacketId;
+                    b.Tag = p.PortNumber.ToString() + '@' + p.PacketId + "@" + p.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
 
                     b.Click += GoToPacket;
 
@@ -1740,12 +1742,12 @@ namespace StarMeter.View
         {
             string tag = ((Button)sender).Tag.ToString();
 
-            MessageBox.Show(tag);    
+            string[] split = tag.Split('@');
 
             int foundIndex = -1;
             for (int i = 0; i < SortedPackets.Count; i++ )
             {
-                if (SortedPackets[i].PacketId.ToString() == tag)
+                if (SortedPackets[i].PacketId.ToString() == split[1])
                 {
                     foundIndex = i;
                     break;
@@ -1754,19 +1756,78 @@ namespace StarMeter.View
 
             if (foundIndex > -1)
             {
-                MessageBox.Show("Found at position " + foundIndex);
-
                 PageIndex = (foundIndex / 100) - 1;
                 NextPage(null, null);
+
+                var portToSearch = int.Parse(split[0]);
+
+                var time = DateTime.ParseExact(split[2], "dd-MM-yyyy HH:mm:ss.fff", null);
+
+                var timeLabels = TimeList.Children.OfType<Label>();
+
+
+                foreach (var t in timeLabels)
+                {
+                    string n = t.Content.ToString();
+
+                    var dt = DateTime.ParseExact(time.ToString("dd-MM-yyyy") + " " + n, "dd-MM-yyyy HH:mm:ss.fff", null);
+                    
+                    TimeSpan ts = time - dt;
+
+                    if (ts < _section)
+                    {
+                        _lblFoundObj = (Label)t;
+                        break;
+                    }
+
+                }
+
+
+                if (_lblFoundObj != null)
+                {
+                    _lblFoundObj.BringIntoView();
+                    
+                    var copy = _lblFoundObj.Background;
+                    _colourBeforeHighlight = copy;
+                    _lblFoundObj.Background = Brushes.LimeGreen;
+                    _showHighlightedPacket = new Timer();
+                    _showHighlightedPacket.Interval = 1400;
+                    _showHighlightedPacket.Elapsed += _showHighlightedPacket_Elapsed;
+                    _showHighlightedPacket.Start();
+                }
+                else 
+                {
+                    MessageBox.Show("This packet is not currntly being displayed - please check your filters");
+                }
+
 
             }
             else 
             {
                 MessageBox.Show("Error is not currently being shown - please adjust your filters");
             }
-
+            
         }
 
+        private void ChangeImageColour() 
+        {
+            _lblFoundObj.Background = _colourBeforeHighlight;
+        }
+
+        private void _showHighlightedPacket_Elapsed(object sender, ElapsedEventArgs tee)
+        {
+
+            _lblFoundObj.Dispatcher.Invoke(new ResetColour(ChangeImageColour));
+
+            _showHighlightedPacket.Stop();
+        }
+
+        Label _lblFoundObj;
+        Brush _colourBeforeHighlight;
+        Timer _showHighlightedPacket;
+
     }
+
+    
 
 }
