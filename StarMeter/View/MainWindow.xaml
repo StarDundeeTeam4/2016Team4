@@ -28,7 +28,7 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <!-- Define the rows and coloumns for the main Grid -->
+        <!-- Define the rows and columns for the main Grid -->
         <Grid.RowDefinitions>
             <RowDefinition Height="1.5*" Name="LabelPanel" />
             <RowDefinition Height="26*" />
@@ -44,28 +44,24 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="1" Grid.Column="5">
+
+
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.25*" />
                 <RowDefinition Height="2*" />
-                <RowDefinition Height="3*" />
-                <RowDefinition Height="1*" />
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Label Background="White" HorizontalAlignment="Stretch" Content="Files Being Displayed"  VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,0,35,0" ></Label>
-            <ScrollViewer Grid.Row="1"  Grid.Column="4" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,35,0">
 
-                <StackPanel Name="SelectedFiles2">
+            <Canvas Panel.ZIndex="9" Name="HelpPanel" Visibility="Hidden" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Right" Height="200" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 10, 50" Background="#FF000000">
 
-                </StackPanel>
-            </ScrollViewer>
-
-            <Canvas Name="HelpPanel" Visibility="Hidden" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Right" Height="172" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 10, 50" Background="#7F000000">
-
-                <Grid Height="172" Width="168">
+                <Grid Height="200" Width="168">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height=".75*"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -85,8 +81,27 @@
                     <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" Foreground="White" >Physical Path Address</Label>
                     <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" Foreground="White" >Protocol ID</Label>
 
+                    <!-- KEY FOOTER -->
+                    <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="White" FontFamily="Gill Sans MT" FontWeight="Bold" FontSize="16">- LEGEND -</Label>
+
                 </Grid>
             </Canvas>
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="3.8*" />
+                </Grid.RowDefinitions>
+
+                <Label Background="White" HorizontalAlignment="Stretch" Content="Files Being Displayed"  VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,0,10,0" ></Label>
+                <ScrollViewer Grid.Row="1"  Grid.Column="4" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
+
+                    <StackPanel Name="SelectedFiles2">
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
 
 
 
@@ -96,18 +111,63 @@
                 </Image.OpacityMask>
             </Image>
 
-
-
-            <DVC:Chart Name="mcChart" Height="300" Grid.Column="5" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <DVC:Chart.Series >
-                    <DVC:PieSeries Title="Experience" 
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2.5*" />
+                    <RowDefinition Height="2.5*" Name="ErrorAreaCollapse" />
+                    <RowDefinition Height=".7*" />
+                </Grid.RowDefinitions>
+                <DVC:Chart Name="ErrorPieChart" Height="179" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0.2,0">
+                    <DVC:Chart.Series>
+                        <DVC:PieSeries Title="Experience" 
                         IndependentValueBinding="{Binding Path=Key}"
+                        Margin="0,5,0,0"
+                        
                         DependentValueBinding="{Binding Path=Value}" Background="Black">
-                    </DVC:PieSeries>
-                </DVC:Chart.Series>
+                        </DVC:PieSeries>
+                    </DVC:Chart.Series>
 
-            </DVC:Chart>
+                </DVC:Chart>
 
+                <Grid Grid.Row="1" Margin="10,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="4*" Name="ErrorCollapse"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Background="Red">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button BorderThickness="0" Foreground="White" Name="cmdCollapseErrorList" Grid.Column="1" Click="cmdCollapseErrorList_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/StarMeter;component/Resources/up chevron.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <Label Foreground="White" FontFamily="Gill Sans MT" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Name="ErrorHeader">Error List (0 total):</Label>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Background="#4C000000" Name="ErrorListPanel"></StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Label Name="lblNumPackets" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" FontFamily="Gill Sans MT" FontSize="14" VerticalContentAlignment="Center" Margin="10,0,10,0">Total Packets: 0</Label>
+                    <Label Name="lblPacketsPerSec" Grid.Row="1" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" FontFamily="Gill Sans MT" FontSize="14" VerticalContentAlignment="Center" Margin="10,0,10,0">Packets Per Second: 0</Label>
+
+                </Grid>
+
+            </Grid>
         </Grid >
 
 
@@ -291,7 +351,6 @@
 
             <!-- TEMP to display the size of the rectangle -->
 
-            <Button Name="CmdTestData" Grid.Row="4" HorizontalAlignment="Right" Content="Add Test values" Width="91" Click="TestTimeCreation" Height="24" Margin="0,383.6,-0.4,-0.4" Grid.RowSpan="2" VerticalAlignment="Top" Visibility="Hidden"/>
             <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="16"></Button>
             <Button Margin="10,5,10,5" BorderThickness="0" Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click" FontFamily="Gill Sans MT" FontSize="16" Background="#FF37A300"/>
             <Grid Grid.Row="4">
@@ -340,9 +399,9 @@
                 <Button Name="cmdApplyFilters" Grid.Row="7" FontSize="16" FontFamily="Gill Sans MT" Background="#FF4A4D54" Foreground="White" Margin="3,8,3,8" Click="cmdApplyFilters_Click">APPLY FILTERS</Button>
 
                 <Grid Grid.Row="3" Background="#4C000000" Margin="0,0,0,5">
-                    <CheckBox Margin="5,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
+                    <CheckBox Margin="10,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
                 </Grid>
-               
+
                 <Grid Background="#4C000000" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,4" >
 
                     <Grid Margin="45,15,35,0">
@@ -438,14 +497,18 @@
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height=".9*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
                         <Label Margin="5,0,5,0" Grid.Column="0" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">Start Time</Label>
                         <Label Margin="5,0,5,0" Grid.Column="1" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">End Time</Label>
 
-                        <TextBox TextChanged="StartTimeTextBox_TextChanged" Grid.Column="0" Grid.Row="1" Margin="10,0,10,10"  Name="StartTimeTextBox" FontFamily="Gill Sans MT" FontSize="14"/>
-                        <TextBox TextChanged="EndTimeTextBox_TextChanged" Grid.Column="1" Grid.Row="1" Margin="10,0,10,10" Name="EndTimeTextBox" FontFamily="Gill Sans MT" FontSize="14"/>
+                        <Label Margin="5,0,5,0" Grid.Column="0" Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="10">(dd/mm/yyyy hh/mm/ss/fff)</Label>
+                        <Label Margin="5,0,5,0" Grid.Column="1" Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="10">(dd/mm/yyyy hh/mm/ss/fff)</Label>
+
+                        <TextBox TextChanged="StartTimeTextBox_TextChanged" Grid.Column="0" Grid.Row="2" Margin="10,0,10,10"  Name="StartTimeTextBox" FontFamily="Gill Sans MT" FontSize="11"/>
+                        <TextBox TextChanged="EndTimeTextBox_TextChanged" Grid.Column="1" Grid.Row="2" Margin="10,0,10,10" Name="EndTimeTextBox" FontFamily="Gill Sans MT" FontSize="11"/>
                     </Grid>
 
                 </Grid>

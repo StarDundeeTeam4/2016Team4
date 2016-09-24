@@ -57,6 +57,8 @@ namespace StarMeter.View
 
                         ColumnChange.Text = "30";
 
+                        MessageBox.Show("Maximum number of packets per column is 30");
+
                     }
 
 

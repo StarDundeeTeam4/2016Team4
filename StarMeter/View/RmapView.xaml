@@ -16,9 +16,9 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" Name="LabelPanel" />
-            <RowDefinition Height="2*" Name="DataVisualisationPopup" />
-            <RowDefinition Height="40" Name="ExitButtonRow"></RowDefinition>
+            <RowDefinition Height="1.22*" Name="LabelPanel" />
+            <RowDefinition Height="4*" Name="DataVisualisationPopup" />
+            <RowDefinition Height="1*" Name="ExitButtonRow"></RowDefinition>
 
         </Grid.RowDefinitions>
 
@@ -27,9 +27,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label x:Name="Label" Grid.Row="0"  Content="Rmap Properties View" Width="290" HorizontalAlignment="Center" HorizontalContentAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Height="26" Margin="0,-3,0,0" />
-          
+            <Label x:Name="Label" Grid.Row="0"  Content="Rmap Properties View" Width="290" HorizontalAlignment="Center" HorizontalContentAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontSize="16" />
+
         </Grid>
+
         <Grid Grid.Row="1" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -38,12 +39,12 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label x:Name="DestinationKeyLabel" Grid.Row="1" Foreground="White" Content="Destination Key: " Height="26" Margin="0,-3,0,0"/>
-            <Label x:Name="SourcePathAddressLabel" Grid.Row="2" Foreground="White"  Content="Source Address: " Height="26" Margin="0,-3,0,0"/>
-            <Label x:Name="PacketTypeLabel" Grid.Row="3" Foreground="White"  Content="Command Type: " Height="26" Margin="0,-3,0,0"/>
-            <Label x:Name="CommandByteLabel" Grid.Row="4" Foreground="White"  Content="CommandByte: " Height="26" Margin="0,-3,0,0"/>
+            <Label x:Name="DestinationKeyLabel" Grid.Row="1" Foreground="White" Content="Destination Key: " Height="26" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontStyle="Italic"/>
+            <Label x:Name="SourcePathAddressLabel" Grid.Row="2" Foreground="White"  Content="Source Address: " Height="26" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontStyle="Italic"/>
+            <Label x:Name="PacketTypeLabel" Grid.Row="3" Foreground="White"  Content="Command Type: " Height="26" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontStyle="Italic"/>
+            <Label x:Name="CommandByteLabel" Grid.Row="4" Foreground="White"  Content="CommandByte: " Height="26" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontStyle="Italic"/>
         </Grid>
-       
-        <Button x:Name="ExitButton" Grid.Row="2" Content="Exit" Background="Red" Click="ExitButtonEvent" Foreground="White"/>
+
+        <Button x:Name="ExitButton" Grid.Row="2" Content="Exit" Background="#FF37A300" Click="ExitButtonEvent" Foreground="White" FontFamily="Gill Sans MT" FontSize="16"/>
     </Grid>
 </Window>

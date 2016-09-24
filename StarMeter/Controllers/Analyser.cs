@@ -27,13 +27,14 @@ namespace StarMeter.Controllers
             var totalNoOfDataChars = 0;
             foreach (var packet in packetDictionary.Values)
             {
+                var packetAddressLength = 0;
                 if (packet.Address != null)
                 {
-                    var packetAddressLength = packet.Address.Length;
-                    var packetCargoLength = packet.Cargo.Length;
-                    var packetDataChars = packetAddressLength + packetCargoLength;
-                    totalNoOfDataChars += packetDataChars;
+                    packetAddressLength = packet.Address.Length;
                 }
+                var packetCargoLength = packet.Cargo.Length;
+                var packetDataChars = packetAddressLength + packetCargoLength;
+                totalNoOfDataChars += packetDataChars;
             }
             return totalNoOfDataChars;
         }
@@ -128,7 +129,7 @@ namespace StarMeter.Controllers
         /// </summary>
         /// <param name="packets"></param>
         /// <returns></returns>
-        public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets) 
+        public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets)
         {
             var graphData = new List<KeyValuePair<string, int>>();
             var errorData = new List<KeyValuePair<string, int>>();

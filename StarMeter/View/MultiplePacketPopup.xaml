@@ -20,8 +20,8 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
                 <StackPanel Name="PacketList" Margin="0,3,0,0"/>
             </ScrollViewer>
-            
-            <Button Click="Button_Click" Grid.Row="1" Margin="5" Background="Green" Foreground="White" FontFamily="Gill Sans MT" FontSize="16">OK</Button>
+
+            <Button Click="Button_Click" Grid.Row="1" Margin="5" Background="#FF37A300" Foreground="White" FontFamily="Gill Sans MT" FontSize="16">OK</Button>
             
         </Grid>
     </Grid>

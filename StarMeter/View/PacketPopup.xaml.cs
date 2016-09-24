@@ -54,7 +54,7 @@ namespace StarMeter.View
 
             TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = packet.ProtocolId;
-            ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
+            ProtocolLabel.Content = PacketLabelCreator.GetProtocolLabel(protocolId);
 
             if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
             {
@@ -148,7 +148,6 @@ namespace StarMeter.View
         private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
             Close();
-            Owner.Show();
         }
 
         private void ShowRmapProperties(object sender, RoutedEventArgs e)
@@ -189,9 +188,14 @@ namespace StarMeter.View
         private void ArrowMouseRightButtonDown(Packet packet, PacketPopup packetPopup)
         {
             packetPopup.SetupElements(packet);
-            packetPopup.Owner = this;
+            //packetPopup.Owner = this;
             packetPopup.Controller = Controller;
             packetPopup.WindowStartupLocation = WindowStartupLocation.Manual;
+        }
+        
+        private void cmdCopyToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff"));
         }
     }
 }
