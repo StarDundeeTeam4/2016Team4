@@ -19,19 +19,24 @@ namespace StarMeter.View
         private Packet _packet;
         public Controller Controller;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packet"></param>
         public void SetupElements(Packet packet)
         {
             if (!(packet is RmapPacket))
             {
                 ViewRmapPropertiesButton.Visibility = Visibility.Hidden;
             }
-            var br = GetBrush(packet.IsError);
+
+            var brush = ErrorPacketFormatting.GetBrush(packet.IsError);
 
             _packet = packet;
             Width = 500;
             Height = 500;
 
-            lblErrorMsg.Background = br;
+            lblErrorMsg.Background = brush;
 
             var logo = new BitmapImage();
             logo.BeginInit();
@@ -49,13 +54,12 @@ namespace StarMeter.View
                 lblErrorMsg.Content = "ERROR: " + packet.ErrorType;
             }
 
-            IconBG.Background = br;
+            IconBG.Background = brush;
             ErrorIcon.Source = logo;
 
             TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = packet.ProtocolId;
             ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
-
             if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
             {
                 SequenceNumberLabel.Foreground = Brushes.Red;
@@ -67,29 +71,7 @@ namespace StarMeter.View
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
 
-            var addressArray = packet.Address;
-            var finalAddressString = "";
-
-            if (addressArray != null)
-            {
-                if (addressArray.Length > 1)
-                {
-                    finalAddressString += "Physical Path: ";
-                    for (var i = 0; i < addressArray.Length - 1; i++)
-                        finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
-                }
-                else
-                {
-                    finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
-                }
-            }
-            else
-            {
-                finalAddressString = "No Address";
-            }
-
-            AddressLabel.Content = finalAddressString;
-
+            AddressLabel.Content = PacketLabelCreator.GetAddressLabel(packet.Address);
             LeftArrow.Visibility = _packet.PrevPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
@@ -97,16 +79,6 @@ namespace StarMeter.View
             RightArrow.Visibility = _packet.NextPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
-        }
-
-        private static Brush GetBrush(bool isError) 
-        {
-            if (isError)
-            {
-                return Brushes.Red;
-            }
-            var converter = new BrushConverter();
-            return (Brush)converter.ConvertFromString("#6699ff");
         }
 
         private void NextPacket(object sender, RoutedEventArgs e)
@@ -129,15 +101,15 @@ namespace StarMeter.View
 
         private void ViewCargo(object sender, RoutedEventArgs e)
         {
-            var b = (Button)sender;
-            var br = b.Background;
+            var button = (Button)sender;
+            var brush = button.Background;
 
             if (_packet.Cargo != null)
             {
-                var cv = new CargoView();
-                cv.SetupElements(br, _packet);
-                cv.Owner = this;
-                cv.Show();
+                var cargoView = new CargoView();
+                cargoView.SetupElements(brush, _packet);
+                cargoView.Owner = this;
+                cargoView.Show();
             }
             else
             {
