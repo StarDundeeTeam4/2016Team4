@@ -196,6 +196,7 @@ namespace StarMeter.View
         private void cmdCopyToClipboard_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(_packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff"));
+            MessageBox.Show("Copied to clipboard");
         }
     }
 }

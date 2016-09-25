@@ -144,7 +144,7 @@
 
                         <Button BorderThickness="0" Foreground="White" Name="cmdCollapseErrorList" Grid.Column="1" Click="cmdCollapseErrorList_Click">
                             <Button.Background>
-                                <ImageBrush ImageSource="/StarMeter;component/Resources/up chevron.png" Stretch="Uniform"/>
+                                <ImageBrush ImageSource="/StarMeter;component/Resources/minus.png" Stretch="Uniform"/>
                             </Button.Background>
                         </Button>
                         <Label Foreground="White" FontFamily="Gill Sans MT" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Name="ErrorHeader">Error List (0 total):</Label>
@@ -231,8 +231,8 @@
                 <ColumnDefinition Width="*"  Name="Port3BHeader"/>
                 <ColumnDefinition Width="*"  Name="Port4AHeader"/>
                 <ColumnDefinition Width="*"  Name="Port4BHeader"/>
-                <ColumnDefinition Width="18" />
-                <!-- Adjust to align with the scroll bar -->
+                <ColumnDefinition Width="18" /><!-- Adjust to align with the scroll bar -->
+                <ColumnDefinition Width="0*" Name="NoPacketsHead"/>
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column ="1" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 1</Label>
@@ -266,8 +266,11 @@
                         <ColumnDefinition Width="*" Name="Port3B"/>
                         <ColumnDefinition Width="*" Name="Port4A"/>
                         <ColumnDefinition Width="*" Name="Port4B"/>
+                        <ColumnDefinition Width="0*" Name="NoPacketsArea"/>
                     </Grid.ColumnDefinitions>
 
+                    <Label Grid.Column="10" Foreground="White" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="16">No Packets to Display</Label>
+                    
                     <!-- Container for the time elements -->
                     <StackPanel Background="#FF616161" Name="TimeList" Margin="0,0,0,-0.4" Grid.RowSpan="2"/>
 

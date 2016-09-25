@@ -93,6 +93,8 @@
     <Compile Include="Controllers\PacketHandler.cs" />
     <Compile Include="Controllers\RmapPacketHandler.cs" />
     <Compile Include="Models\ObjectFinder.cs" />
+    <Compile Include="View\Helpers\ComponentFetcher.cs" />
+    <Compile Include="View\Helpers\LogicHelper.cs" />
     <Compile Include="View\Helpers\PacketLabelCreator.cs" />
     <Compile Include="View\Helpers\PageFetcher.cs" />
     <Compile Include="View\MultiplePacketPopup.xaml.cs">
@@ -215,6 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\up chevron.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\minus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\plus.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
