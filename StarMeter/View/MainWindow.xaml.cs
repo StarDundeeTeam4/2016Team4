@@ -68,7 +68,7 @@ namespace StarMeter.View
         public delegate void ResetColour();
         
         // error list objects
-        Label _lblFoundObj;
+        Button _lblFoundObj;
         Brush _colourBeforeHighlight;
         Timer _showHighlightedPacket;
 
@@ -78,6 +78,7 @@ namespace StarMeter.View
         // packets in an ordered list
         public List<Packet> SortedPackets = new List<Packet>();
 
+        Packet[] _tempStore;
 
         
         /// <summary>
@@ -226,7 +227,7 @@ namespace StarMeter.View
 
                 if (tempTimespans[index].Value >= packetTimespan)
                 {
-                    if (tempTimespans[index].Value.Add(_halfSection) < packetTimespan)
+                    if (tempTimespans[index].Value.Add(_halfSection) <= packetTimespan)
                     {
                         found = true;
                     }
@@ -237,7 +238,7 @@ namespace StarMeter.View
                 }
                 else
                 {
-                    if (tempTimespans[index].Value.Add(_section) > packetTimespan)
+                    if (tempTimespans[index].Value.Add(_section) >= packetTimespan)
                     {
                         found = true;
                     }
@@ -590,7 +591,7 @@ namespace StarMeter.View
             if (p != null)
             {
                 pp.SetupElements(p); // send the packet as a parameter
-                pp.Owner = this;
+                //pp.Owner = this;
                 pp.Show();
             }
         }
@@ -1021,11 +1022,20 @@ namespace StarMeter.View
                 // create the pie chart
                 CreateChart();
 
+                PageIndex = 0;
+
                 // display the rest of the the elements
-                SetupElements();
+                SetupElements(false);
                 CalculateStats();
                 DisplayErrorList();
                 DisplaySidePanels();
+
+
+                // reset _previous for the next load
+                for (int i = 0; i < 8; i++)
+                {
+                    _previous[i] = new TimeSpan();
+                }
                 
             }
 
@@ -1069,10 +1079,9 @@ namespace StarMeter.View
                 Button b = new Button();
                 b.Content = p.DateReceived.ToString("HH:mm:ss.fff") + ":   " + p.ErrorType + " (Port " + p.PortNumber + ")";
                 b.Foreground = Brushes.White;
-                var converter = new BrushConverter();
                 b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
                 b.Margin = new Thickness(0, 0, 0, 5);
-                b.Background = (Brush)converter.ConvertFromString("#4ca8a8a8");
+                b.Background = (Brush)_brushConvertor.ConvertFromString("#4ca8a8a8");
                 b.BorderThickness = new Thickness(0);
                 b.Height = 30;
 
@@ -1088,10 +1097,8 @@ namespace StarMeter.View
         /// Creates the labels for the time list (down the left hand side)
         /// </summary>
         /// <param name="packets">The packets to relate the times to</param>
-        private void CreateAllTimeLabels(Packet[] packets)
+        private void CreateAllTimeLabels(Packet[] packets, bool doubleInterval)
         {
-            
-
             packets = (from pair in packets orderby pair.DateReceived ascending select pair).ToArray();
 
             _timeSpanOccupied.Clear();
@@ -1122,7 +1129,9 @@ namespace StarMeter.View
                     }
 
                     _timeSpanOccupied.Add(list);
-                    Label lbl = ComponentFetcher.CreateTimeLabel(packets[0].DateReceived.TimeOfDay);
+                    Button lbl = ComponentFetcher.CreateTimeLabel(packets[0].DateReceived);
+
+                    lbl.Click += LoadSpecificTime;
 
                     TimeList.Children.Add(lbl);
 
@@ -1131,12 +1140,18 @@ namespace StarMeter.View
             else
             {
                 var milli = (int)timeDiff.TotalMilliseconds;
-
+               
                 _interval = milli / packets.Length / 2;
-
+                
                 _section = new TimeSpan(0, 0, 0, 0, _interval);
                 _negativeSection = _section.Negate();
                 _halfSection = new TimeSpan(0, 0, 0, 0, -_interval / 2);
+
+                if (_halfSection == new TimeSpan(0, 0, 0, 0, 0)) 
+                {
+                    _halfSection = new TimeSpan(0, 0, 0, 0, -1);
+                }
+
                 var i = 0;
 
                 var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(_interval * i)));
@@ -1153,7 +1168,8 @@ namespace StarMeter.View
                 while (curr <= tEnd)
                 {
                     i++;
-                    Label lbl = ComponentFetcher.CreateTimeLabel(curr.TimeOfDay);
+                    Button lbl = ComponentFetcher.CreateTimeLabel(curr);
+                    lbl.Click += LoadSpecificTime;
                     TimeList.Children.Add(lbl);
 
                     curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(_interval * i)));
@@ -1170,6 +1186,71 @@ namespace StarMeter.View
                 }
                 _timespans = timelist.ToArray();
             }
+        }
+        
+        void LoadSpecificTime(object sender, RoutedEventArgs e) 
+        {
+            string tag = ((Button)sender).Tag.ToString();
+            
+            // may need to tweak this to go backwards instead of forward
+            DateTime start = DateTime.ParseExact(tag, "dd-MM-yyyy HH:mm:ss.fff", null) + _halfSection;
+            DateTime end = start + _section;
+
+
+            // take copy of sortedList
+            _tempStore = new Packet[SortedPackets.Count];
+            SortedPackets.CopyTo(_tempStore, 0);
+
+            // apply filters
+            List<Packet> packets = ApplyFilters(SortedPackets.ToArray(), start, end);
+
+            SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
+            
+            FiltersPane.Width = new GridLength(0, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+            DataVisualisationPopup.Height = new GridLength(0, GridUnitType.Star);
+            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);
+            LeftPanelButton.Width = new GridLength(0, GridUnitType.Star);
+            cmdBackToNormalData.Height = new GridLength(1.2, GridUnitType.Star);
+            TimeLabels.Width = new GridLength(0, GridUnitType.Pixel);
+            TimeHeader.Width = new GridLength(0, GridUnitType.Pixel);
+            HeightScroller.Visibility = System.Windows.Visibility.Hidden;
+
+            lblViewingSpecific.Content = "Viewing Packets between " + start.ToString("dd/MM/yyyy HH:mm:ss.fff") + " and " + end.ToString("dd/MM/yyyy HH:mm:ss.fff");
+
+            RemoveAllPackets();
+
+            AddPacketsInOrder(SortedPackets);
+
+        }
+
+        void AddPacketsInOrder(List<Packet> packets) 
+        {
+
+            int[] count = new int[8];
+
+            for (int i = 0; i < packets.Count; i++) 
+            {
+                var sp = GetPanelToUse(packets[i].PortNumber);
+
+                for (int j = 0; j < 2 * count[packets[i].PortNumber - 1]; j++)
+                {
+                    var lbl = new Label();
+                    lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
+                    sp.Children.Add(lbl);
+                }
+
+                for (int j = 0; j < 8; j++) 
+                {
+                    count[j]++;
+                }
+                count[packets[i].PortNumber - 1] = 0;
+
+                var b = ComponentFetcher.GetPacketButton(packets[i], "");
+                b.Click += OpenPopup;
+                sp.Children.Add(b);
+            }
+
         }
 
         /// <summary>
@@ -1330,12 +1411,16 @@ namespace StarMeter.View
 
             Packet[] toLoad = PageFetcher.FetchPage(SortedPackets);
 
-            CreateAllTimeLabels(toLoad);
+            CreateAllTimeLabels(toLoad, false);
             AddPacketCollection(toLoad);
 
             if (PageIndex > 0)
             {
                 PrevPageBtn.Visibility = Visibility.Visible;
+            }
+            else 
+            {
+                PrevPageBtn.Visibility = Visibility.Hidden;
             }
 
 
@@ -1367,7 +1452,7 @@ namespace StarMeter.View
 
             Packet[] toLoad = PageFetcher.FetchPage(SortedPackets);
 
-            CreateAllTimeLabels(toLoad);
+            CreateAllTimeLabels(toLoad, false);
             AddPacketCollection(toLoad);
 
             NextPageBtn.Visibility = Visibility.Visible;
@@ -1473,6 +1558,11 @@ namespace StarMeter.View
             HeightScroller.Visibility = Visibility.Hidden;
 
             RemoveAllPackets();
+
+            NoPacketsArea.Width = new GridLength(50000, GridUnitType.Star);
+            NoPacketsHead.Width = new GridLength(50000, GridUnitType.Star);
+            lblNumShowing.Visibility = Visibility.Hidden;
+            TimeLabels.Width = new GridLength(0, GridUnitType.Pixel); 
         }
 
         /// <summary>
@@ -1484,11 +1574,6 @@ namespace StarMeter.View
         /// <returns></returns>
         List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
         {
-            for (int i = 0; i < 8; i++)
-            {
-                _previous[i] = new TimeSpan();
-            }
-
             List<Packet> packetsFound = new List<Packet>();
 
             foreach (var p in packets)
@@ -1611,24 +1696,30 @@ namespace StarMeter.View
 
                 SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
 
-                SetupElements();                
+                PageIndex = 0;
+
+                SetupElements(false);
+
+                // reset _previous for the next load
+                for (int i = 0; i < 8; i++)
+                {
+                    _previous[i] = new TimeSpan();
+                }
             }
         }
 
         /// <summary>
         /// Setup the elements to display packets
         /// </summary>
-        void SetupElements() 
+        void SetupElements(bool doubleInterval) 
         {
-            PageIndex = 0;
-
             Packet[] toLoad = PageFetcher.FetchPage(SortedPackets);
 
 
             TimeList.Children.Clear();
             RemoveAllPackets();
 
-            CreateAllTimeLabels(toLoad);
+            CreateAllTimeLabels(toLoad, doubleInterval);
             AddPacketCollection(toLoad);
             CreateDataRateGraph(SortedPackets.ToArray());
 
@@ -1646,12 +1737,6 @@ namespace StarMeter.View
 
             UpdateShowingLabel();
             
-            // reset _previous for the next load
-            for (int i = 0; i < 8; i++)
-            {
-                _previous[i] = new TimeSpan();
-            }
-
         }
 
         /// <summary>
@@ -1764,6 +1849,7 @@ namespace StarMeter.View
                     _showHighlightedPacket.Interval = 1400;
                     _showHighlightedPacket.Elapsed += _showHighlightedPacket_Elapsed;
                     _showHighlightedPacket.Start();
+
                 }
                 else 
                 {
@@ -1779,9 +1865,9 @@ namespace StarMeter.View
             
         }
 
-        Label FindObjectInPort(int portToSearch, DateTime time) 
+        Button FindObjectInPort(int portToSearch, DateTime time) 
         {
-            var timeLabels = TimeList.Children.OfType<Label>();
+            var timeLabels = TimeList.Children.OfType<Button>();
             
             foreach (var t in timeLabels)
             {
@@ -1793,7 +1879,7 @@ namespace StarMeter.View
 
                 if (ts < _section)
                 {
-                    _lblFoundObj = (Label)t;
+                    _lblFoundObj = (Button)t;
                     break;
                 }
             }
@@ -1872,13 +1958,14 @@ namespace StarMeter.View
         /// <returns></returns>
         public Style GetTimeStyle(double val)
         {
-            var style = new Style { TargetType = typeof(Label) };
+            var style = new Style { TargetType = typeof(Button) };
             style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
             style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
             style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
             style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+            style.Setters.Add(new Setter(BorderThicknessProperty, new Thickness(0)));
 
             var converter = new BrushConverter();
 
@@ -1905,6 +1992,52 @@ namespace StarMeter.View
             style.Setters.Add(new Setter(HeightProperty, val));
 
             return style;
+        }
+
+        private void BackToNormalPage_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: restore to previous data
+            SortedPackets = _tempStore.ToList();
+
+            SetupElements(false);
+
+
+            if (!_isLeftArrow)
+            {
+                FiltersPane.Width = new GridLength(3, GridUnitType.Star);
+            }
+            else
+            {
+                FiltersPane.Width = new GridLength(0, GridUnitType.Star);
+            }
+
+            if (!_isRightArrow)
+            {
+                GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+            }
+            else
+            {
+                GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+            }
+
+            if (!_isUpArrow)
+            {
+                DataVisualisationPopup.Height = new GridLength(10, GridUnitType.Star);
+            }
+            else
+            {
+                DataVisualisationPopup.Height = new GridLength(1, GridUnitType.Star);
+            }
+            
+
+            // restore panels to the correct sizes
+            RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
+            LeftPanelButton.Width = new GridLength(1, GridUnitType.Star);
+            PortHeadings.Height = new GridLength(1, GridUnitType.Star);
+            cmdBackToNormalData.Height = new GridLength(0, GridUnitType.Star);
+            TimeLabels.Width = new GridLength(140, GridUnitType.Pixel);
+            TimeHeader.Width = new GridLength(140, GridUnitType.Pixel);
+            HeightScroller.Visibility = System.Windows.Visibility.Visible;
         }
     }
 }

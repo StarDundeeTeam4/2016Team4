@@ -15,13 +15,14 @@ namespace StarMeter.View.Helpers
         /// </summary>
         /// <param name="time">The time to display</param>
         /// <returns></returns>
-        public static Label CreateTimeLabel(TimeSpan time)
+        public static Button CreateTimeLabel(DateTime time)
         {
             // create a label for the time
             # region Time label
-            Label l = new Label();
-            l.Content = time.ToString(@"hh\:mm\:ss\.fff");
+            Button l = new Button();
+            l.Content = time.TimeOfDay.ToString(@"hh\:mm\:ss\.fff");
             l.SetResourceReference(Control.StyleProperty, "Timestamp");
+            l.Tag = time.ToString("dd-MM-yyyy HH:mm:ss.fff");
             #endregion
 
             return l;

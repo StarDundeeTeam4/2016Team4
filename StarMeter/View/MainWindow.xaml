@@ -33,6 +33,7 @@
             <RowDefinition Height="1.5*" Name="LabelPanel" />
             <RowDefinition Height="26*" />
             <RowDefinition Height="1*" Name="DataVisualisationPopup" />
+            <RowDefinition Height="0*" Name="cmdBackToNormalData" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" Name="FileSelectedPane"/>
@@ -144,7 +145,7 @@
 
                         <Button BorderThickness="0" Foreground="White" Name="cmdCollapseErrorList" Grid.Column="1" Click="cmdCollapseErrorList_Click">
                             <Button.Background>
-                                <ImageBrush ImageSource="/StarMeter;component/Resources/minus.png" Stretch="Uniform"/>
+                                <ImageBrush ImageSource="/StarMeter;component/Resources/minus.png"/>
                             </Button.Background>
                         </Button>
                         <Label Foreground="White" FontFamily="Gill Sans MT" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Name="ErrorHeader">Error List (0 total):</Label>
@@ -182,7 +183,7 @@
             </Button.Background>
         </Button>
 
-        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="3" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14">Showing 0 to 0 of 0 results</Label>
+        <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="3" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14" Visibility="Hidden">Showing 0 to 0 of 0 results</Label>
 
         <Button Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton" Visibility="Hidden">
             <Button.Background>
@@ -219,10 +220,10 @@
         <!-- The column headers -->
         <Grid Grid.Row="0" Grid.Column="3" Name="PortHeaders">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
+                <RowDefinition Height="*" Name="PortHeadings" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="140" Name="TimeHeader"/>
                 <ColumnDefinition Width="*"  Name="Port1AHeader"/>
                 <ColumnDefinition Width="*"  Name="Port1BHeader"/>
                 <ColumnDefinition Width="*"  Name="Port2AHeader"/>
@@ -232,7 +233,7 @@
                 <ColumnDefinition Width="*"  Name="Port4AHeader"/>
                 <ColumnDefinition Width="*"  Name="Port4BHeader"/>
                 <ColumnDefinition Width="18" /><!-- Adjust to align with the scroll bar -->
-                <ColumnDefinition Width="0*" Name="NoPacketsHead"/>
+                <ColumnDefinition Width="50000*" Name="NoPacketsHead"/>
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column ="1" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 1</Label>
@@ -243,6 +244,7 @@
             <Label Grid.Row="0" Grid.Column ="6" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 6</Label>
             <Label Grid.Row="0" Grid.Column ="7" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 7</Label>
             <Label Grid.Row="0" Grid.Column ="8" Style="{DynamicResource PortHeader}" FontWeight="Bold">Port 8</Label>
+
         </Grid>
 
         <Grid HorizontalAlignment="Stretch" Grid.Column="3" Background="White" VerticalAlignment="Stretch" Grid.Row="1" Name="PacketGridContainer">
@@ -257,7 +259,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <!-- 1 column per port and 1 for the time -->
-                        <ColumnDefinition Width="140" Name="TimeLabels"/>
+                        <ColumnDefinition Width="0" Name="TimeLabels"/>
                         <ColumnDefinition Width="*" Name="Port1A"/>
                         <ColumnDefinition Width="*" Name="Port1B"/>
                         <ColumnDefinition Width="*" Name="Port2A"/>
@@ -266,7 +268,7 @@
                         <ColumnDefinition Width="*" Name="Port3B"/>
                         <ColumnDefinition Width="*" Name="Port4A"/>
                         <ColumnDefinition Width="*" Name="Port4B"/>
-                        <ColumnDefinition Width="0*" Name="NoPacketsArea"/>
+                        <ColumnDefinition Width="50000*" Name="NoPacketsArea"/>
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="10" Foreground="White" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="16">No Packets to Display</Label>
@@ -538,8 +540,20 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
+        </Grid>
 
 
+        <Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="8" >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" Name="SpacingLeft"/>
+                <ColumnDefinition Width="2*" Name="lblViewing"/>
+                <ColumnDefinition Width="*" Name="cmdBack"/>
+                <ColumnDefinition Width="*" Name="SpacingRight"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="1" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Foreground="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Name="lblViewingSpecific" FontFamily="Gill Sans MT">Viewing packets between 00:00:00.000 and 00:00:00.000</Label>
+            <Button Name="BackToNormalPage" Click="BackToNormalPage_Click" Grid.Column="2" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Foreground="White" Background="Red" VerticalAlignment="Stretch" FontFamily="Gill Sans MT" VerticalContentAlignment="Center">GO BACK</Button>
 
         </Grid>
 

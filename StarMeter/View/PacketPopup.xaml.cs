@@ -56,13 +56,24 @@ namespace StarMeter.View
             var protocolId = packet.ProtocolId;
             ProtocolLabel.Content = PacketLabelCreator.GetProtocolLabel(protocolId);
 
-            if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
+
+            if (packet.ErrorType.Equals(ErrorType.SequenceError))
             {
                 SequenceNumberLabel.Foreground = Brushes.Red;
             }
-            else if (packet.ErrorType.Equals(ErrorType.DataError))
+            else
+            {
+                SequenceNumberLabel.Foreground = Brushes.White;
+            }
+
+            if (packet.ErrorType.Equals(ErrorType.DataError))
             {
                 CargoButton.Background = Brushes.Red;
+            }
+            else
+            {
+                BrushConverter bc = new BrushConverter();
+                CargoButton.Background = (Brush)bc.ConvertFromString("#FF4A4D54");
             }
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
@@ -188,7 +199,7 @@ namespace StarMeter.View
         private void ArrowMouseRightButtonDown(Packet packet, PacketPopup packetPopup)
         {
             packetPopup.SetupElements(packet);
-            //packetPopup.Owner = this;
+            packetPopup.Owner = this;
             packetPopup.Controller = Controller;
             packetPopup.WindowStartupLocation = WindowStartupLocation.Manual;
         }
