@@ -19,19 +19,23 @@ namespace StarMeter.View
         private Packet _packet;
         public Controller Controller;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packet"></param>
         public void SetupElements(Packet packet)
         {
             if (!(packet is RmapPacket))
             {
                 ViewRmapPropertiesButton.Visibility = Visibility.Hidden;
             }
-            var br = GetBrush(packet.IsError);
+            var brush = GetBrush(packet.IsError);
 
             _packet = packet;
             Width = 500;
             Height = 500;
 
-            lblErrorMsg.Background = br;
+            lblErrorMsg.Background = brush;
 
             var logo = new BitmapImage();
             logo.BeginInit();
@@ -49,7 +53,7 @@ namespace StarMeter.View
                 lblErrorMsg.Content = "ERROR: " + packet.ErrorType;
             }
 
-            IconBG.Background = br;
+            IconBG.Background = brush;
             ErrorIcon.Source = logo;
 
             TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
@@ -67,29 +71,7 @@ namespace StarMeter.View
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
 
-            var addressArray = packet.Address;
-            var finalAddressString = "";
-
-            if (addressArray != null)
-            {
-                if (addressArray.Length > 1)
-                {
-                    finalAddressString += "Physical Path: ";
-                    for (var i = 0; i < addressArray.Length - 1; i++)
-                        finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
-                }
-                else
-                {
-                    finalAddressString = "Logical Address: " + Convert.ToInt32(addressArray[0]);
-                }
-            }
-            else
-            {
-                finalAddressString = "No Address";
-            }
-
-            AddressLabel.Content = finalAddressString;
-
+            AddressLabel.Content = PacketLabelCreator.GetAddressLabel(packet.Address);
             LeftArrow.Visibility = _packet.PrevPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
