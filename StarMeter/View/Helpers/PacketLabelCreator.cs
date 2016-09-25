@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StarMeter.Models;
 
 namespace StarMeter.View.Helpers
 {
@@ -41,6 +42,16 @@ namespace StarMeter.View.Helpers
                 return "Protocol: " + protocolId + " (RMAP)";
             }
             return "Protocol: " + protocolId;
+        }
+
+        public static string GetSourcePathAddress(RmapPacket packet)
+        {
+            string sourcePathAdd = null;
+            for (var i = 0; i < packet.SourcePathAddress.Length - 1; i++)
+            {
+                sourcePathAdd += Convert.ToInt32(packet.SourcePathAddress[i]) + "  ";
+            }
+            return sourcePathAdd;
         }
     }
 }

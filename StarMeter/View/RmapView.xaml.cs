@@ -1,64 +1,64 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using StarMeter.Models;
+using StarMeter.View.Helpers;
 
 namespace StarMeter.View
 {
-    public partial class RmapView : Window
+    public partial class RmapView
     {
         public RmapView()
         {
             InitializeComponent();
         }
 
-        public void SetupElements(Brush brush, RmapPacket p)
+        public void SetupElements(Brush brush, RmapPacket packet)
         {
-            if (p.PacketType.Contains("Reply"))
+            if (packet.PacketType.Contains("Reply"))
             {
                 DestinationKeyLabel.Content = "Status: ";
-                DestinationKeyLabel.Content += p.DestinationKey > 0 ? "Command Failed Execution" : "Command Succesful";
+                DestinationKeyLabel.Content += packet.DestinationKey > 0 
+                    ? "Command Failed Execution" 
+                    : "Command Succesful";
             }
             else
             {
                 DestinationKeyLabel.Content = "Destination Key: ";
-                DestinationKeyLabel.Content += p.DestinationKey.ToString();
+                DestinationKeyLabel.Content += packet.DestinationKey.ToString();
             }
 
-            if (p.SourcePathAddress.Length == 0)
+            if (packet.SourcePathAddress.Length == 0)
             {
                 SourcePathAddressLabel.Content += "No Path Address";
             }
             else
             {
-                for (var i = 0; i < p.SourcePathAddress.Length - 1; i++)
-                    SourcePathAddressLabel.Content += Convert.ToInt32(p.SourcePathAddress[i]) + "  ";
+                SourcePathAddressLabel.Content = PacketLabelCreator.GetSourcePathAddress(packet);
             }
-
-            CommandByteLabel.Content += ToBitString(Reverse(p.CommandByte));
-            PacketTypeLabel.Content += p.PacketType;
+            CommandByteLabel.Content += ToBitString(Reverse(packet.CommandByte));
+            PacketTypeLabel.Content += packet.PacketType;
         }
+
+
 
         public static string ToBitString(BitArray bits)
         {
             var stringBuilder = new StringBuilder();
-
-            for (int i = 0; i < bits.Count; i++)
+            for (var i = 0; i < bits.Count; i++)
             {
-                char c = bits[i] 
+                var character = bits[i] 
                     ? '1' 
                     : '0';
-                stringBuilder.Append(c);
+                stringBuilder.Append(character);
             }
-
             return stringBuilder.ToString();
         }
       
         private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         //Modified from - Tim Lloyd - StackOverFlow
@@ -76,6 +76,5 @@ namespace StarMeter.View
             }
             return result;
         }
-
     }
 }

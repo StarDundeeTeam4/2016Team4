@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>StarMeter.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gat.Controls.OpenDialog">
       <HintPath>..\packages\OpenDialog.1.1.1\lib\net45\Gat.Controls.OpenDialog.dll</HintPath>
@@ -95,6 +98,7 @@
     <Compile Include="Models\ObjectFinder.cs" />
     <Compile Include="View\Helpers\ComponentFetcher.cs" />
     <Compile Include="View\Helpers\LogicHelper.cs" />
+    <Compile Include="View\Helpers\ErrorPacketFormatting.cs" />
     <Compile Include="View\Helpers\PacketLabelCreator.cs" />
     <Compile Include="View\Helpers\PageFetcher.cs" />
     <Compile Include="View\MultiplePacketPopup.xaml.cs">
