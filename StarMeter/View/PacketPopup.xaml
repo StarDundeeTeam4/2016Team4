@@ -19,22 +19,22 @@
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="6*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height=".5*" />
-            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="1.2*"/>
             <!--<RowDefinition Height="*" />-->
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid ShowGridLines="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="Success" x:Name="lblErrorMsg" Grid.Row="0" HorizontalContentAlignment="Left" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Red" Foreground="White" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic" FontFamily="Gill Sans MT" FontSize="14"></Label>
 
-            <Grid Grid.Column="1" Background="Red" Name="IconBG">
+            <Grid Grid.Column="1" Background="Red" Name="IconBG" ShowGridLines="False">
                 <Image Name="ErrorIcon" HorizontalAlignment="Right" Grid.Column="0" Source="pack://application:,,,/Resources/Error.png"></Image>
             </Grid>
 
@@ -42,8 +42,8 @@
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height=".9*" />
-                <RowDefinition Height=".5*" />
+                <RowDefinition Height=".7*" />
+                <RowDefinition Height=".2*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -61,7 +61,17 @@
 
             <Label Grid.Column="1" Foreground="White" FontFamily="Gill Sans MT" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="10" Content="(Right Click Arrows to open Packet in new Window)"/>
 
-            <Label x:Name="TimeLabel" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic" FontFamily="Gill Sans MT"/>
+            <Grid Grid.Row="2" Grid.Column="1" >
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="TimeLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="00/00/0000 00:00:000" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Italic" FontFamily="Gill Sans MT"/>
+                <Button Name="cmdCopyToClipboard" Grid.Column="1" Margin="8" FontFamily="Gill Sans MT" FontSize="10" Click="cmdCopyToClipboard_Click" Background="#FF4A4D54" BorderBrush="{x:Null}" Foreground="White">Copy Time to Clipboard</Button>
+            </Grid>
+            
+            
             <Label x:Name="ProtocolLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
             <Label x:Name="SequenceNumberLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
             <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
@@ -76,13 +86,13 @@
             </Grid.ColumnDefinitions>
 
 
-            <Button Grid.Row="2" Grid.Column="0" Content="View Cargo" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ViewCargo" Margin="15,0,15,0" BorderBrush="{x:Null}" Name="CargoButton"/>
-            <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Background="#FF6B6A6A" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ShowRmapProperties" Margin="15,0,15,0" BorderBrush="{x:Null}" Grid.Column="1"/>
+            <Button Grid.Row="2" Grid.Column="0" Content="View Cargo" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ViewCargo" Margin="15,0,15,0" BorderBrush="{x:Null}" Name="CargoButton"/>
+            <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ShowRmapProperties" Margin="15,0,15,0" BorderBrush="{x:Null}" Grid.Column="1"/>
 
 
         </Grid>
 
-        <Button Grid.Row="4" Content="OK" Foreground="White" FontFamily="Calibri" FontSize="20" Click="ExitButtonEvent" Background="#FF20A600"/>
+        <Button Grid.Row="4" Content="OK" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ExitButtonEvent" Background="#FF37A300"/>
 
     </Grid>
 </Window>

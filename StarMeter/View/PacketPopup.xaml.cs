@@ -59,14 +59,25 @@ namespace StarMeter.View
 
             TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = packet.ProtocolId;
-            ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
+            ProtocolLabel.Content = PacketLabelCreator.GetProtocolLabel(protocolId);
+
             if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
             {
                 SequenceNumberLabel.Foreground = Brushes.Red;
             }
-            else if (packet.ErrorType.Equals(ErrorType.DataError))
+            else
+            {
+                SequenceNumberLabel.Foreground = Brushes.White;
+            }
+
+            if (packet.ErrorType.Equals(ErrorType.DataError))
             {
                 CargoButton.Background = Brushes.Red;
+            }
+            else
+            {
+                BrushConverter bc = new BrushConverter();
+                CargoButton.Background = (Brush)bc.ConvertFromString("#FF4A4D54");
             }
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
@@ -120,7 +131,6 @@ namespace StarMeter.View
         private void ExitButtonEvent(object sender, RoutedEventArgs e)
         {
             Close();
-            Owner.Show();
         }
 
         private void ShowRmapProperties(object sender, RoutedEventArgs e)
@@ -164,6 +174,12 @@ namespace StarMeter.View
             packetPopup.Owner = this;
             packetPopup.Controller = Controller;
             packetPopup.WindowStartupLocation = WindowStartupLocation.Manual;
+        }
+        
+        private void cmdCopyToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(_packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff"));
+            MessageBox.Show("Copied to clipboard");
         }
     }
 }

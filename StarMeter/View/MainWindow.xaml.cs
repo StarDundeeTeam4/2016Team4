@@ -12,6 +12,8 @@ using System.Windows.Controls.DataVisualization.Charting.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using StarMeter.View.Helpers;
+using System.Timers;
 
 namespace StarMeter.View
 {
@@ -21,8 +23,67 @@ namespace StarMeter.View
     public partial class MainWindow
     {
         private readonly Controller _controller = new Controller();
+        private readonly Analyser _analyser = new Analyser();
 
         private readonly StackPanel[] _portStacks = new StackPanel[8];
+
+        public static int PageIndex;
+
+        // loading icon
+        private readonly GifBitmapDecoder _gifDecoder;
+        private int _animCount;
+        private readonly System.Timers.Timer _loadingTimer;
+
+        // status variables for timers
+        private bool _isUpArrow = true;
+        private bool _isLeftArrow;
+        private bool _isRightArrow;
+        
+        // timers for sliding the various panels in - and a max value to count up to before stopping the timer
+        System.Timers.Timer _t;
+        private int _count;
+        System.Timers.Timer _t2;
+        private double _count2 = 2.75;
+        System.Timers.Timer _t3;
+        private double _count3 = 2.75;
+
+        // displaying custom colours
+        BrushConverter _brushConvertor = new BrushConverter();
+        
+        // display by time
+        private readonly TimeSpan[] _previous = new TimeSpan[8];
+        private readonly List<List<Guid>[]> _timeSpanOccupied = new List<List<Guid>[]>();
+        private int _interval;
+        private TimeSpan _section;
+        private TimeSpan _negativeSection;
+        private TimeSpan _halfSection;
+        private TimeSpan[] _timespans;
+        
+        // this will allow us to read the files or remove the files later.
+        private readonly List<Grid> _fileGrids = new List<Grid>();
+        
+        // delegates to allow GUI changes to be made from a Timer/seperate thread
+        public delegate void UpdateSlider();
+        public delegate void UpdateAnimation();
+        public delegate void ResetColour();
+        
+        // error list objects
+        Button _lblFoundObj;
+        Brush _colourBeforeHighlight;
+        Timer _showHighlightedPacket;
+
+        // toggling the error list open/close
+        bool _isErrorListOpen = true;
+
+        // packets in an ordered list
+        public List<Packet> SortedPackets = new List<Packet>();
+
+        Packet[] _tempStore;
+
+        
+        /// <summary>
+        /// Constructor for the class/Window
+        /// </summary> 
         public MainWindow()
         {
             InitializeComponent();
@@ -37,27 +98,34 @@ namespace StarMeter.View
             _portStacks[6] = Port4AHolder;
             _portStacks[7] = Port4BHolder;
 
+            // setup thw loading Icon from the file 
             _gifDecoder = new GifBitmapDecoder(new Uri("pack://application:,,,/Resources/rocket.gif"), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
             LoadingIcon.Source = _gifDecoder.Frames[0];
 
+            // setup the timer for the icon
             _loadingTimer = new System.Timers.Timer();
             _loadingTimer.Elapsed += _LoadingTimer_Elapsed;
             _loadingTimer.Interval = 100;
-
-            //_LoadingTimer.Start();
         }
 
+        /// <summary>
+        /// Update which frame of the gif to display
+        /// </summary>
         private void ChangeAnimFrame()
         {
             if (_animCount >= _gifDecoder.Frames.Count - 1)
             {
-                _animCount = 0;
+                _animCount = 0; // go back to start
             }
             LoadingIcon.Source = _gifDecoder.Frames[_animCount];
         }
 
+        /// <summary>
+        /// Display the '...' after loading message
+        /// </summary>
         public void ChangeDots()
         {
+            // work out how many dots to display
             int dots = _animCount / 6;
             string[] split = LoadingMessage.Content.ToString().Split('.');
             string dottage = "";
@@ -67,128 +135,39 @@ namespace StarMeter.View
                 dottage += ".";
             }
 
-
+            // display them
             LoadingMessage.Content = split[0] + dottage;
         }
 
+        /// <summary>
+        /// Each 'Tick' of the loading timer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void _LoadingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             _animCount++;
             LoadingIcon.Dispatcher.Invoke(new UpdateAnimation(ChangeAnimFrame));
             LoadingMessage.Dispatcher.Invoke(new UpdateAnimation(ChangeDots));
         }
-
-        private readonly GifBitmapDecoder _gifDecoder;
-        private int _animCount;
-
-        private readonly System.Timers.Timer _loadingTimer;
-
-        private void CreateTimeLabel(TimeSpan time)
-        {
-            // create a label for the time
-            # region Time label
-            Label l = new Label();
-            l.Content = time.ToString(@"hh\:mm\:ss\.fff");
-            l.SetResourceReference(Control.StyleProperty, "Timestamp");
-
-            TimeList.Children.Add(l);
-            #endregion
-        }
-
-        public Button GetPacketButton(Packet p, string nameToSet)
-        {
-            #region Create Button for the packet
-            string sty = "";
-
-            var b = new Button();
-            b.Click += OpenPopup;
-
-            string nameOutput = nameToSet.Replace('.', 'M').Replace(':', '_');
-
-            var lab = new Label();
-
-            lab.FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT");
-
-            try
-            {
-
-                var addressArray = p.Address;
-                var finalAddressString = "";
-
-                if (addressArray != null)
-                {
-                    if (addressArray.Length > 1)
-                    {
-                        finalAddressString += "Path: ";
-                        for (var i = 0; i < addressArray.Length - 1; i++)
-                            finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
-                    }
-                    else
-                        finalAddressString = Convert.ToInt32(addressArray[0]).ToString();
-                }
-                else
-                {
-                    finalAddressString = "No Address";
-                }
-
-                lab.Content = finalAddressString;
-
-                var protocolId = p.ProtocolId;
-
-                if (protocolId == 1)
-                {
-                    lab.Content = (lab.Content) + Environment.NewLine + "P: " + protocolId + " (RMAP)";
-                }
-                else
-                {
-                    lab.Content = (lab.Content) + Environment.NewLine + "P: " + protocolId;
-                }
-            }
-            catch (Exception e)
-            {
-                lab.Content = "Unknown Packet Type";
-            }
-
-            try
-            {
-                b.Tag = p.PacketId;
-            }
-            catch (Exception)
-            {
-                b.Tag = "";
-            }
-
-            b.Content = lab;
-
-            try
-            {
-                sty = p.IsError ? "Error" : "Success";
-            }
-            catch (Exception)
-            {
-                sty = "Error";
-            }
-
-            b.SetResourceReference(Control.StyleProperty, sty);
-
-            b.Name = "btn" + nameOutput;
-
-            StackPanel stackPan = GetPanelToUse(p.PortNumber);
-
-            return b;
-            #endregion
-        }
-
-        // work out which panel to assign the packet to
+        
+        /// <summary>
+        /// Work out which panel to assign the packet to
+        /// </summary>
+        /// <param name="portNum">The port nuber of the packet</param>
+        /// <returns>Which stack panel to make the parent</returns>
         private StackPanel GetPanelToUse(int portNum)
         {
             return _portStacks[portNum - 1];
         }
 
-        //This function takes a list of packets to display on the screen.
-        //As we use pagination we only send a page worth of packets at one time.
+        /// <summary>
+        /// Display a collection of packets on the screen
+        /// </summary>
+        /// <param name="packets">The array of packets to display</param>
         public void AddPacketCollection(Packet[] packets)
         {
+            // loop through each packet, setting the initial value of each element in the _previous array
             foreach (Packet p in packets)
             {
                 if (_previous[p.PortNumber - 1] == new TimeSpan())
@@ -196,6 +175,8 @@ namespace StarMeter.View
                     _previous[p.PortNumber - 1] = p.DateReceived.TimeOfDay;
                 }
             }
+
+            // loop through each packet and add a timespan for each
             var tempTimespans = new List<KeyValuePair<int, TimeSpan>>();
             if (packets.Length > 1)
             {
@@ -217,56 +198,36 @@ namespace StarMeter.View
 
             foreach (var p in packets)
             {
-                AddPacket(p, tempTimespans); //Places a single packet on the screen.
+                AddPacket(p, tempTimespans); // add each single packet on the screen.
             }
-
-            var total = SortedPackets.Count;
-            var start = _pageIndex * 100 + 1;
-            var end = start + 99;
-
-            if (end > total)
-            {
-                end = total;
-            }
-
-            if (packets.Length == 0)
-            {
-                lblNumShowing.Content = "No packets to display";
-            }
-            else
-            {
-                lblNumShowing.Content = "Showing " + start + " - " + end + " of " + total + " packets";
-            }
+            
         }
 
-        private readonly TimeSpan[] _previous = new TimeSpan[8];
-
-        private readonly List<List<Guid>[]> _timeSpanOccupied = new List<List<Guid>[]>();
-
+        /// <summary>
+        /// Add a single packet to the columns
+        /// </summary>
+        /// <param name="p">The packet to add</param>
+        /// <param name="tempTimespans">The timespans to use</param>
         private void AddPacket(Packet p, List<KeyValuePair<int, TimeSpan>> tempTimespans)
         {
-            if (_previous[p.PortNumber - 1] != null && (_previous[p.PortNumber - 1].Seconds - p.DateReceived.Second) >= 30) //if more than 30 seconds have passed between packets.
-            {
-                var x = 101;
-                //NEW TRANSMISSION
-            }
             // var temp_timespans = _timespans.ToList();
             var packetTimespan = p.DateReceived.TimeOfDay;
             var sp = GetPanelToUse(p.PortNumber);
             bool found = false;
             int index = 0;
 
-            //The following is a binary search algorithm to find which timestamp matches the current packet in O(log n) time.
-            //As our display contains a representation of time passing we cut the list in half and traverse through the list until we find
-            //a timestamp which is "close enough." This is done using sections as it is extremely unlikely thatthe packet we have perfectly
-            //matches a timestamp.
+
+            // The following is a binary search algorithm to find which timestamp matches the current packet in O(log n) time.
+            // As our display contains a representation of time passing we cut the list in half and traverse through the list until we find
+            // a timestamp which is "close enough." This is done using sections as it is extremely unlikely that the packet we have perfectly
+            // matches a timestamp.
             while (found == false && tempTimespans.Count > 0)
             {
                 index = tempTimespans.Count / 2;
 
                 if (tempTimespans[index].Value >= packetTimespan)
                 {
-                    if (tempTimespans[index].Value.Add(HalfSection) < packetTimespan)
+                    if (tempTimespans[index].Value.Add(_halfSection) <= packetTimespan)
                     {
                         found = true;
                     }
@@ -277,7 +238,7 @@ namespace StarMeter.View
                 }
                 else
                 {
-                    if (tempTimespans[index].Value.Add(_section) > packetTimespan)
+                    if (tempTimespans[index].Value.Add(_section) >= packetTimespan)
                     {
                         found = true;
                     }
@@ -290,13 +251,12 @@ namespace StarMeter.View
             _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber - 1].Add(p.PacketId);
             var currentNumber = _timeSpanOccupied[tempTimespans[index].Key][p.PortNumber - 1].Count;
 
+            // if 2 packets share the same timespan, reconfigure the button to open up the MultiplePacketPopup
             if (currentNumber > 1)
             {
-                Console.WriteLine("CLASH " + tempTimespans[index].Key);
                 var childObjs = GetPanelToUse(p.PortNumber).Children;
                 string toFind = "btn" + tempTimespans[index].Value.ToString().Replace('.', 'M').Replace(':', '_');
                 StackPanel stackPan = GetPanelToUse(p.PortNumber);
-
 
                 var existingBtn = (Button)sp.FindName(toFind);
                 var btn = (Button)LogicalTreeHelper.FindLogicalNode(stackPan, toFind);
@@ -306,8 +266,7 @@ namespace StarMeter.View
                     btn.Background = Brushes.Red;
                 }
 
-                // clear all event handlers here
-
+                // clear all event handlers 
                 btn.Click -= OpenPopup;
 
                 btn.Click -= ViewMultiplePackets;
@@ -335,7 +294,7 @@ namespace StarMeter.View
                 //incrementing the number of spaces to add by one each time.
                 while (diff.CompareTo(new TimeSpan(0, 0, 0, 0, _interval)) > 0)
                 {
-                    diff = diff.Add(NegativeSection);
+                    diff = diff.Add(_negativeSection);
                     spaces++;
                 }
 
@@ -346,16 +305,22 @@ namespace StarMeter.View
                     sp.Children.Add(lbl);
                 }
 
-                var b = GetPacketButton(p, tempTimespans[index].Value.ToString());
+                var b = ComponentFetcher.GetPacketButton(p, tempTimespans[index].Value.ToString());
+
+                b.Click += OpenPopup;
+
 
                 sp.Children.Add(b);
                 _previous[p.PortNumber - 1] = tempTimespans[index].Value;
             }
         }
-
-        //This function will remove all packets from the screen which are being displayed.
+        
+        /// <summary>
+        /// Remove all packets from the screen
+        /// </summary>
         public void RemoveAllPackets()
         {
+            // loop through all child elements of the stacks, remove all components
             for (int i = 0; i < 8; i++)
             {
                 var childElements = _portStacks[i].Children;
@@ -367,25 +332,37 @@ namespace StarMeter.View
             }
             var timeElements = TimeList.Children;
 
+            // same for the time labels
             while (timeElements.Count > 0)
             {
                 timeElements.Remove((UIElement)timeElements[0]);
             }
         }
-
-        #region TEMP
-
+        
+        /// <summary>
+        /// Create the Line graph
+        /// </summary>
+        /// <param name="packets"></param>
         void CreateDataRateGraph(Packet[] packets)
         {
             RatesLineChart.Series.Clear();
             RatesLineChart.DataContext = null;
 
-            Analyser a = new Analyser();
-            var values = a.GetDataForLineChart(SortedPackets.ToArray());
+            var values = _analyser.GetDataForLineChart(SortedPackets.ToArray());
 
+            FormatLineChart(values);
+        }
 
+        /// <summary>
+        /// Format the output for the line chart
+        /// </summary>
+        /// <param name="values">The values to add to the chart</param>
+        void FormatLineChart(List<KeyValuePair<string, int>>[] values) 
+        {
+            // if the errors only box is false - i.e. display all data...
             if (!(bool)ChkErrorsOnly.IsChecked)
             {
+                // add the successful packet data
                 var lineSeries1 = new LineSeries
                 {
                     IsSelectionEnabled = true,
@@ -398,6 +375,7 @@ namespace StarMeter.View
                 RatesLineChart.Series.Add(lineSeries1);
             }
 
+            // add the error data
             var lineSeriesError = new LineSeries
             {
                 Title = "Error Rate",
@@ -410,7 +388,7 @@ namespace StarMeter.View
 
             RatesLineChart.DataContext = values;
 
-
+            // format the legend
             Legend legend = ObjectFinder.FindChild<Legend>(RatesLineChart, "Legend");
             if (legend != null)
             {
@@ -420,17 +398,17 @@ namespace StarMeter.View
             }
 
 
+            // set the colours for the graph
             System.Windows.Controls.DataVisualization.ResourceDictionaryCollection lineSeriesPalette = new System.Windows.Controls.DataVisualization.ResourceDictionaryCollection();
-
             Brush currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
             Brush currentBrush2 = new SolidColorBrush(Color.FromRgb(200, 20, 20)); //Red
-
 
             System.Windows.ResourceDictionary pieDataPointStyles2 = new ResourceDictionary();
             Style stylePie2 = new Style(typeof(LineDataPoint));
             stylePie2.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush2));
             pieDataPointStyles2.Add("DataPointStyle", stylePie2);
 
+            // change the style of the errors
             if (!(bool)ChkErrorsOnly.IsChecked)
             {
                 System.Windows.ResourceDictionary pieDataPointStyles = new ResourceDictionary();
@@ -440,28 +418,16 @@ namespace StarMeter.View
                 lineSeriesPalette.Add(pieDataPointStyles);
             }
 
+            // set the palette
             lineSeriesPalette.Add(pieDataPointStyles2);
-
             RatesLineChart.Palette = lineSeriesPalette;
-
-
         }
 
-        private void TestTimeCreation(object sender, RoutedEventArgs e)
-        {
-            //AddPacketCollection(packets);
-
-            //CreateDataRateGraph();         
-
-            //ScrollBackToBottom();
-
-
-            Statisticspage sp = new Statisticspage();
-            sp.Show();
-
-        }
-        #endregion
-
+        /// <summary>
+        /// Open the menu to view multiple packets
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewMultiplePackets(object sender, RoutedEventArgs e)
         {
             MultiplePacketPopup mpp = new MultiplePacketPopup(_controller);
@@ -482,17 +448,20 @@ namespace StarMeter.View
             mpp.ShowDialog();
         }
 
-        //This will allow us to read the files or remove the files later.
-        private readonly List<Grid> _fileGrids = new List<Grid>();
-
+        /// <summary>
+        /// Open the file dialog and select a file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FileSelection(object sender, RoutedEventArgs e)
         {
+            // show the loading icon
             LoadingIcon.Visibility = Visibility.Visible;
             LoadingMessage.Visibility = Visibility.Visible;
             LoadingMessage.Content = "Selecting File";
-
             _loadingTimer.Start();
 
+            // open a file dialog
             var ofd = new OpenFileDialog
             {
                 // only allow .rec files
@@ -502,6 +471,7 @@ namespace StarMeter.View
 
             bool? confirmed = ofd.ShowDialog();
 
+            // if the user cancels, hide the form and hide the loading icon
             if (confirmed != true)
             {
                 LoadingIcon.Visibility = Visibility.Hidden;
@@ -511,12 +481,28 @@ namespace StarMeter.View
 
             LoadingMessage.Content = "Selecting File";
 
-            // display file name
+            // display file name in list
             List<string> filesAdded = _controller.AddFileNames(ofd.FileNames);
+            AddFileSelected(filesAdded);
 
+            // hide loading icon
+            LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
+            LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
+            _loadingTimer.Stop();
+
+        }
+        
+        /// <summary>
+        /// Add the selected files to the list being displayed on the screen
+        /// </summary>
+        /// <param name="filesAdded">The list of files to add</param>
+        void AddFileSelected(List<string> filesAdded) 
+        {
             foreach (string fileName in filesAdded)
             {
                 string actualName = fileName.Split('.')[0];
+
+                // create a grid to hold the elements
                 var g = new Grid
                 {
                     Name = "grid_" + actualName, //remove file extension for name
@@ -534,6 +520,7 @@ namespace StarMeter.View
                 g.ColumnDefinitions.Add(cd);
                 g.ColumnDefinitions.Add(cd2);
 
+                // add a label (filename) and button (remove) to he grid
                 Label l = new Label
                 {
                     Name = "label_" + actualName,
@@ -568,15 +555,13 @@ namespace StarMeter.View
                 _fileGrids.Add(g);
 
             }
-
-            LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
-            LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
-
-            _loadingTimer.Stop();
-
         }
 
-        //Removes a file from the list of files selected by the user.
+        /// <summary>
+        /// Remove a file from the list of selected files
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelUpload(object sender, RoutedEventArgs e)
         {
             Button b = (Button)sender;
@@ -587,7 +572,11 @@ namespace StarMeter.View
             _fileGrids.RemoveAt(id);
         }
 
-        //This opens the PacketPopup.xaml dialog.
+        /// <summary>
+        /// Open the Packet Popup dialog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void OpenPopup(object sender, RoutedEventArgs e)
         {
             var b = (Button)sender;
@@ -601,22 +590,28 @@ namespace StarMeter.View
 
             if (p != null)
             {
-                pp.SetupElements(p); // send the packet as a parameter, along with the colour to make the header
-                pp.Owner = this;
+                pp.SetupElements(p); // send the packet as a parameter
+                //pp.Owner = this;
                 pp.Show();
             }
         }
 
+        /// <summary>
+        /// Find a packet based on its Guid
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
         private Packet FindPacket(Guid guid)
         {
             // TODO: change this to be a lookup from dictionary
-
             return SortedPackets.FirstOrDefault(p => guid.Equals(p.PacketId));
         }
 
-        //This lets us know which image to change to.
-        private bool _isUpArrow = true;
-
+        /// <summary>
+        /// Show the line chart panel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowDataVisPopup(object sender, RoutedEventArgs e)
         {
             ImageBrush image;
@@ -634,6 +629,7 @@ namespace StarMeter.View
                 };
             }
 
+            // start the timer
             if (_t == null)
             {
                 _t = new System.Timers.Timer();
@@ -644,28 +640,26 @@ namespace StarMeter.View
 
             DataVisButton.Background = image;
         }
-
-        private bool _isRightArrow;
-
+        
+        /// <summary>
+        /// Show the RHS (Stats) panel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowDataVisPopup2(object sender, RoutedEventArgs e)
         {
             ImageBrush image;
 
             if (_isRightArrow)
             {
-                // GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
             }
             else
             {
-                // GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")))
-                {
-                    //Stretch = Stretch.UniformToFill
-                };
-
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
             }
 
+            // start the timer
             if (_t2 == null)
             {
                 _t2 = new System.Timers.Timer();
@@ -677,27 +671,25 @@ namespace StarMeter.View
             DataVisButton2.Background = image;
         }
 
-        private bool _isLeftArrow;
-
+        /// <summary>
+        /// Show the Filters panel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowDataVisPopup3(object sender, RoutedEventArgs e)
         {
             ImageBrush image;
 
             if (_isLeftArrow)
             {
-                // GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
             }
             else
             {
-                // GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")))
-                {
-                    //Stretch = Stretch.UniformToFill
-                };
-
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
             }
 
+            // start the timer
             if (_t3 == null)
             {
                 _t3 = new System.Timers.Timer();
@@ -709,10 +701,11 @@ namespace StarMeter.View
             DataVisButton3.Background = image;
         }
 
-        public delegate void UpdateSlider();
-        public delegate void UpdateAnimation();
-
-        // This is the method to run when the timer is raised.
+        /// <summary>
+        /// Controls the bottom panel sliding in
+        /// </summary>
+        /// <param name="myObject"></param>
+        /// <param name="myEventArgs"></param>
         private void TimerEventProcessor(object myObject, EventArgs myEventArgs)
         {
             // Restarts the timer and increments the counter.
@@ -725,6 +718,7 @@ namespace StarMeter.View
                 _count -= 1;
             }
 
+            // if the count has reached it's limit, stop the timer
             if ((_count > 10 && _isUpArrow) || (_count < 2 && !_isUpArrow))
             {
                 _t.Stop();
@@ -738,6 +732,11 @@ namespace StarMeter.View
             DataVisualisationPopup.Dispatcher.Invoke(new UpdateSlider(MoveSlider));
         }
 
+        /// <summary>
+        /// Controls the RHS panel sliding in
+        /// </summary>
+        /// <param name="myObject"></param>
+        /// <param name="myEventArgs"></param>
         private void TimerEventProcessor2(object myObject, EventArgs myEventArgs)
         {
             // Restarts the timer and increments the counter.
@@ -750,12 +749,11 @@ namespace StarMeter.View
                 _count2 -= 0.25;
             }
 
+            // if the count has reached it's limit, stop the timer
             if ((_count2 > 2.75 && _isRightArrow) || (_count2 < 0.25 && !_isRightArrow))
             {
                 _t2.Stop();
-
-                //GraphPanelPie.Dispatcher.Invoke(new UpdateSlider(FixStretch));
-
+                
                 _isRightArrow = !_isRightArrow;
                 _t2 = null;
             }
@@ -763,6 +761,11 @@ namespace StarMeter.View
             GraphPanelPie.Dispatcher.Invoke(new UpdateSlider(MoveSlider2));
         }
 
+        /// <summary>
+        /// Controls the LHS panel sliding in 
+        /// </summary>
+        /// <param name="myObject"></param>
+        /// <param name="myEventArgs"></param>
         private void TimerEventProcessor3(object myObject, EventArgs myEventArgs)
         {
             // Restarts the timer and increments the counter.
@@ -779,8 +782,7 @@ namespace StarMeter.View
             {
                 _t3.Stop();
 
-                //GraphPanelPie.Dispatcher.Invoke(new UpdateSlider(FixStretch));
-
+                // if the count has reached it's limit, stop the timer
                 _isLeftArrow = !_isLeftArrow;
                 _t3 = null;
             }
@@ -788,32 +790,29 @@ namespace StarMeter.View
             FiltersPane.Dispatcher.Invoke(new UpdateSlider(MoveSlider3));
         }
 
-        System.Timers.Timer _t;
-        private int _count;
-
-        System.Timers.Timer _t2;
-        private double _count2 = 2.75;
-
-        System.Timers.Timer _t3;
-        private double _count3 = 2.75;
-
+        #region Panel slider timers
         /// <summary>
-        /// set the height of the packet buttons
+        /// set the height of the bottom panel
         /// </summary>
         private void MoveSlider()
         {
             DataVisualisationPopup.Height = new GridLength(_count, GridUnitType.Star);
         }
-
+        /// <summary>
+        /// Sets the width of the RHS
+        /// </summary>
         private void MoveSlider2()
         {
             GraphPanelPie.Width = new GridLength(_count2, GridUnitType.Star);
         }
-
+        /// <summary>
+        /// Sets the width of the LHS panel
+        /// </summary>
         private void MoveSlider3()
         {
             FiltersPane.Width = new GridLength(_count3, GridUnitType.Star);
         }
+        #endregion
 
         /// <summary>
         /// Fixes the button at the bottom - else it looks silly
@@ -825,95 +824,9 @@ namespace StarMeter.View
                 DataVisButton.VerticalAlignment = VerticalAlignment.Stretch;
             }
         }
-
+        
         /// <summary>
-        /// Get the style for an error
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
-        private static Style GetErrorStyle(double val)
-        {
-
-            var style = new Style { TargetType = typeof(Button) };
-            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
-            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
-            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
-            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
-            style.Setters.Add(new Setter(ForegroundProperty, Brushes.White));
-            style.Setters.Add(new Setter(BackgroundProperty, Brushes.Red));
-            style.Setters.Add(new Setter(HeightProperty, val));
-
-
-
-            return style;
-        }
-
-        /// <summary>
-        /// get the style for a successful packet
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
-        private static Style GetSuccessStyle(double val)
-        {
-            var style = new Style { TargetType = typeof(Button) };
-            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
-            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
-            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
-            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
-            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
-
-            var converter = new BrushConverter();
-
-            style.Setters.Add(new Setter(BackgroundProperty, (Brush)converter.ConvertFromString("#6699ff")));
-            style.Setters.Add(new Setter(HeightProperty, val));
-
-            return style;
-        }
-
-        /// <summary>
-        /// Get the style for a timestamp
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
-        public Style GetTimeStyle(double val)
-        {
-            var style = new Style { TargetType = typeof(Label) };
-            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
-            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
-            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
-            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
-            style.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
-            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
-
-            var converter = new BrushConverter();
-
-            style.Setters.Add(new Setter(BackgroundProperty, (Brush)converter.ConvertFromString("#d9d9d9")));
-            style.Setters.Add(new Setter(HeightProperty, val));
-
-            return style;
-        }
-
-        /// <summary>
-        /// Get the style for a timestamp
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
-        public Style GetFillerStyle(double val)
-        {
-            var style = new Style { TargetType = typeof(Label) };
-            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
-            style.Setters.Add(new Setter(VisibilityProperty, Visibility.Hidden));
-
-            var converter = new BrushConverter();
-
-            style.Setters.Add(new Setter(BackgroundProperty, (Brush)converter.ConvertFromString("#b383d3")));
-            style.Setters.Add(new Setter(HeightProperty, val));
-
-            return style;
-        }
-
-        /// <summary>
-        /// change the height of the objects - xzoom in and out
+        /// Change the height of the objects - xzoom in and out
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -927,7 +840,6 @@ namespace StarMeter.View
 
         //The following code hides or shows each port depending on if the filter checkbox has been checked or not.
         #region Hide and Show Ports
-
         void DisplayPort1A(object sender, RoutedEventArgs e)
         {
             Port1A.Width = new GridLength(1, GridUnitType.Star);
@@ -948,7 +860,6 @@ namespace StarMeter.View
             Port1B.Width = new GridLength(0, GridUnitType.Star);
             Port1BHeader.Width = new GridLength(0, GridUnitType.Star);
         }
-
 
         void DisplayPort2A(object sender, RoutedEventArgs e)
         {
@@ -971,7 +882,6 @@ namespace StarMeter.View
             Port2BHeader.Width = new GridLength(0, GridUnitType.Star);
         }
 
-
         void DisplayPort3A(object sender, RoutedEventArgs e)
         {
             Port3A.Width = new GridLength(1, GridUnitType.Star);
@@ -992,7 +902,6 @@ namespace StarMeter.View
             Port3B.Width = new GridLength(0, GridUnitType.Star);
             Port3BHeader.Width = new GridLength(0, GridUnitType.Star);
         }
-
 
         void DisplayPort4A(object sender, RoutedEventArgs e)
         {
@@ -1015,8 +924,7 @@ namespace StarMeter.View
             Port4B.Width = new GridLength(0, GridUnitType.Star);
             Port4BHeader.Width = new GridLength(0, GridUnitType.Star);
         }
-
-
+        
         void SelectAllPorts(object sender, RoutedEventArgs e)
         {
             Check1A.IsChecked = true;
@@ -1041,108 +949,155 @@ namespace StarMeter.View
         }
 
         #endregion
+        
+        /// <summary>
+        /// Create a list of the files for which data is being display
+        /// </summary>
+        void CreateFilesDisplayedList()
+        {
+            SelectedFiles2.Children.Clear();
 
-        public List<Packet> SortedPackets = new List<Packet>();
+            // for each file selected, create a label and add it to the list
+            foreach (var s in _controller.filePaths)
+            {
+                string actualName2 = (s.Split('\\').Last());
 
+                Label l = new Label()
+                {
+                    Style = (Style)Application.Current.Resources["FileSelected"],
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    Height = 40,
+                    Margin = new Thickness(0, 0, 0, 5),
+                };
+
+                l.Content = actualName2;
+                SelectedFiles2.Children.Add(l);
+
+            }
+
+        }
+
+        /// <summary>
+        /// Calculate stats based of the loaded data
+        /// </summary>
+        void CalculateStats() 
+        {
+            lblNumPackets.Content = "Total Data Characters: " + _analyser.CalculateTotalNoOfDataChars(_controller.packets);
+            lblPacketsPerSec.Content = "Packets per Second: " + Math.Round(_analyser.CalculatePacketRatePerSecond(_controller.packets), 5);
+
+            ErrorHeader.Content = "Errors (" + _analyser.CalculateTotalNoOfErrorPackets(_controller.packets) + " total):";
+        }
+
+        /// <summary>
+        /// When the user clicks the 'Begin Analysis button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
+            // check that files exist
             if (_controller.filePaths.Count < 1)
             {
                 MessageBox.Show("No Files Selected");
             }
             else
             {
+                // if there are files...
+
+                // reset previous (before we begin time calculations)
                 for (int i = 0; i < 8; i++)
                 {
                     _previous[i] = new TimeSpan();
                 }
-
-                FiltersPane.Width = new GridLength(3, GridUnitType.Star);
-                FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
-                LeftSidePanel.Width = new GridLength(0.25, GridUnitType.Star);
-
-                RemoveAllPackets();
-
-                //Adds the files being displayed to the right side panel             
-
+                
+                // get the list of packets
                 var packets = _controller.ParsePackets().ToList();
 
-                SelectedFiles2.Children.Clear();
-
-                //List<string> filesAdded = _controller.AddFileNames(s);
-
-
-                foreach (var s in _controller.filePaths)
-                {
-                    string actualName2 = (s.Split('\\').Last());
-
-                    Label l = new Label()
-                    {
-                        Style = (Style)Application.Current.Resources["FileSelected"],
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        VerticalAlignment = VerticalAlignment.Stretch,
-                        Height = 60,
-                        Margin = new Thickness(0, 0, 0, 5),
-                    };
-
-                    l.Content = actualName2;
-                    SelectedFiles2.Children.Add(l);
-
-                }
-                //packets = controller.packets.Values.ToList();
-
+                // display file list
+                CreateFilesDisplayedList();
+                
                 SortedPackets = (from pair in _controller.packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
 
-                Packet[] firstLoad;
-                try
-                {
-                    firstLoad = SortedPackets.GetRange(0, 100).ToArray();
-                    //firstLoad = sortedPackets.Values.ToList().GetRange(0, 100);
-
-                    //List<Packet> packsss = ;
-
-                    //firstLoad = packsss.GetRange(0, 100).ToArray();
-                }
-                catch (Exception)
-                {
-                    //firstLoad = null;
-                    firstLoad = SortedPackets.ToArray();
-                }
-
-                CreateAllTimeLabels(firstLoad);
-                AddPacketCollection(firstLoad);
+                // create the pie chart
                 CreateChart();
-                DataVisButton2.Visibility = Visibility.Visible;
-                DataVisButton3.Visibility = Visibility.Visible;
-                DataVisButton.Visibility = Visibility.Visible;
 
-                HeightScroller.Visibility = Visibility.Visible;
-                CreateDataRateGraph(SortedPackets.ToArray());
+                PageIndex = 0;
 
-                if (SortedPackets.Count < 100) { NextPageBtn.Visibility = Visibility.Hidden; } else { NextPageBtn.Visibility = Visibility.Visible; }
+                // display the rest of the the elements
+                SetupElements(false);
+                CalculateStats();
+                DisplayErrorList();
+                DisplaySidePanels();
 
-                StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-                EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+
+                // reset _previous for the next load
+                for (int i = 0; i < 8; i++)
+                {
+                    _previous[i] = new TimeSpan();
+                }
                 
             }
 
-            PacketScroller.ScrollToVerticalOffset(0);
-            for (int i = 0; i < 8; i++)
-            {
-                _previous[i] = new TimeSpan();
-            }
-
-            cmdApplyFilters.Background = Brushes.Green;
-
         }
 
-        private int _interval;
-        private TimeSpan _section;
-        public TimeSpan NegativeSection;
-        public TimeSpan HalfSection;
-        private TimeSpan[] _timespans;
+        /// <summary>
+        /// Show the side panels (for graphs/filters etc)
+        /// </summary>
+        void DisplaySidePanels() 
+        {
+            // hide/show the relevant panels and buttons
+            FiltersPane.Width = new GridLength(3, GridUnitType.Star);
+            FileSelectedPane.Width = new GridLength(0, GridUnitType.Star);
+            LeftSidePanel.Width = new GridLength(0.25, GridUnitType.Star);
 
-        private void CreateAllTimeLabels(Packet[] packets)
+            DataVisButton2.Visibility = Visibility.Visible;
+            DataVisButton3.Visibility = Visibility.Visible;
+            DataVisButton.Visibility = Visibility.Visible;
+            HeightScroller.Visibility = Visibility.Visible;
+
+            RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+
+            StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+            EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+        }
+
+        /// <summary>
+        /// Create the elements for the error list
+        /// </summary>
+        void DisplayErrorList()
+        {
+            ErrorListPanel.Children.Clear();
+
+            // loop through all pckets which are flagged as errors
+            Packet[] packs = (_controller.packets.Values.Where(packet => packet.IsError)).ToArray();
+
+            foreach (var p in packs)
+            {
+                // create button
+                Button b = new Button();
+                b.Content = p.DateReceived.ToString("HH:mm:ss.fff") + ":   " + p.ErrorType + " (Port " + p.PortNumber + ")";
+                b.Foreground = Brushes.White;
+                b.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
+                b.Margin = new Thickness(0, 0, 0, 5);
+                b.Background = (Brush)_brushConvertor.ConvertFromString("#4ca8a8a8");
+                b.BorderThickness = new Thickness(0);
+                b.Height = 30;
+
+                b.Tag = p.PortNumber.ToString() + '@' + p.PacketId + "@" + p.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+
+                b.Click += GoToPacket;
+
+                ErrorListPanel.Children.Add(b);
+            }
+        }
+
+        /// <summary>
+        /// Creates the labels for the time list (down the left hand side)
+        /// </summary>
+        /// <param name="packets">The packets to relate the times to</param>
+        private void CreateAllTimeLabels(Packet[] packets, bool doubleInterval)
         {
             packets = (from pair in packets orderby pair.DateReceived ascending select pair).ToArray();
 
@@ -1174,19 +1129,29 @@ namespace StarMeter.View
                     }
 
                     _timeSpanOccupied.Add(list);
-                    CreateTimeLabel(packets[0].DateReceived.TimeOfDay);
+                    Button lbl = ComponentFetcher.CreateTimeLabel(packets[0].DateReceived);
+
+                    lbl.Click += LoadSpecificTime;
+
+                    TimeList.Children.Add(lbl);
+
                 }
             }
             else
             {
                 var milli = (int)timeDiff.TotalMilliseconds;
-
+               
                 _interval = milli / packets.Length / 2;
-                //interval = 300;
-
+                
                 _section = new TimeSpan(0, 0, 0, 0, _interval);
-                NegativeSection = _section.Negate();
-                HalfSection = new TimeSpan(0, 0, 0, 0, -_interval / 2);
+                _negativeSection = _section.Negate();
+                _halfSection = new TimeSpan(0, 0, 0, 0, -_interval / 2);
+
+                if (_halfSection == new TimeSpan(0, 0, 0, 0, 0)) 
+                {
+                    _halfSection = new TimeSpan(0, 0, 0, 0, -1);
+                }
+
                 var i = 0;
 
                 var curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(_interval * i)));
@@ -1203,7 +1168,9 @@ namespace StarMeter.View
                 while (curr <= tEnd)
                 {
                     i++;
-                    CreateTimeLabel(curr.TimeOfDay);
+                    Button lbl = ComponentFetcher.CreateTimeLabel(curr);
+                    lbl.Click += LoadSpecificTime;
+                    TimeList.Children.Add(lbl);
 
                     curr = tStart.Add(new TimeSpan(0, 0, 0, 0, (int)(_interval * i)));
                     timelist.Add(curr.TimeOfDay);
@@ -1220,27 +1187,98 @@ namespace StarMeter.View
                 _timespans = timelist.ToArray();
             }
         }
+        
+        void LoadSpecificTime(object sender, RoutedEventArgs e) 
+        {
+            string tag = ((Button)sender).Tag.ToString();
+            
+            // may need to tweak this to go backwards instead of forward
+            DateTime start = DateTime.ParseExact(tag, "dd-MM-yyyy HH:mm:ss.fff", null) + _halfSection;
+            DateTime end = start + _section;
 
+
+            // take copy of sortedList
+            _tempStore = new Packet[SortedPackets.Count];
+            SortedPackets.CopyTo(_tempStore, 0);
+
+            // apply filters
+            List<Packet> packets = ApplyFilters(SortedPackets.ToArray(), start, end);
+
+            SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
+            
+            FiltersPane.Width = new GridLength(0, GridUnitType.Star);
+            GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+            DataVisualisationPopup.Height = new GridLength(0, GridUnitType.Star);
+            RightButtonColumn.Width = new GridLength(0, GridUnitType.Star);
+            LeftPanelButton.Width = new GridLength(0, GridUnitType.Star);
+            cmdBackToNormalData.Height = new GridLength(1.2, GridUnitType.Star);
+            TimeLabels.Width = new GridLength(0, GridUnitType.Pixel);
+            TimeHeader.Width = new GridLength(0, GridUnitType.Pixel);
+            HeightScroller.Visibility = System.Windows.Visibility.Hidden;
+
+            lblViewingSpecific.Content = "Viewing Packets between " + start.ToString("dd/MM/yyyy HH:mm:ss.fff") + " and " + end.ToString("dd/MM/yyyy HH:mm:ss.fff");
+
+            RemoveAllPackets();
+
+            AddPacketsInOrder(SortedPackets);
+
+        }
+
+        void AddPacketsInOrder(List<Packet> packets) 
+        {
+
+            int[] count = new int[8];
+
+            for (int i = 0; i < packets.Count; i++) 
+            {
+                var sp = GetPanelToUse(packets[i].PortNumber);
+
+                for (int j = 0; j < 2 * count[packets[i].PortNumber - 1]; j++)
+                {
+                    var lbl = new Label();
+                    lbl.SetResourceReference(Control.StyleProperty, "TimeFiller");
+                    sp.Children.Add(lbl);
+                }
+
+                for (int j = 0; j < 8; j++) 
+                {
+                    count[j]++;
+                }
+                count[packets[i].PortNumber - 1] = 0;
+
+                var b = ComponentFetcher.GetPacketButton(packets[i], "");
+                b.Click += OpenPopup;
+                sp.Children.Add(b);
+            }
+
+        }
+
+        /// <summary>
+        /// When the checkbox for displaying 'Errors only' is checked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            _displayErrorsOnly = true;
-            cmdApplyFilters.Background = Brushes.Green;
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
 
+        /// <summary>
+        /// When the checkbox for displaying 'Errors only' is unchecked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            _displayErrorsOnly = false;
-
-            cmdApplyFilters.Background = Brushes.Green;
-
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
 
-        private void CreateChart()
+        /// <summary>
+        /// Set up the style and the appearance of the pie chart
+        /// </summary>
+        /// <param name="errRate"></param>
+        void SetupPieChart(double errRate) 
         {
-            Analyser a = new Analyser();
-            double errRate = a.CalculateErrorRateFromArray(_controller.packets.Values.ToArray());
-
-
             Style style = new Style(typeof(Chart));
             Setter st1 = new Setter(BackgroundProperty,
                                         new SolidColorBrush(Colors.Transparent));
@@ -1255,9 +1293,9 @@ namespace StarMeter.View
             style.Setters.Add(st3);
             style.Setters.Add(st4);
 
-            mcChart.Style = style;
+            ErrorPieChart.Style = style;
 
-            EdgePanel ep = ObjectFinder.FindChild<EdgePanel>(mcChart, "ChartArea");
+            EdgePanel ep = ObjectFinder.FindChild<EdgePanel>(ErrorPieChart, "ChartArea");
             if (ep != null)
             {
                 var grid = ep.Children.OfType<Grid>().FirstOrDefault();
@@ -1273,7 +1311,7 @@ namespace StarMeter.View
                 }
             }
 
-            Legend legend = ObjectFinder.FindChild<Legend>(mcChart, "Legend");
+            Legend legend = ObjectFinder.FindChild<Legend>(ErrorPieChart, "Legend");
             if (legend != null)
             {
                 legend.Foreground = new SolidColorBrush(Colors.White);
@@ -1299,18 +1337,29 @@ namespace StarMeter.View
             pieSeriesPalette.Add(pieDataPointStyles2);
             pieSeriesPalette.Add(pieDataPointStyles);
 
-            mcChart.Palette = pieSeriesPalette;
+            ErrorPieChart.Palette = pieSeriesPalette;
 
-            ((PieSeries)mcChart.Series[0]).ItemsSource =
+            ((PieSeries)ErrorPieChart.Series[0]).ItemsSource =
             new KeyValuePair<string, double>[]{
             new KeyValuePair<string, double>("Error", errRate),
             new KeyValuePair<string, double>("Success", 1-errRate) };
-
-            RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
-
         }
 
+        /// <summary>
+        /// Create the Pie chart
+        /// </summary>
+        private void CreateChart()
+        {
+            var errRate = _analyser.CalculateErrorRateFromArray(_controller.packets.Values.ToArray());
+
+            SetupPieChart(errRate);
+        }
+
+        /// <summary>
+        /// Reset all filters
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Reset(object sender, RoutedEventArgs e)
         {
             ChkErrorsOnly.IsChecked = false;
@@ -1318,14 +1367,10 @@ namespace StarMeter.View
             addressSearch.Text = "";
             protocolSearch.Text = "";
 
-            CreateDataRateGraph(_controller.packets.Values.ToArray());
-
             _count = 2;
             _isUpArrow = false;
             SelectAllPorts(null, null);
-
-            SortedPackets = ApplyFilters(_controller.packets.Values.ToArray(), new DateTime(), new DateTime());
-
+                        
             try
             {
                 StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
@@ -1333,25 +1378,29 @@ namespace StarMeter.View
             }
             catch (Exception) { }
 
-            var converter = new BrushConverter();
+            CreateDataRateGraph(_controller.packets.Values.ToArray());
 
-            cmdApplyFilters.Background = (Brush)converter.ConvertFromString("#FF4A4D54");
+            // reset the colour of the Apply button
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF4A4D54");
         }
-
-        int _pageIndex;
-
+        
+        /// <summary>
+        /// Move to the next page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void NextPage(object sender, RoutedEventArgs e)
         {
             if (SortedPackets.Count == 0) return;
             RemoveAllPackets();
-            _pageIndex++;
+            PageIndex++;
 
             for (int i = 0; i < 8; i++)
             {
                 _previous[i] = new TimeSpan();
             }
 
-            if (100 * (_pageIndex + 1) > SortedPackets.Count)
+            if (100 * (PageIndex + 1) > SortedPackets.Count)
             {
                 NextPageBtn.Visibility = Visibility.Hidden;
             }
@@ -1360,99 +1409,133 @@ namespace StarMeter.View
                 NextPageBtn.Visibility = Visibility.Visible;
             }
 
-            Packet[] toLoad;
+            Packet[] toLoad = PageFetcher.FetchPage(SortedPackets);
 
-            try
-            {
-                toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
-            }
-            catch (Exception)
-            {
-                toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
-            }
-
-            CreateAllTimeLabels(toLoad);
+            CreateAllTimeLabels(toLoad, false);
             AddPacketCollection(toLoad);
 
-            PrevPageBtn.Visibility = Visibility.Visible;
+            if (PageIndex > 0)
+            {
+                PrevPageBtn.Visibility = Visibility.Visible;
+            }
+            else 
+            {
+                PrevPageBtn.Visibility = Visibility.Hidden;
+            }
+
+
 
             PacketScroller.ScrollToVerticalOffset(0);
+
+            UpdateShowingLabel();
+        
         }
 
+        /// <summary>
+        /// Move to the previous page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PrevPage(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
-            _pageIndex--;
+            PageIndex--;
 
             for (int i = 0; i < 8; i++)
             {
                 _previous[i] = new TimeSpan();
             }
 
-            PrevPageBtn.Visibility = _pageIndex == 0
+            PrevPageBtn.Visibility = PageIndex == 0
                 ? Visibility.Hidden
                 : Visibility.Visible;
 
-            Packet[] toLoad;
+            Packet[] toLoad = PageFetcher.FetchPage(SortedPackets);
 
-            if (SortedPackets.Count == 0)
-            {
-                try
-                {
-                    toLoad = _controller.packets.Values.ToList().GetRange(100 * _pageIndex, 100).ToArray();
-                }
-                catch (Exception)
-                {
-                    toLoad = _controller.packets.Values.ToList().GetRange(100 * _pageIndex, _controller.packets.Count - 100 * _pageIndex).ToArray();
-                }
-            }
-            else
-            {
-                try
-                {
-                    toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
-                }
-                catch (Exception)
-                {
-                    toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, _controller.packets.Count - 100 * _pageIndex).ToArray();
-                }
-            }
-
-            CreateAllTimeLabels(toLoad);
+            CreateAllTimeLabels(toLoad, false);
             AddPacketCollection(toLoad);
 
             NextPageBtn.Visibility = Visibility.Visible;
 
+            UpdateShowingLabel();
+
         }
 
-        public bool IsAfterTime(Packet p, DateTime dt)
+        /// <summary>
+        /// Displays which packets are being displayed ("Showing X - Y of Z packets")
+        /// </summary>
+        void UpdateShowingLabel() 
         {
-            return (p.DateReceived >= dt);
-        }
-        public bool IsBeforeTime(Packet p, DateTime dt)
-        {
-            return (p.DateReceived <= dt);
-        }
-        public bool IsBetweenTimes(Packet p, DateTime start, DateTime end)
-        {
-            return ((p.DateReceived <= end) && (p.DateReceived >= start));
+            if (SortedPackets.Count == 0)
+            {
+                lblNumShowing.Visibility = System.Windows.Visibility.Hidden;
+
+                NoPacketsArea.Width = new GridLength(50000, GridUnitType.Star);
+                NoPacketsHead.Width = new GridLength(50000, GridUnitType.Star);
+                TimeLabels.Width = new GridLength(0, GridUnitType.Pixel);
+            }
+            else
+            {
+                lblNumShowing.Visibility = System.Windows.Visibility.Visible;
+
+                NoPacketsArea.Width = new GridLength(0, GridUnitType.Star);
+                TimeLabels.Width = new GridLength(140, GridUnitType.Pixel);
+                NoPacketsHead.Width = new GridLength(0, GridUnitType.Star);
+
+                int start = (PageIndex * 100) + 1;
+
+                int end;
+
+                if ((start + 99) > SortedPackets.Count)
+                {
+                    end = SortedPackets.Count;
+                }
+                else 
+                {
+                    end = start + 99;
+                }
+
+                lblNumShowing.Content = "Showing " + start + " - " + end + " of " + SortedPackets.Count + " packets";
+
+               
+            }
         }
         
+        /// <summary>
+        /// When the user hovers on the Help icon
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Image_MouseEnter(object sender, MouseEventArgs e)
         {
             HelpPanel.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// When the user stops hovering on the Help icon
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Image_MouseLeave(object sender, MouseEventArgs e)
         {
             HelpPanel.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// Return to the File Selection panel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GoBackToFileSelection(object sender, RoutedEventArgs e)
         {
+            ResetWindow();
+        }        
 
-            // Reset(null, null);
-
+        /// <summary>
+        /// Reset all elements to go back to the file selection screen
+        /// </summary>
+        void ResetWindow()
+        {
             SelectedFiles.Children.Clear();
             _fileGrids.Clear();
 
@@ -1464,7 +1547,7 @@ namespace StarMeter.View
             LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
 
             SortedPackets.Clear();
-            lblNumShowing.Content = "No Packets to display";
+
 
             NextPageBtn.Visibility = Visibility.Hidden;
             PrevPageBtn.Visibility = Visibility.Hidden;
@@ -1476,19 +1559,21 @@ namespace StarMeter.View
 
             RemoveAllPackets();
 
+            NoPacketsArea.Width = new GridLength(50000, GridUnitType.Star);
+            NoPacketsHead.Width = new GridLength(50000, GridUnitType.Star);
+            lblNumShowing.Visibility = Visibility.Hidden;
+            TimeLabels.Width = new GridLength(0, GridUnitType.Pixel); 
         }
 
-
-        bool _displayErrorsOnly = false;
-
+        /// <summary>
+        /// Apply the selected filters to the data 
+        /// </summary>
+        /// <param name="packets">The packets to filter through</param>
+        /// <param name="start">The start time to look from</param>
+        /// <param name="end">The end time to look up to</param>
+        /// <returns></returns>
         List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
         {
-
-            for (int i = 0; i < 8; i++)
-            {
-                _previous[i] = new TimeSpan();
-            }
-
             List<Packet> packetsFound = new List<Packet>();
 
             foreach (var p in packets)
@@ -1498,7 +1583,7 @@ namespace StarMeter.View
 
                 if ((start != new DateTime()) && (end != new DateTime()))
                 {
-                    validTime = IsBetweenTimes(p, start, end);
+                    validTime = LogicHelper.IsBetweenTimes(p, start, end);
                 }
                 else if ((start == new DateTime()) && (end == new DateTime()))
                 {
@@ -1506,17 +1591,17 @@ namespace StarMeter.View
                 }
                 else if (start == new DateTime())
                 {
-                    validTime = IsBeforeTime(p, end);
+                    validTime = LogicHelper.IsBeforeTime(p, end);
                 }
                 else if (end == new DateTime())
                 {
-                    validTime = IsAfterTime(p, start);
+                    validTime = LogicHelper.IsAfterTime(p, start);
                 }
                 #endregion
 
                 #region Error Checks
                 bool matchesError = true;
-                if (!(!_displayErrorsOnly || p.IsError)) { matchesError = false; }
+                if (!((bool)(!ChkErrorsOnly.IsChecked )|| p.IsError)) { matchesError = false; }
                 #endregion
 
                 #region Protocol checks
@@ -1526,7 +1611,7 @@ namespace StarMeter.View
                 bool validProtocol = false;
                 if (protoSearch.Length > 0)
                 {
-                    validProtocol = MatchesProtocolSearch(p, protoSearch);
+                    validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch);
                 }
                 else
                 {
@@ -1541,7 +1626,7 @@ namespace StarMeter.View
                 bool validAddress = false;
                 if (addrSearch.Length > 0)
                 {
-                    validAddress = MatchesAddressSearch(p, addrSearch);
+                    validAddress = LogicHelper.MatchesAddressSearch(p, addrSearch);
                 }
                 else
                 {
@@ -1560,41 +1645,12 @@ namespace StarMeter.View
             return packetsFound;
 
         }
-
-        bool MatchesProtocolSearch(Packet p, string search)
-        {
-            if (p.ProtocolId.ToString().Equals(search))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        bool MatchesAddressSearch(Packet p, string search)
-        {
-            byte[] address = p.Address;
-            string finalAddressString = "";
-
-            if (address.Length > 1)
-            {
-                finalAddressString += "Physical Path: ";
-                for (var i = 0; i < address.Length - 1; i++)
-                    finalAddressString += Convert.ToInt32(address[i]) + "  ";
-            }
-            else
-                finalAddressString = Convert.ToInt32(address[0]).ToString();
-
-
-            if (finalAddressString.Equals(search))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-
+                
+        /// <summary>
+        /// When the user clicks on the 'Apply filters' button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cmdApplyFilters_Click(object sender, RoutedEventArgs e)
         {
             RemoveAllPackets();
@@ -1607,6 +1663,7 @@ namespace StarMeter.View
 
             bool apply = true;
 
+            // check if a valid start/end DateTime has been entered
             if (start != "")
             {
                 try
@@ -1632,62 +1689,355 @@ namespace StarMeter.View
                 }
             }
 
+            // if the dates are valid, apply the filters and display the packets
             if (apply)
             {
                 List<Packet> packets = ApplyFilters(_controller.packets.Values.ToArray(), startTime, endTime);
 
                 SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
 
+                PageIndex = 0;
 
-                Packet[] toLoad;
+                SetupElements(false);
 
-                try
+                // reset _previous for the next load
+                for (int i = 0; i < 8; i++)
                 {
-                    toLoad = SortedPackets.GetRange(100 * _pageIndex, 100).ToArray();
+                    _previous[i] = new TimeSpan();
                 }
-                catch (Exception)
-                {
-                    toLoad = SortedPackets.ToList().GetRange(100 * _pageIndex, SortedPackets.Count - 100 * _pageIndex).ToArray();
-                }
-
-
-                TimeList.Children.Clear();
-                RemoveAllPackets();
-
-                CreateAllTimeLabels(toLoad);
-                AddPacketCollection(toLoad);
-                CreateDataRateGraph(SortedPackets.ToArray());
-
-
-                var converter = new BrushConverter();
-
-                cmdApplyFilters.Background = (Brush)converter.ConvertFromString("#FF4A4D54");
-
-                PacketScroller.ScrollToVerticalOffset(0);
-
             }
         }
 
+        /// <summary>
+        /// Setup the elements to display packets
+        /// </summary>
+        void SetupElements(bool doubleInterval) 
+        {
+            Packet[] toLoad = PageFetcher.FetchPage(SortedPackets);
+
+
+            TimeList.Children.Clear();
+            RemoveAllPackets();
+
+            CreateAllTimeLabels(toLoad, doubleInterval);
+            AddPacketCollection(toLoad);
+            CreateDataRateGraph(SortedPackets.ToArray());
+
+
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF4A4D54");
+
+            PacketScroller.ScrollToVerticalOffset(0);
+
+            PrevPageBtn.Visibility = Visibility.Hidden;
+
+            NextPageBtn.Visibility = ((PageIndex + 1)* 100) > SortedPackets.Count 
+                ? Visibility.Hidden
+                : Visibility.Visible;
+
+
+            UpdateShowingLabel();
+            
+        }
+
+        /// <summary>
+        /// When the user types in the address box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void addressSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            cmdApplyFilters.Background = Brushes.Green;
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
 
+        /// <summary>
+        /// When the user types in the protocol box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void protocolSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            cmdApplyFilters.Background = Brushes.Green;
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
 
+        /// <summary>
+        /// When the user types in the Start Time textbox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void StartTimeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            cmdApplyFilters.Background = Brushes.Green;
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
 
+        /// <summary>
+        /// When the user types in the End Time box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void EndTimeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            cmdApplyFilters.Background = Brushes.Green;
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
-                
-    }
 
+        /// <summary>
+        /// Collapse/expand the errorlist
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cmdCollapseErrorList_Click(object sender, RoutedEventArgs e)
+        {
+            // toggle the bool and set the heights and images accordingly
+            _isErrorListOpen = !_isErrorListOpen;
+
+            if (_isErrorListOpen)
+            {
+                ErrorCollapse.Height = new GridLength(4, GridUnitType.Star);
+                ErrorAreaCollapse.Height = new GridLength(2.5, GridUnitType.Star);                 
+                ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/minus.png")));
+                cmdCollapseErrorList.Background = image;
+            }
+            else
+            {
+                ErrorCollapse.Height = new GridLength(0, GridUnitType.Star);
+                ErrorAreaCollapse.Height = new GridLength(.3, GridUnitType.Star);
+                ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/plus.png")));
+                cmdCollapseErrorList.Background = image;
+            }
+        }
+
+        /// <summary>
+        /// When the user clicks an error in the Error list, find the errounous packet and go to it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GoToPacket(object sender, RoutedEventArgs e) 
+        {
+            string tag = ((Button)sender).Tag.ToString();
+
+            string[] split = tag.Split('@');
+
+            int foundIndex = -1;
+            for (int i = 0; i < SortedPackets.Count; i++ )
+            {
+                if (SortedPackets[i].PacketId.ToString() == split[1])
+                {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            if (foundIndex > -1)
+            {
+                PageIndex = (foundIndex / 100) - 1;
+                NextPage(null, null);
+
+                var portToSearch = int.Parse(split[0]);
+
+                var time = DateTime.ParseExact(split[2], "dd-MM-yyyy HH:mm:ss.fff", null);
+
+                _lblFoundObj = FindObjectInPort(portToSearch, time);
+
+                if (_lblFoundObj != null)
+                {
+                    // scroll to the label
+                    _lblFoundObj.BringIntoView();
+                    
+                    var copy = _lblFoundObj.Background;
+                    _colourBeforeHighlight = copy;
+                    _lblFoundObj.Background = Brushes.LimeGreen;
+                    _showHighlightedPacket = new Timer();
+                    _showHighlightedPacket.Interval = 1400;
+                    _showHighlightedPacket.Elapsed += _showHighlightedPacket_Elapsed;
+                    _showHighlightedPacket.Start();
+
+                }
+                else 
+                {
+                    MessageBox.Show("This packet is not currntly being displayed - please check your filters");
+                }
+
+
+            }
+            else 
+            {
+                MessageBox.Show("Error is not currently being shown - please adjust your filters");
+            }
+            
+        }
+
+        Button FindObjectInPort(int portToSearch, DateTime time) 
+        {
+            var timeLabels = TimeList.Children.OfType<Button>();
+            
+            foreach (var t in timeLabels)
+            {
+                string n = t.Content.ToString();
+
+                var dt = DateTime.ParseExact(time.ToString("dd-MM-yyyy") + " " + n, "dd-MM-yyyy HH:mm:ss.fff", null);
+
+                TimeSpan ts = time - dt;
+
+                if (ts < _section)
+                {
+                    _lblFoundObj = (Button)t;
+                    break;
+                }
+            }
+
+            return _lblFoundObj;
+
+        }
+
+        /// <summary>
+        /// Return the Time label to the original colour
+        /// </summary>
+        private void ChangeImageColour() 
+        {
+            _lblFoundObj.Background = _colourBeforeHighlight;
+        }
+
+        /// <summary>
+        /// Make the Time label, corresponding to the selected error, Green for X amount of time
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="tee"></param>
+        private void _showHighlightedPacket_Elapsed(object sender, ElapsedEventArgs eea)
+        {
+            _lblFoundObj.Dispatcher.Invoke(new ResetColour(ChangeImageColour));
+
+            _showHighlightedPacket.Stop();
+        }
+
+        /// <summary>
+        /// Get the style for an error
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static Style GetErrorStyle(double val)
+        {
+
+            var style = new Style { TargetType = typeof(Button) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.White));
+            style.Setters.Add(new Setter(BackgroundProperty, Brushes.Red));
+            style.Setters.Add(new Setter(HeightProperty, val));
+
+
+
+            return style;
+        }
+
+        /// <summary>
+        /// Get the style for a successful packet
+        /// </summary>
+        /// <param name="val">The height of the object</param>
+        /// <returns></returns>
+        private static Style GetSuccessStyle(double val)
+        {
+            var style = new Style { TargetType = typeof(Button) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+
+            var converter = new BrushConverter();
+            style.Setters.Add(new Setter(BackgroundProperty, (Brush)converter.ConvertFromString("#6699ff")));
+            style.Setters.Add(new Setter(HeightProperty, val));
+
+            return style;
+        }
+
+        /// <summary>
+        /// Get the style for a timestamp
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public Style GetTimeStyle(double val)
+        {
+            var style = new Style { TargetType = typeof(Button) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(HorizontalAlignmentProperty, HorizontalAlignment.Stretch));
+            style.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
+            style.Setters.Add(new Setter(BorderThicknessProperty, new Thickness(0)));
+
+            var converter = new BrushConverter();
+
+            style.Setters.Add(new Setter(BackgroundProperty, (Brush)converter.ConvertFromString("#d9d9d9")));
+            style.Setters.Add(new Setter(HeightProperty, val));
+
+            return style;
+        }
+
+        /// <summary>
+        /// Get the style for a timestamp
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public Style GetFillerStyle(double val)
+        {
+            var style = new Style { TargetType = typeof(Label) };
+            style.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 0, (val / 10) - 1)));
+            style.Setters.Add(new Setter(VisibilityProperty, Visibility.Hidden));
+
+            var converter = new BrushConverter();
+
+            style.Setters.Add(new Setter(BackgroundProperty, (Brush)converter.ConvertFromString("#b383d3")));
+            style.Setters.Add(new Setter(HeightProperty, val));
+
+            return style;
+        }
+
+        private void BackToNormalPage_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: restore to previous data
+            SortedPackets = _tempStore.ToList();
+
+            SetupElements(false);
+
+
+            if (!_isLeftArrow)
+            {
+                FiltersPane.Width = new GridLength(3, GridUnitType.Star);
+            }
+            else
+            {
+                FiltersPane.Width = new GridLength(0, GridUnitType.Star);
+            }
+
+            if (!_isRightArrow)
+            {
+                GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+            }
+            else
+            {
+                GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
+            }
+
+            if (!_isUpArrow)
+            {
+                DataVisualisationPopup.Height = new GridLength(10, GridUnitType.Star);
+            }
+            else
+            {
+                DataVisualisationPopup.Height = new GridLength(1, GridUnitType.Star);
+            }
+            
+
+            // restore panels to the correct sizes
+            RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
+            LeftPanelButton.Width = new GridLength(1, GridUnitType.Star);
+            PortHeadings.Height = new GridLength(1, GridUnitType.Star);
+            cmdBackToNormalData.Height = new GridLength(0, GridUnitType.Star);
+            TimeLabels.Width = new GridLength(140, GridUnitType.Pixel);
+            TimeHeader.Width = new GridLength(140, GridUnitType.Pixel);
+            HeightScroller.Visibility = System.Windows.Visibility.Visible;
+        }
+    }
 }

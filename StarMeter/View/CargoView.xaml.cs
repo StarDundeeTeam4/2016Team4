@@ -36,6 +36,9 @@ namespace StarMeter.View
                     {
                         noOfColumns = 30;
                         ColumnChange.Text = "30";
+
+                        MessageBox.Show("Maximum number of packets per column is 30");
+
                     }
                     if (cargoByteCounter.Equals(noOfColumns - 1))
                     {
