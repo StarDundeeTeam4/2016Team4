@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows.Media;
 
 namespace StarMeter.View.Helpers
 {
-    class ErrorPacket
+    public class ErrorPacketFormatting
     {
+        public static Brush GetBrush(bool isError)
+        {
+            if (isError)
+            {
+                return Brushes.Red;
+            }
+            var converter = new BrushConverter();
+            return (Brush)converter.ConvertFromString("#6699ff");
+        }
     }
 }

@@ -29,7 +29,8 @@ namespace StarMeter.View
             {
                 ViewRmapPropertiesButton.Visibility = Visibility.Hidden;
             }
-            var brush = GetBrush(packet.IsError);
+
+            var brush = ErrorPacketFormatting.GetBrush(packet.IsError);
 
             _packet = packet;
             Width = 500;
@@ -59,7 +60,6 @@ namespace StarMeter.View
             TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             var protocolId = packet.ProtocolId;
             ProtocolLabel.Content += PacketLabelCreator.GetProtocolLabel(protocolId);
-
             if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
             {
                 SequenceNumberLabel.Foreground = Brushes.Red;
@@ -79,16 +79,6 @@ namespace StarMeter.View
             RightArrow.Visibility = _packet.NextPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
-        }
-
-        private static Brush GetBrush(bool isError) 
-        {
-            if (isError)
-            {
-                return Brushes.Red;
-            }
-            var converter = new BrushConverter();
-            return (Brush)converter.ConvertFromString("#6699ff");
         }
 
         private void NextPacket(object sender, RoutedEventArgs e)
@@ -111,15 +101,15 @@ namespace StarMeter.View
 
         private void ViewCargo(object sender, RoutedEventArgs e)
         {
-            var b = (Button)sender;
-            var br = b.Background;
+            var button = (Button)sender;
+            var brush = button.Background;
 
             if (_packet.Cargo != null)
             {
-                var cv = new CargoView();
-                cv.SetupElements(br, _packet);
-                cv.Owner = this;
-                cv.Show();
+                var cargoView = new CargoView();
+                cargoView.SetupElements(brush, _packet);
+                cargoView.Owner = this;
+                cargoView.Show();
             }
             else
             {
