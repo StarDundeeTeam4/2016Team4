@@ -1648,70 +1648,62 @@ namespace StarMeter.View
         /// <param name="start">The start time to look from</param>
         /// <param name="end">The end time to look up to</param>
         /// <returns></returns>
-        List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
+        private List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
         {
-            List<Packet> packetsFound = new List<Packet>();
+            var packetsFound = new List<Packet>();
 
-            foreach (var p in packets)
+            foreach (var packet in packets)
             {
                 #region Time Checks
-                bool validTime = true;
+                var validTime = true;
 
                 if ((start != new DateTime()) && (end != new DateTime()))
                 {
-                    validTime = LogicHelper.IsBetweenTimes(p, start, end);
-                }
-                else if ((start == new DateTime()) && (end == new DateTime()))
-                {
-                    validTime = true;
+                    validTime = LogicHelper.IsBetweenTimes(packet, start, end);
                 }
                 else if (start == new DateTime())
                 {
-                    validTime = LogicHelper.IsBeforeTime(p, end);
+                    validTime = LogicHelper.IsBeforeTime(packet, end);
                 }
                 else if (end == new DateTime())
                 {
-                    validTime = LogicHelper.IsAfterTime(p, start);
+                    validTime = LogicHelper.IsAfterTime(packet, start);
                 }
                 #endregion
-
                 #region Error Checks
-                bool matchesError = true;
-                if (!((bool)(!ChkErrorsOnly.IsChecked )|| p.IsError)) { matchesError = false; }
+                var matchesError = true;
+                var errorsOnly = !ChkErrorsOnly.IsChecked;
+                if (errorsOnly != null && !((bool)errorsOnly || packet.IsError))
+                {
+                    matchesError = false;
+                }
                 #endregion
-
                 #region Protocol checks
-
-                //var protoSearch = protocolSearch.Text.Trim();
                 var protoSearch = ProtocolSelected.Text.Split('(');
 
-                bool validProtocol = false;
+                bool validProtocol;
                 if (protoSearch.Length > 1 && protoSearch[0].Length > 0)
                 {
-                    if (AddressTypeDropdown.SelectedIndex == 0)
-                    {
-                        // search by hex
-                    }
-                    else 
-                    {
-                        // search by decimal
-                        validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch[0].Trim());
-                    }
+                    validProtocol = AddressTypeDropdown.SelectedIndex == 0 
+                        ? LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim()) 
+                        : LogicHelper.DecimalProtocolSearch(packet, protoSearch[0].Trim());
                 }
                 else
                 {
                     validProtocol = true;
                 }
                 #endregion
-
                 #region Address checks
 
                 var addrSearch = addressSearch.Text.Trim();
+                bool validAddress;
+                var typeOfSearch = AddressTypeDropdown.Text;
 
-                bool validAddress = false;
                 if (addrSearch.Length > 0)
                 {
-                    validAddress = LogicHelper.MatchesAddressSearch(p, addrSearch);
+                    validAddress = typeOfSearch == "0d" 
+                        ? LogicHelper.DecimalAddressSearch(packet, addrSearch) 
+                        : LogicHelper.HexAddressSearch(packet, addrSearch);
                 }
                 else
                 {
@@ -1719,16 +1711,13 @@ namespace StarMeter.View
                 }
 
                 #endregion
-
+                
                 if (validTime && matchesError && validProtocol && validAddress)
                 {
-                    packetsFound.Add(p);
+                    packetsFound.Add(packet);
                 }
-
             }
-
             return packetsFound;
-
         }
                 
         /// <summary>
