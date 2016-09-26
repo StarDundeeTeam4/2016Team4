@@ -20,7 +20,6 @@ namespace StarMeter.Controllers
             byte destinationKey = 0x00;
             string rmapPacketType = "";
             byte[] sourceAddress = null;
-            int sequenceNumber = 0;
             int addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
 
             try
@@ -35,7 +34,6 @@ namespace StarMeter.Controllers
 
                 rmapPacketType = GetRmapType(rmapCommandByte);
                 sourceAddress = GetSourceAddressRmap(packet);
-                sequenceNumber = GetTransactionIdentifier(packet, addressIndex);
             }
             catch (IndexOutOfRangeException)
             {
@@ -52,7 +50,7 @@ namespace StarMeter.Controllers
             rmapPacket.ProtocolId   = packet.ProtocolId;
             rmapPacket.SequenceNum  = packet.SequenceNum;
             rmapPacket.Crc          = packet.Crc;
-
+            rmapPacket.Address      = packet.Address;
 
             rmapPacket.CommandByte       = rmapCommandByte;
             rmapPacket.DestinationKey    = destinationKey;
@@ -72,7 +70,7 @@ namespace StarMeter.Controllers
         {
             var fullPacket = packet.FullPacket;
             //Location of transaction Identifier according to protocol specification
-            var transactionBytes = new byte[] {fullPacket[addressIndex + 6], fullPacket[addressIndex + 5]};
+            var transactionBytes = new[] {fullPacket[addressIndex + 6], fullPacket[addressIndex + 5]};
             //Convert back to unsigned 16 bit integer (byte + byte = 16 bits.) 
             var final = BitConverter.ToUInt16(transactionBytes, 0);
             return final;
@@ -81,7 +79,7 @@ namespace StarMeter.Controllers
         /// <summary>
         /// Calculate the source address for the packet
         /// </summary>
-        /// <param name="rmapFullPacket">The packet's data</param>
+        /// <param name="rmapPacket"></param>
         /// <returns>The source address byte array</returns>
         public static byte[] GetSourceAddressRmap(Packet rmapPacket)
         {
@@ -105,7 +103,6 @@ namespace StarMeter.Controllers
             }
 
            return sourceAddress.ToArray();
-
         }
 
         /// <summary>
