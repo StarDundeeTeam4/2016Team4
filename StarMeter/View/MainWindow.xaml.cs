@@ -1695,7 +1695,7 @@ namespace StarMeter.View
                     else 
                     {
                         // search by decimal
-                        validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch[0].Trim());
+                        validProtocol = LogicHelper.MatchesProtocolSearch(packet, protoSearch[0].Trim());
                     }
                 }
                 else
