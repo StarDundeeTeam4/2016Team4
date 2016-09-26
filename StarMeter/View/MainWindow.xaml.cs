@@ -1711,7 +1711,7 @@ namespace StarMeter.View
                 bool validAddress = false;
                 if (addrSearch.Length > 0)
                 {
-                    validAddress = LogicHelper.MatchesAddressSearch(p, addrSearch);
+                    validAddress = LogicHelper.DecimalAddressSearch(p, addrSearch);
                 }
                 else
                 {
