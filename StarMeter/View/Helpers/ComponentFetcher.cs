@@ -1,9 +1,6 @@
 ﻿using StarMeter.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace StarMeter.View.Helpers
@@ -19,98 +16,71 @@ namespace StarMeter.View.Helpers
         {
             // create a label for the time
             # region Time label
-            Button l = new Button();
-            l.Content = time.TimeOfDay.ToString(@"hh\:mm\:ss\.fff");
-            l.SetResourceReference(Control.StyleProperty, "Timestamp");
-            l.Tag = time.ToString("dd-MM-yyyy HH:mm:ss.fff");
+            var timeLabel = new Button
+            {
+                Content = time.TimeOfDay.ToString(@"hh\:mm\:ss\.fff")
+            };
+            timeLabel.SetResourceReference(FrameworkElement.StyleProperty, "Timestamp");
+            timeLabel.Tag = time.ToString("dd-MM-yyyy HH:mm:ss.fff");
             #endregion
-
-            return l;
+            return timeLabel;
         }
 
         /// <summary>
         /// Get a button to represent a packet
         /// </summary>
-        /// <param name="p">The packet to make a button for</param>
+        /// <param name="packet">The packet to make a button for</param>
         /// <param name="nameToSet">What to set the name as</param>
         /// <returns></returns>
-        public static Button GetPacketButton(Packet p, string nameToSet)
+        public static Button GetPacketButton(Packet packet, string nameToSet)
         {
             #region Create Button for the packet
-            string sty = "";
-
-            var b = new Button();
-            string nameOutput = nameToSet.Replace('.', 'M').Replace(':', '_');
-
-            var lab = new Label();
-
-            lab.FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT");
+            string packetStatus;
+            var packetButton = new Button();
+            var nameOutput = nameToSet.Replace('.', 'M').Replace(':', '_');
+            var packetLabel = new Label
+            {
+                FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT")
+            };
 
             try
             {
+                var finalAddressString = PacketLabelCreator.GetAddressLabel(packet.Address);
+                packetLabel.Content = finalAddressString;
 
-                var addressArray = p.Address;
-                var finalAddressString = "";
-
-                if (addressArray != null)
-                {
-                    if (addressArray.Length > 1)
-                    {
-                        finalAddressString += "Path: ";
-                        for (var i = 0; i < addressArray.Length - 1; i++)
-                            finalAddressString += Convert.ToInt32(addressArray[i]) + "  ";
-                    }
-                    else
-                        finalAddressString = Convert.ToInt32(addressArray[0]).ToString();
-                }
-                else
-                {
-                    finalAddressString = "No Address";
-                }
-
-                lab.Content = finalAddressString;
-
-                var protocolId = p.ProtocolId;
-
-                if (protocolId == 1)
-                {
-                    lab.Content = (lab.Content) + Environment.NewLine + "P: " + protocolId + " (RMAP)";
-                }
-                else
-                {
-                    lab.Content = (lab.Content) + Environment.NewLine + "P: " + protocolId;
-                }
-            }
-            catch (Exception e)
-            {
-                lab.Content = "Unknown Packet Type";
-            }
-
-            try
-            {
-                b.Tag = p.PacketId;
+                var protocolId = packet.ProtocolId;
+                packetLabel.Content += Environment.NewLine + PacketLabelCreator.GetProtocolLabel(protocolId);
             }
             catch (Exception)
             {
-                b.Tag = "";
+                packetLabel.Content = "Unknown Packet Type";
             }
-
-            b.Content = lab;
 
             try
             {
-                sty = p.IsError ? "Error" : "Success";
+                packetButton.Tag = packet.PacketId;
             }
             catch (Exception)
             {
-                sty = "Error";
+                packetButton.Tag = "";
             }
 
-            b.SetResourceReference(Control.StyleProperty, sty);
+            packetButton.Content = packetLabel;
 
-            b.Name = "btn" + nameOutput;
+            try
+            {
+                packetStatus = packet.IsError 
+                    ? "Error" 
+                    : "Success";
+            }
+            catch (Exception)
+            {
+                packetStatus = "Error";
+            }
 
-            return b;
+            packetButton.SetResourceReference(FrameworkElement.StyleProperty, packetStatus);
+            packetButton.Name = "btn" + nameOutput;
+            return packetButton;
             #endregion
         }
     }
