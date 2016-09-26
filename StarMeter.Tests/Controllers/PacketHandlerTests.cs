@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StarMeter.Controllers;
 using StarMeter.Models;
@@ -12,12 +8,6 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class PacketHandlerTests
     {
-        [TestInitialize]
-        public void Initialize()
-        {
-            
-        }
-
         [TestMethod]
         public void SplitCargoFromNonRmapPacket()
         {
@@ -52,14 +42,14 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetCargoArrayFail()
         {
-            byte[] data = new byte[0];
-            Packet p = new Packet()
+            var data = new byte[0];
+            var p = new Packet
             {
                 FullPacket = data,
                 ProtocolId = 1,
             };
 
-            byte[] result = PacketHandler.GetCargoArray(p);
+            var result = PacketHandler.GetCargoArray(p);
             Assert.IsNull(result);
         }
 
@@ -68,13 +58,13 @@ namespace StarMeter.Tests.Controllers
         {
             byte[] data = {0x02, 0xfe, 0x01, 0x0d, 0x00, 0xfe, 0x00};
 
-            Packet p = new Packet()
+            var p = new Packet
             {
                 FullPacket = data,
                 ProtocolId = 1,
             };
 
-            byte[] result = PacketHandler.GetCargoArray(p);
+            var result = PacketHandler.GetCargoArray(p);
             CollectionAssert.AreEqual(data, result);
         }
 
@@ -223,13 +213,13 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetProtocolIdFail()
         {
-            byte[] data = new byte[0];
-            Packet p = new Packet()
+            var data = new byte[0];
+            var p = new Packet
             {
                 FullPacket = data,
             };
 
-            int result = PacketHandler.GetProtocolId(p);
+            var result = PacketHandler.GetProtocolId(p);
             Assert.AreEqual(-1, result);
         }
 
@@ -326,16 +316,13 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetSequenceNumberFail()
         {
-            byte[] data = new byte[0];
-            Packet p = new Packet() {FullPacket = data,};
-            int result = PacketHandler.GetSequenceNumber(p);
+            var data = new byte[0];
+            var packet = new Packet
+            {
+                FullPacket = data,
+            };
+            var result = PacketHandler.GetSequenceNumber(packet);
             Assert.AreEqual(-1, result);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            
         }
     }
 }

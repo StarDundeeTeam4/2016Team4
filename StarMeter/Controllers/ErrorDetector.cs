@@ -97,7 +97,6 @@ namespace StarMeter.Controllers
             }
             else
             {
-                //crcValid = CRC.CheckCrcForPacket(currentPacket.FullPacket);
                 crcValid = true;
             }
             return crcValid;

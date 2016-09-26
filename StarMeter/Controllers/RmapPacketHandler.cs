@@ -13,14 +13,13 @@ namespace StarMeter.Controllers
         /// <returns>The new RmapPacket</returns>
         public static RmapPacket CreateRmapPacket(Packet packet)
         {
-            RmapPacket rmapPacket = new RmapPacket();
-
+            var rmapPacket = new RmapPacket();
             //setting vars to be essentially null so packet can be created even if error
             BitArray rmapCommandByte = null;
             byte destinationKey = 0x00;
-            string rmapPacketType = "";
+            var rmapPacketType = "";
             byte[] sourceAddress = null;
-            int addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
+            var addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
 
             try
             {
@@ -28,10 +27,8 @@ namespace StarMeter.Controllers
                 {
                     throw new IndexOutOfRangeException(); //no logical address so is incomplete or otherwise dataerror
                 }
-
                 rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
                 destinationKey = GetDestinationKey(packet);
-
                 rmapPacketType = GetRmapType(rmapCommandByte);
                 sourceAddress = GetSourceAddressRmap(packet);
             }
@@ -145,18 +142,16 @@ namespace StarMeter.Controllers
             if (packet.PacketType.EndsWith("Reply"))
             {
                 //test cargo CRC
-                var cargo = CRC.CheckCrcForPacket(packet.Cargo);
-
+                var cargo = Crc.CheckCrcForPacket(packet.Cargo);
                 //test header CRC
                 //remove cargo from header and test as if full packet
                 var length = packet.FullPacket.Length - packet.Cargo.Length;
                 var headerBytes = new byte[length];
                 Array.Copy(packet.FullPacket, headerBytes, length);
-                var header = CRC.CheckCrcForPacket(headerBytes);
-
-                return (header && cargo);
+                var header = Crc.CheckCrcForPacket(headerBytes);
+                return header && cargo;
             }
-            return CRC.CheckCrcForPacket(packet.FullPacket);
+            return Crc.CheckCrcForPacket(packet.FullPacket);
         }
 
         /// <summary>
@@ -183,7 +178,6 @@ namespace StarMeter.Controllers
             {
                 result += " Reply";
             }
-
             return result;
         }
 
@@ -205,8 +199,8 @@ namespace StarMeter.Controllers
         /// <returns>The sequence number</returns>
         public static int GetRmapSequenceNumber(Packet packet)
         {
-            int logicalIndex = PacketHandler.GetLogicalAddressIndex(packet);
-            byte[] sequence = new byte[2];
+            var logicalIndex = PacketHandler.GetLogicalAddressIndex(packet);
+            var sequence = new byte[2];
 
             Array.Copy(packet.FullPacket, logicalIndex + 5, sequence, 0, 2);
             Array.Reverse(sequence); //damn little-endian-ness

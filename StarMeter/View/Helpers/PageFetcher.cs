@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StarMeter.View.Helpers
 {
@@ -16,8 +14,7 @@ namespace StarMeter.View.Helpers
         /// <returns></returns>
         public static Packet[] FetchPage(List<Packet> allPackets)
         {
-            int page = MainWindow.PageIndex;    // which page we need the data from (0 = first 100 packets, 1 = second 100 packets etc)
-
+            var page = MainWindow.PageIndex;    // which page we need the data from (0 = first 100 packets, 1 = second 100 packets etc)
             try
             {
                 return allPackets.GetRange(100 * page, 100).ToArray();
@@ -27,6 +24,5 @@ namespace StarMeter.View.Helpers
                 return allPackets.ToList().GetRange(100 * page, allPackets.Count - 100 * page).ToArray();
             }
         }
-
     }
 }

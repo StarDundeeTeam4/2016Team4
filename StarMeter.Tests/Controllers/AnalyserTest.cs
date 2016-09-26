@@ -44,7 +44,7 @@ namespace StarMeter.Tests.Controllers
             DateReceived = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
             IsError = true,
-            Address = ExampleAddress,
+            Address = ExampleAddress
         };
 
         private static readonly Packet Packet2 = new Packet
@@ -52,7 +52,7 @@ namespace StarMeter.Tests.Controllers
             PacketId = Guid.NewGuid(),
             DateReceived = DateTime.ParseExact("08-09-2016 15:12:52.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
-            Address = ExampleAddress,
+            Address = ExampleAddress
         };
 
         private static readonly Packet Packet3 = new Packet
@@ -60,7 +60,7 @@ namespace StarMeter.Tests.Controllers
             PacketId = Guid.NewGuid(),
             DateReceived = DateTime.ParseExact("08-09-2016 15:12:54.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
-            Address = ExampleAddress,
+            Address = ExampleAddress
         };
 
         private readonly Dictionary<Guid,Packet> _packetDict = new Dictionary<Guid, Packet>
@@ -75,7 +75,6 @@ namespace StarMeter.Tests.Controllers
         {
             const int expectedResult = 771;
             var actualResult = _analyser.CalculateTotalNoOfDataChars(_packetDict);
-
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -84,7 +83,6 @@ namespace StarMeter.Tests.Controllers
         {
             const int expectedResult = 3;
             var actualResult = _analyser.CalculateTotalNoOfPackets(_packetDict);
-
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -93,7 +91,6 @@ namespace StarMeter.Tests.Controllers
         {
             const int expectedResult = 1;
             var actualResult = _analyser.CalculateTotalNoOfErrorPackets(_packetDict);
-
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -102,17 +99,14 @@ namespace StarMeter.Tests.Controllers
         {
             const double expectedResult = 0.33;
             var actualResult = _analyser.CalculateErrorRate(_packetDict);
-
             Assert.AreEqual(expectedResult, Math.Round(actualResult, 2));
         }
-
 
         [TestMethod]
         public void CalculatePacketRateTest()
         {
             const double expectedResult = 0.75;
             var actualResult = _analyser.CalculatePacketRatePerSecond(_packetDict);
-
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -121,7 +115,6 @@ namespace StarMeter.Tests.Controllers
         {
             const double expectedResult = 192.75;
             var actualResult = _analyser.CalculateDataRateBytePerSecond(_packetDict);
-
             Assert.AreEqual(expectedResult, actualResult);
         }
 

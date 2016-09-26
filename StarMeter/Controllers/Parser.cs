@@ -10,7 +10,7 @@ namespace StarMeter.Controllers
     public class Parser
     {
         public Dictionary<Guid, Packet> PacketDict = new Dictionary<Guid, Packet>();
-        public Guid? _prevPacket;
+        public Guid? PrevPacket;
 
         /// <summary>
         /// Send a file specified by filePath to be parsed
@@ -19,12 +19,12 @@ namespace StarMeter.Controllers
         /// <returns>A Dictionary of Packets paired with their IDs of the file's contents</returns>
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
-            _prevPacket = null;
-            var r = new StreamReaderWrapper(filePath);
+            PrevPacket = null;
+            var streamReader = new StreamReaderWrapper(filePath);
             PacketDict.Clear();
-            PacketDict = ParsePackets(r);
-            r.Close();
-            _prevPacket = null;
+            PacketDict = ParsePackets(streamReader);
+            streamReader.Close();
+            PrevPacket = null;
             return PacketDict;
         }
 
@@ -38,32 +38,34 @@ namespace StarMeter.Controllers
             string line;
             r.ReadLine();
 
-            string strPortNumber = r.ReadLine();
-            int portNumber = int.Parse(strPortNumber);
+            var strPortNumber = r.ReadLine();
+            var portNumber = int.Parse(strPortNumber);
 
             r.ReadLine();
             while ((line = r.ReadLine()) != null && r.Peek() > -1)
             {
-                Guid packetId = Guid.NewGuid();
-                Packet packet = new Packet {PortNumber = portNumber, PacketId = packetId};
-
+                var packetId = Guid.NewGuid();
+                var packet = new Packet
+                {
+                    PortNumber = portNumber,
+                    PacketId = packetId
+                };
                 DateTime tempDate;
+
                 if (PacketHandler.ParseDateTime(line, out tempDate))
                 {
                     packet.DateReceived = tempDate;
                 }
 
-                string packetType = r.ReadLine();
+                var packetType = r.ReadLine();
 
                 if (PacketHandler.IsPType(packetType))
                 {
                     packet = SetPrevPacket(packet);
-
                     //read cargo line and convert to byte array
-                    string[] packetAsStrings = r.ReadLine().Split(' ');
+                    var packetAsStrings = r.ReadLine().Split(' ');
                     packet.FullPacket =
                         packetAsStrings.Select(item => byte.Parse(item, NumberStyles.HexNumber)).ToArray();
-
                     packet = PacketHandler.SetPacketInformation(packet);
 
                     if (packet.ProtocolId == 1)
@@ -71,7 +73,7 @@ namespace StarMeter.Controllers
                         packet = RmapPacketHandler.CreateRmapPacket(packet);
                     }
 
-                    string endingState = r.ReadLine();
+                    var endingState = r.ReadLine();
                     packet.IsError = string.CompareOrdinal(endingState, "EOP") != 0;
                 }
                 else if (packetType == null)
@@ -80,11 +82,9 @@ namespace StarMeter.Controllers
                 }
                 else
                 {
-                    packet.PrevPacket = _prevPacket;
+                    packet.PrevPacket = PrevPacket;
+                    var error = r.ReadLine();
 
-                    packet.IsError = true;
-
-                    string error = r.ReadLine();
                     if (error == "Disconnect")
                     {
                         packet.ErrorType = ErrorType.Disconnect;
@@ -92,7 +92,7 @@ namespace StarMeter.Controllers
 
                     if (PacketDict.Count >= 2)
                     {
-                        ErrorDetector errorDetector = new ErrorDetector();
+                        var errorDetector = new ErrorDetector();
                         var previousPacket = GetPrevPacket(packet);
                         var previousPreviousPacket = GetPrevPacket(previousPacket);
                         previousPacket.ErrorType = errorDetector.GetErrorType(previousPreviousPacket, previousPacket);
@@ -105,7 +105,6 @@ namespace StarMeter.Controllers
                 PacketDict.Add(packetId, packet);
                 r.ReadLine();
             }
-            //_prevPacket = null;
             return PacketDict;
         }
 
@@ -117,15 +116,15 @@ namespace StarMeter.Controllers
         public Packet SetPrevPacket(Packet packet)
         {
             //set previous packet's next packet as this packet
-            if (_prevPacket != null)
+            if (PrevPacket != null)
             {
-                Guid prev = _prevPacket.GetValueOrDefault(); //converting from nullable to non-nullable
+                var prev = PrevPacket.GetValueOrDefault(); //converting from nullable to non-nullable
                 PacketDict[prev].NextPacket = packet.PacketId;
             }
             //set current packet's previous packet
-            packet.PrevPacket = _prevPacket;
+            packet.PrevPacket = PrevPacket;
             //store this id as the previous packet
-            _prevPacket = packet.PacketId;
+            PrevPacket = packet.PacketId;
             return packet;
         }
 
@@ -136,7 +135,7 @@ namespace StarMeter.Controllers
         /// <returns>The previous packet</returns>
         public Packet GetPrevPacket(Packet packet)
         {
-            Guid prevPacketId = (Guid)packet.PrevPacket;
+            var prevPacketId = (Guid)packet.PrevPacket;
             Packet previousPacket;
             PacketDict.TryGetValue(prevPacketId, out previousPacket);
             return previousPacket;
