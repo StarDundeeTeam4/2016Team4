@@ -50,6 +50,7 @@ namespace StarMeter.Controllers
             rmapPacket.ProtocolId   = packet.ProtocolId;
             rmapPacket.SequenceNum  = packet.SequenceNum;
             rmapPacket.Crc          = packet.Crc;
+            rmapPacket.Address      = packet.Address;
 
             rmapPacket.CommandByte       = rmapCommandByte;
             rmapPacket.DestinationKey    = destinationKey;
