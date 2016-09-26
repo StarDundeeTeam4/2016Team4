@@ -7,8 +7,8 @@ namespace StarMeter.Controllers
 {
     public class Controller
     {
-        public readonly List<string> filePaths = new List<string>();
-        public readonly Dictionary<Guid, Packet> packets = new Dictionary<Guid,Packet>();
+        public readonly List<string> FilePaths = new List<string>();
+        public readonly Dictionary<Guid, Packet> Packets = new Dictionary<Guid,Packet>();
 
         /// <summary>
         /// Try and find the packet from the provided Guid, null if not found
@@ -19,7 +19,7 @@ namespace StarMeter.Controllers
         {
             try
             {
-                return packets[guid];
+                return Packets[guid];
             }
             catch
             {
@@ -34,17 +34,16 @@ namespace StarMeter.Controllers
         /// <returns>The new list of filenames</returns>
         public List<string> AddFileNames(string[] newFileNames)
         {
-            List<string> filesAdded = new List<string>();       
+            var filesAdded = new List<string>();       
 
-            foreach (string fileName in newFileNames)
+            foreach (var fileName in newFileNames)
             {
-                if (!filePaths.Contains(fileName))
+                if (!FilePaths.Contains(fileName))
                 {
-                    filePaths.Add(fileName);
+                    FilePaths.Add(fileName);
                     filesAdded.Add(fileName.Split('\\').Last());
                 }
             }
-
             return filesAdded;
         }
 
@@ -55,7 +54,7 @@ namespace StarMeter.Controllers
         /// <returns>An array of the filenames</returns>
         public string[] GetFileNames()
         {
-            return filePaths.Select(filePath => filePath.Split('\\').Last()).ToArray();
+            return FilePaths.Select(filePath => filePath.Split('\\').Last()).ToArray();
         }
 
         /// <summary>
@@ -65,10 +64,10 @@ namespace StarMeter.Controllers
         /// <returns>The index of the removed file in the list</returns>
         public int RemoveFile(string fileName)
         {
-            int index = filePaths.FindIndex(x => x.EndsWith(fileName));
+            var index = FilePaths.FindIndex(x => x.EndsWith(fileName));
             if (index >= 0)
             {
-                filePaths.RemoveAt(index);
+                FilePaths.RemoveAt(index);
             }
             return index;
         }
@@ -79,17 +78,17 @@ namespace StarMeter.Controllers
         /// <returns>An array of all added packets</returns>
         public Packet[] ParsePackets() 
         {
-            packets.Clear();
-            Parser parser = new Parser();
-            foreach (var file in filePaths) 
+            Packets.Clear();
+            var parser = new Parser();
+            foreach (var file in FilePaths) 
             {
                 var packetDict = (parser.ParseFile(file));
-                foreach (var p in packetDict)
+                foreach (var packet in packetDict)
                 {
-                    packets.Add(p.Key, p.Value);
+                    Packets.Add(packet.Key, packet.Value);
                 }
             }
-            return packets.Values.ToArray();
+            return Packets.Values.ToArray();
         }
     }
 }

@@ -1014,7 +1014,7 @@ namespace StarMeter.View
             SelectedFiles2.Children.Clear();
 
             // for each file selected, create a label and add it to the list
-            foreach (var s in _controller.filePaths)
+            foreach (var s in _controller.FilePaths)
             {
                 string actualName2 = (s.Split('\\').Last());
 
@@ -1039,10 +1039,10 @@ namespace StarMeter.View
         /// </summary>
         void CalculateStats() 
         {
-            lblNumPackets.Content = "Total Data Characters: " + _analyser.CalculateTotalNoOfDataChars(_controller.packets);
-            lblPacketsPerSec.Content = "Packets per Second: " + Math.Round(_analyser.CalculatePacketRatePerSecond(_controller.packets), 5);
+            lblNumPackets.Content = "Total Data Characters: " + _analyser.CalculateTotalNoOfDataChars(_controller.Packets);
+            lblPacketsPerSec.Content = "Packets per Second: " + Math.Round(_analyser.CalculatePacketRatePerSecond(_controller.Packets), 5);
 
-            ErrorHeader.Content = "Errors (" + _analyser.CalculateTotalNoOfErrorPackets(_controller.packets) + " total):";
+            ErrorHeader.Content = "Errors (" + _analyser.CalculateTotalNoOfErrorPackets(_controller.Packets) + " total):";
         }
 
         /// <summary>
@@ -1053,7 +1053,7 @@ namespace StarMeter.View
         private void cmdBeginAnalysis_Click(object sender, RoutedEventArgs e)
         {
             // check that files exist
-            if (_controller.filePaths.Count < 1)
+            if (_controller.FilePaths.Count < 1)
             {
                 MessageBox.Show("No Files Selected");
             }
@@ -1073,7 +1073,7 @@ namespace StarMeter.View
                 // display file list
                 CreateFilesDisplayedList();
                 
-                SortedPackets = (from pair in _controller.packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
+                SortedPackets = (from pair in _controller.Packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
 
                 // create the pie chart
                 CreateChart();
@@ -1132,7 +1132,7 @@ namespace StarMeter.View
             ErrorListPanel.Children.Clear();
 
             // loop through all pckets which are flagged as errors
-            Packet[] packs = (_controller.packets.Values.Where(packet => packet.IsError)).ToArray();
+            Packet[] packs = (_controller.Packets.Values.Where(packet => packet.IsError)).ToArray();
 
             foreach (var p in packs)
             {
@@ -1416,7 +1416,7 @@ namespace StarMeter.View
         /// </summary>
         private void CreateChart()
         {
-            var errRate = _analyser.CalculateErrorRateFromArray(_controller.packets.Values.ToArray());
+            var errRate = _analyser.CalculateErrorRateFromArray(_controller.Packets.Values.ToArray());
 
             SetupPieChart(errRate);
         }
@@ -1444,7 +1444,7 @@ namespace StarMeter.View
             }
             catch (Exception) { }
 
-            CreateDataRateGraph(_controller.packets.Values.ToArray());
+            CreateDataRateGraph(_controller.Packets.Values.ToArray());
 
             // reset the colour of the Apply button
             cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF4A4D54");
@@ -1605,7 +1605,7 @@ namespace StarMeter.View
         private void ClearSelectedFiles(object sender, RoutedEventArgs e)
         {
             SelectedFiles.Children.Clear();
-            _controller.filePaths.Clear();
+            _controller.FilePaths.Clear();
             _fileGrids.Clear();
         }     
 
@@ -1616,7 +1616,7 @@ namespace StarMeter.View
         {
             
 
-            _controller.packets.Clear();         
+            _controller.Packets.Clear();         
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
@@ -1766,7 +1766,7 @@ namespace StarMeter.View
             // if the dates are valid, apply the filters and display the packets
             if (apply)
             {
-                List<Packet> packets = ApplyFilters(_controller.packets.Values.ToArray(), startTime, endTime);
+                List<Packet> packets = ApplyFilters(_controller.Packets.Values.ToArray(), startTime, endTime);
 
                 SortedPackets = (from pair in packets orderby pair.DateReceived ascending select pair).ToList();
 

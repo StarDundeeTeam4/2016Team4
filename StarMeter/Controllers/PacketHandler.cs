@@ -70,11 +70,9 @@ namespace StarMeter.Controllers
         public static byte[] GetCargoArray(Packet packet)
         {
             var logicalIndex = GetLogicalAddressIndex(packet);
-
             try
             {
                 var start = logicalIndex + 1; //increment anyway
-
                 if (packet.ProtocolId == 1)
                 {
                     var type =
@@ -93,9 +91,8 @@ namespace StarMeter.Controllers
                     start = 0;
                     length = packet.FullPacket.Length; //overflow handling
                 }
-                byte[] cargo = new byte[length];
+                var cargo = new byte[length];
                 Array.Copy(packet.FullPacket, start, cargo, 0, length);
-
                 return cargo;
             }
             catch (IndexOutOfRangeException)
@@ -159,11 +156,8 @@ namespace StarMeter.Controllers
                 {
                     return RmapPacketHandler.GetRmapSequenceNumber(packet);
                 }
-                else
-                {
-                    int logicalIndex = GetLogicalAddressIndex(packet);
-                    return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
-                }
+                var logicalIndex = GetLogicalAddressIndex(packet);
+                return Convert.ToInt32(packet.FullPacket[logicalIndex + 2]);
             }
             catch (Exception)
             {

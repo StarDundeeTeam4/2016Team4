@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StarMeter.Controllers
 {
-    public static class CRC
+    public static class Crc
     {
         /** The lookup table used to calculate the RMAP CRC for a buffer. */
         private static readonly ushort[] RmapCrcTable = {  0x00, 0x91, 0xe3, 0x72, 0x07, 0x96, 0xe4, 0x75,
@@ -38,7 +38,7 @@ namespace StarMeter.Controllers
                                                             0xa8, 0x39, 0x4b, 0xda, 0xaf, 0x3e, 0x4c, 0xdd,
                                                             0xa6, 0x37, 0x45, 0xd4, 0xa1, 0x30, 0x42, 0xd3,
                                                             0xb4, 0x25, 0x57, 0xc6, 0xb3, 0x22, 0x50, 0xc1,
-                                                            0xba, 0x2b, 0x59, 0xc8, 0xbd, 0x2c, 0x5e, 0xcf,  };
+                                                            0xba, 0x2b, 0x59, 0xc8, 0xbd, 0x2c, 0x5e, 0xcf  };
 
         /// <summary>
         /// Method to generate a CRC byte for a given packet.
@@ -52,11 +52,11 @@ namespace StarMeter.Controllers
         {
             ushort crc = 0;
 
-            for (int i = 0; i < bytes.Length; i++)
+            for (var i = 0; i < bytes.Length; i++)
             {
                 /* The value of the byte from the buffer is XORed with the current CRC value. */
                 /* The result is then used to lookup the new CRC value from the lookup table */
-                byte index = (byte)(crc ^ bytes[i]);
+                var index = (byte)(crc ^ bytes[i]);
                 crc = (ushort) ((crc >> 8) ^ RmapCrcTable[index]);
             }
             return crc;
@@ -69,7 +69,7 @@ namespace StarMeter.Controllers
         /// <returns>A string in the format 0xff, where ff represents the hex value of the input byte</returns>
         public static string ByteToHexString(ushort by)
         {
-            StringBuilder hex = new StringBuilder(2);
+            var hex = new StringBuilder(2);
             hex.AppendFormat("0x{0:x2}", by);
             return hex.ToString();
         }
@@ -83,10 +83,9 @@ namespace StarMeter.Controllers
         {
             try
             {
-                byte[] packetBody = packet.Take(packet.Length - 1).ToArray();
+                var packetBody = packet.Take(packet.Length - 1).ToArray();
                 ushort crcToCheck = packet.Last();
-                ushort calculatedCrc = RMAP_CalculateCRC(packetBody);
-
+                var calculatedCrc = RMAP_CalculateCRC(packetBody);
                 return Equals(crcToCheck, calculatedCrc);
             }
             catch (InvalidOperationException)
