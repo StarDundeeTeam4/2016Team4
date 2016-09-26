@@ -50,6 +50,13 @@ namespace StarMeter.View.Helpers
             return packet.ProtocolId.ToString().Equals(protocolToSearch);
         }
 
+
+        /// <summary>
+        /// Check if a packet matches a hex protocol search string
+        /// </summary>
+        /// <param name="packet">The packet in question</param>
+        /// <param name="protocolToSearch">The search text</param>
+        /// <returns></returns>
         public static bool HexProtocolSearch(Packet packet, string protocolToSearch)
         {
             var hexPacketProtocol = packet.ProtocolId.ToString();
