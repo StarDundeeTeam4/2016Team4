@@ -358,6 +358,8 @@
 
             <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="16"></Button>
             <Button Margin="10,5,10,5" BorderThickness="0" Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click" FontFamily="Gill Sans MT" FontSize="16" Background="#FF37A300"/>
+            <Button Margin="10,5,10,5" BorderThickness="0" Name ="cmdBeginAnalysis1" Grid.Row="4" HorizontalAlignment="Stretch" Content="Remove All Files" Foreground="White" Click="ClearSelectedFiles" FontFamily="Gill Sans MT" FontSize="16" Background="Red"/>
+
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
