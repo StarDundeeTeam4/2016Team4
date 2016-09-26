@@ -80,5 +80,10 @@ namespace StarMeter.View
 
         }
 
+        private void CancelClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
     }
 }

@@ -78,6 +78,7 @@ namespace StarMeter.View
 
         // toggling the error list open/close
         bool _isErrorListOpen = true;
+        bool _isFilesDisplayedOpen = true;
 
         // packets in an ordered list
         public List<Packet> SortedPackets = new List<Packet>();
@@ -362,14 +363,14 @@ namespace StarMeter.View
 
                 var b = ComponentFetcher.GetPacketButton(p, tempTimespans[index].Value.ToString());
 
-                b.Click += OpenPopup;
-
+                b.MouseLeftButtonDown += OpenPopup;
 
                 sp.Children.Add(b);
                 _previous[p.PortNumber - 1] = tempTimespans[index].Value;
             }
         }
-        
+
+                
         /// <summary>
         /// Remove all packets from the screen
         /// </summary>
@@ -1405,6 +1406,9 @@ namespace StarMeter.View
             new KeyValuePair<string, double>[]{
             new KeyValuePair<string, double>("Error", errRate),
             new KeyValuePair<string, double>("Success", 1-errRate) };
+
+            ErrorPerc.Content = "Error Percentage: " + Math.Round(errRate * 100, 4) + "%";
+
         }
 
         /// <summary>
@@ -1617,9 +1621,9 @@ namespace StarMeter.View
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
             LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
+            DataVisualisationPopup.Height = new GridLength(1, GridUnitType.Star);
 
             SortedPackets.Clear();
-
 
             NextPageBtn.Visibility = Visibility.Hidden;
             PrevPageBtn.Visibility = Visibility.Hidden;
@@ -1684,7 +1688,15 @@ namespace StarMeter.View
                 bool validProtocol = false;
                 if (protoSearch.Length > 1 && protoSearch[0].Length > 0)
                 {
-                    validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch[0].Trim());
+                    if (AddressTypeDropdown.SelectedIndex == 0)
+                    {
+                        // search by hex
+                    }
+                    else 
+                    {
+                        // search by decimal
+                        validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch[0].Trim());
+                    }
                 }
                 else
                 {
@@ -1875,6 +1887,32 @@ namespace StarMeter.View
                 ErrorAreaCollapse.Height = new GridLength(.3, GridUnitType.Star);
                 ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/plus.png")));
                 cmdCollapseErrorList.Background = image;
+            }
+        }
+
+        /// <summary>
+        /// Collapse/expand the errorlist
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cmdCollapseFilesDisplayed_Click(object sender, RoutedEventArgs e)
+        {
+            // toggle the bool and set the heights and images accordingly
+            _isFilesDisplayedOpen = !_isFilesDisplayedOpen;
+
+            if (_isFilesDisplayedOpen)
+            {
+                FileDisplayCollapse.Height = new GridLength(4, GridUnitType.Star);
+                FileAreaCollapsible.Height = new GridLength(2.5, GridUnitType.Star);
+                ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/minus.png")));
+                cmdCollapseFilesDisplayed.Background = image;
+            }
+            else
+            {
+                FileDisplayCollapse.Height = new GridLength(0, GridUnitType.Star);
+                FileAreaCollapsible.Height = new GridLength(.36, GridUnitType.Star);
+                ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/plus.png")));
+                cmdCollapseFilesDisplayed.Background = image;
             }
         }
 

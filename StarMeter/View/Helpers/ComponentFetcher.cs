@@ -110,7 +110,6 @@ namespace StarMeter.View.Helpers
 
             b.Name = "btn" + nameOutput;
 
-
             return b;
             #endregion
         }
