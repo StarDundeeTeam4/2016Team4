@@ -1648,7 +1648,7 @@ namespace StarMeter.View
         /// <param name="start">The start time to look from</param>
         /// <param name="end">The end time to look up to</param>
         /// <returns></returns>
-        List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
+        private List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
         {
             List<Packet> packetsFound = new List<Packet>();
 
@@ -1709,9 +1709,14 @@ namespace StarMeter.View
                 var addrSearch = addressSearch.Text.Trim();
 
                 bool validAddress = false;
+
+                var typeOfSearch = AddressTypeDropdown.Text;
+
                 if (addrSearch.Length > 0)
                 {
-                    validAddress = LogicHelper.DecimalAddressSearch(p, addrSearch);
+                    validAddress = typeOfSearch == "0d" 
+                        ? LogicHelper.DecimalAddressSearch(p, addrSearch) 
+                        : LogicHelper.HexAddressSearch(p, addrSearch);
                 }
                 else
                 {
