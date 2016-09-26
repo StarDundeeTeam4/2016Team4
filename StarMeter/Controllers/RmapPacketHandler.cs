@@ -20,7 +20,6 @@ namespace StarMeter.Controllers
             byte destinationKey = 0x00;
             string rmapPacketType = "";
             byte[] sourceAddress = null;
-            int sequenceNumber = 0;
             int addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
 
             try
@@ -35,7 +34,6 @@ namespace StarMeter.Controllers
 
                 rmapPacketType = GetRmapType(rmapCommandByte);
                 sourceAddress = GetSourceAddressRmap(packet);
-                sequenceNumber = GetTransactionIdentifier(packet, addressIndex);
             }
             catch (IndexOutOfRangeException)
             {
@@ -52,7 +50,6 @@ namespace StarMeter.Controllers
             rmapPacket.ProtocolId   = packet.ProtocolId;
             rmapPacket.SequenceNum  = packet.SequenceNum;
             rmapPacket.Crc          = packet.Crc;
-
 
             rmapPacket.CommandByte       = rmapCommandByte;
             rmapPacket.DestinationKey    = destinationKey;
