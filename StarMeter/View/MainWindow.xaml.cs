@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using StarMeter.View.Helpers;
 using System.Timers;
+using Microsoft.VisualBasic;
+using System.IO;
+using System.Reflection;
 
 namespace StarMeter.View
 {
@@ -26,6 +29,7 @@ namespace StarMeter.View
         private readonly Analyser _analyser = new Analyser();
 
         private readonly StackPanel[] _portStacks = new StackPanel[8];
+        public static List<KeyValuePair<int, string>> Protocols = new List<KeyValuePair<int,string>>();
 
         public static int PageIndex;
 
@@ -106,6 +110,57 @@ namespace StarMeter.View
             _loadingTimer = new System.Timers.Timer();
             _loadingTimer.Elapsed += _LoadingTimer_Elapsed;
             _loadingTimer.Interval = 100;
+
+            LoadProtocolList();
+
+        }
+
+        void LoadProtocolList() 
+        {
+            try
+            {
+                //TODO: change to comma thing
+
+                StreamReader sr = new StreamReader("../../Resources/ProtocolList.txt");
+
+                string line = sr.ReadLine();
+
+                while (line != null)
+                {
+                    string[] split = line.Split('(');
+                    int key = int.Parse(split[0]);
+                    string name = split[1];
+
+                    KeyValuePair<int, string> kvp = new KeyValuePair<int, string>(key, name);
+                    Protocols.Add(kvp);
+
+                    line = sr.ReadLine();
+                }
+
+                sr.Close();
+                AddProtocolObjects();
+
+                
+            }
+            catch (Exception e) { }
+        }
+
+        void AddProtocolObjects() 
+        {
+            foreach (var p in Protocols)
+            {
+                // add to list
+                ComboBoxItem cb = new ComboBoxItem();
+                cb.Content = p.Key + " (" + p.Value;
+                cb.FontFamily = new FontFamily("Gill Sans MT");
+                cb.FontSize = 14;
+                cb.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
+                cb.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
+                cb.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                cb.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+
+                ProtocolSelected.Items.Add(cb);
+            }
         }
 
         /// <summary>
@@ -1059,6 +1114,11 @@ namespace StarMeter.View
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
 
+            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
+            DataVisButton2.Background = image;
+
+            _isRightArrow = false;
+
             StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
             EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
         }
@@ -1251,6 +1311,8 @@ namespace StarMeter.View
                 sp.Children.Add(b);
             }
 
+            PacketScroller.ScrollToTop();
+
         }
 
         /// <summary>
@@ -1365,7 +1427,7 @@ namespace StarMeter.View
             ChkErrorsOnly.IsChecked = false;
 
             addressSearch.Text = "";
-            protocolSearch.Text = "";
+            ProtocolSelected.SelectedValue = 0;
 
             _count = 2;
             _isUpArrow = false;
@@ -1616,12 +1678,13 @@ namespace StarMeter.View
 
                 #region Protocol checks
 
-                var protoSearch = protocolSearch.Text.Trim();
+                //var protoSearch = protocolSearch.Text.Trim();
+                var protoSearch = ProtocolSelected.Text.Split('(');
 
                 bool validProtocol = false;
-                if (protoSearch.Length > 0)
+                if (protoSearch.Length > 1 && protoSearch[0].Length > 0)
                 {
-                    validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch);
+                    validProtocol = LogicHelper.MatchesProtocolSearch(p, protoSearch[0].Trim());
                 }
                 else
                 {
@@ -2048,6 +2111,31 @@ namespace StarMeter.View
             TimeLabels.Width = new GridLength(140, GridUnitType.Pixel);
             TimeHeader.Width = new GridLength(140, GridUnitType.Pixel);
             HeightScroller.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        private void ProtocolSelected_SelectionChanged(object sender, EventArgs e)
+        {
+            if (ProtocolSelected.Text == "ADD NEW PROTOCOL") 
+            {
+                // add protocol to list
+                ProtocolCreator pc = new ProtocolCreator();
+                pc.ShowDialog();
+
+                KeyValuePair<int, string> kvp = ProtocolCreator.CreatedObject;
+
+                // add to list
+                ComboBoxItem cb = new ComboBoxItem();
+                cb.Content = kvp.Key + " (" + kvp.Value + ")";
+                cb.FontFamily = new FontFamily("Gill Sans MT");
+                cb.FontSize = 14;
+                cb.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
+                cb.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
+                cb.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                cb.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+
+                ProtocolSelected.Items.Add(cb);
+
+            }
         }
     }
 }
