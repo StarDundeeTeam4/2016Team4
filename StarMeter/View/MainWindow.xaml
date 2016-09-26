@@ -54,6 +54,8 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            
+            
             <Canvas Panel.ZIndex="9" Name="HelpPanel" Visibility="Hidden" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Right" Height="200" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 10, 50" Background="#FF000000">
 
                 <Grid Height="200" Width="168">
@@ -112,7 +114,6 @@
                 <ScrollViewer Grid.Row="1"  Grid.Column="4" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
 
                     <StackPanel Name="SelectedFiles2">
-
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
@@ -210,13 +211,13 @@
 
         <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="3" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14" Visibility="Hidden">Showing 0 to 0 of 0 results</Label>
 
-        <Button Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton" Visibility="Hidden">
+        <Button Panel.ZIndex="10" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton" BorderThickness="0" Visibility="Hidden">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
         </Button>
 
-        <Button Grid.Row="1" Grid.Column="4"  Height="50" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch">
+        <Button Grid.Row="1" Grid.Column="4"  Height="50" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch" BorderThickness="0" HorizontalAlignment="Stretch">
             <Button.Background>
                 <ImageBrush ImageSource="pack://application:,,,/Resources/right-arrow.png" Stretch="UniformToFill"/>
             </Button.Background>
@@ -229,14 +230,41 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" IsHitTestVisible="false">
+            <Grid Grid.Row="0" Grid.Column="3" >
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="1" Visibility="Hidden" Name="DataRadioButtons">
 
-                <!-- Chart for displaying the data rates, assigned to the bottom row -->
-                <DVC:Chart Visibility="Visible" Background="Transparent" VerticalAlignment="Top" Name="RatesLineChart" Height="200" Grid.Row="0" Padding="0,0,0,0" Margin="10,0,-0.4,-176" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14">
-                    <DVC:LineSeries  DependentValuePath="Value" 
-                    IndependentValuePath="Key" ItemsSource="{Binding}"            
-                    IsSelectionEnabled="True"/>
-                </DVC:Chart>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+
+                        <RadioButton Tag="0" Checked="ChangeLineGraphData" Panel.ZIndex="10" GroupName="DataToDisplay" Foreground="White" FontFamily="Gill Sans MT" Grid.Row="1" VerticalContentAlignment="Center" IsChecked="True">Packet Rate</RadioButton>
+                        <RadioButton Tag="1" Checked="ChangeLineGraphData" Panel.ZIndex="10" GroupName="DataToDisplay" Foreground="White" FontFamily="Gill Sans MT" Grid.Row="2" VerticalContentAlignment="Center">Error Rate</RadioButton>
+                        <RadioButton Tag="2" Checked="ChangeLineGraphData" Panel.ZIndex="10" GroupName="DataToDisplay" Foreground="White" FontFamily="Gill Sans MT" Grid.Row="3" VerticalContentAlignment="Center">Data Rate</RadioButton>
+
+                    </Grid>
+                    
+                    <!-- Chart for displaying the data rates, assigned to the bottom row -->
+                    <DVC:Chart Grid.Column="0" Visibility="Visible" Background="Transparent" VerticalAlignment="Stretch"
+                        Name="RatesLineChart" Grid.Row="0" Padding="0,0,0,0" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14">
+                        <DVC:LineSeries  DependentValuePath="Value" 
+                        IndependentValuePath="Key" ItemsSource="{Binding}" 
+                        IsSelectionEnabled="True"/>
+                    </DVC:Chart>
+                    
+                    
+                    
+                </Grid>
+                
 
             </Grid>
 
@@ -296,6 +324,7 @@
                         <ColumnDefinition Width="50000*" Name="NoPacketsArea"/>
                     </Grid.ColumnDefinitions>
 
+                                        
                     <Label Grid.Column="10" Foreground="White" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="16">No Packets to Display</Label>
                     
                     <!-- Container for the time elements -->
@@ -320,31 +349,10 @@
                     </StackPanel>
 
                 </Grid>
-
             </ScrollViewer>
-
         </Grid>
 
-        <Canvas>
-            <Canvas.Background>
-                <ImageBrush/>
-            </Canvas.Background>
-
-
-            <!-- TAKEN FROM:
-                http://stackoverflow.com/questions/1838163/click-and-drag-selection-box-in-wpf 
-            -->
-
-            <!-- This canvas is overlaid over the previous canvas and is used to 
-                place the rectangle that implements the drag selection box. -->
-            <Rectangle
-                x:Name="selectionBox"
-                Visibility="Collapsed"
-                Stroke="Red"
-                StrokeThickness="3"
-            />
-        </Canvas>
-
+        
         <!-- Logo -->
         <Grid>
             <Grid.ColumnDefinitions>
@@ -369,17 +377,19 @@
                 <RowDefinition Height="3*" />
                 <RowDefinition Height="15*" />
                 <RowDefinition Height="3*" />
-                <RowDefinition Height="3*" />
+                <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
 
 
             <ScrollViewer Grid.Row="2" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
-                <StackPanel Name="SelectedFiles">
-
-                </StackPanel>
+                
+                
+                <StackPanel Name="SelectedFiles"/>
             </ScrollViewer>
 
             <!-- TEMP to display the size of the rectangle -->
+
+
 
             <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="16"></Button>
             <Button Margin="10,5,10,5" BorderThickness="0" Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click" FontFamily="Gill Sans MT" FontSize="16" Background="#FF37A300"/>
@@ -403,7 +413,7 @@
                 <ColumnDefinition Width="1*" Name="LeftPanelButton"/>
             </Grid.ColumnDefinitions>
 
-            <Button Height="50" Content=""  Click="ShowDataVisPopup3" Name="DataVisButton3" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="Collapsed">
+            <Button Height="50" Content="" BorderThickness="0" Click="ShowDataVisPopup3" Name="DataVisButton3" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="Collapsed">
                 <Button.Background>
                     <ImageBrush ImageSource="pack://application:,,,/Resources/left-arrow.png" Stretch="UniformToFill"/>
                 </Button.Background>

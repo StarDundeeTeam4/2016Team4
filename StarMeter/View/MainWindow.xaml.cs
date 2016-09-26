@@ -17,6 +17,7 @@ using System.Timers;
 using Microsoft.VisualBasic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 namespace StarMeter.View
 {
@@ -74,7 +75,7 @@ namespace StarMeter.View
         // error list objects
         Button _lblFoundObj;
         Brush _colourBeforeHighlight;
-        Timer _showHighlightedPacket;
+        System.Timers.Timer _showHighlightedPacket;
 
         // toggling the error list open/close
         bool _isErrorListOpen = true;
@@ -85,7 +86,8 @@ namespace StarMeter.View
 
         Packet[] _tempStore;
 
-        
+        List<KeyValuePair<string, int>>[] _lineChartData; 
+
         /// <summary>
         /// Constructor for the class/Window
         /// </summary> 
@@ -404,50 +406,38 @@ namespace StarMeter.View
             RatesLineChart.Series.Clear();
             RatesLineChart.DataContext = null;
 
-            var values = _analyser.GetDataForLineChart(SortedPackets.ToArray());
+            _lineChartData = _analyser.GetDataForLineChart(SortedPackets.ToArray());
 
-            FormatLineChart(values);
+            FormatLineChart(0);
         }
 
         /// <summary>
         /// Format the output for the line chart
         /// </summary>
         /// <param name="values">The values to add to the chart</param>
-        void FormatLineChart(List<KeyValuePair<string, int>>[] values) 
+        void FormatLineChart(int index) 
         {
-            // if the errors only box is false - i.e. display all data...
-            if (!(bool)ChkErrorsOnly.IsChecked)
-            {
-                // add the successful packet data
-                var lineSeries1 = new LineSeries
-                {
-                    IsSelectionEnabled = true,
-                    Title = "Data Rate",
-                    Foreground = Brushes.White,
-                    DependentValuePath = "Value",
-                    IndependentValuePath = "Key",
-                    ItemsSource = values[0]
-                };
-                RatesLineChart.Series.Add(lineSeries1);
-            }
 
+            RatesLineChart.Series.Clear();
+            
             // add the error data
-            var lineSeriesError = new LineSeries
+            var lineSeries = new LineSeries
             {
                 Title = "Error Rate",
                 Foreground = Brushes.Black,
                 DependentValuePath = "Value",
                 IndependentValuePath = "Key",
-                ItemsSource = values[1]
+                ItemsSource = _lineChartData[index]
             };
-            RatesLineChart.Series.Add(lineSeriesError);
+            RatesLineChart.Series.Add(lineSeries);
 
-            RatesLineChart.DataContext = values;
+            RatesLineChart.DataContext =  _lineChartData[index];
 
             // format the legend
             Legend legend = ObjectFinder.FindChild<Legend>(RatesLineChart, "Legend");
             if (legend != null)
             {
+                legend.Visibility = Visibility.Hidden;
                 legend.Foreground = new SolidColorBrush(Colors.White);
                 legend.Background = new SolidColorBrush(Colors.Transparent);
                 legend.BorderBrush = new SolidColorBrush(Colors.Transparent);
@@ -456,23 +446,24 @@ namespace StarMeter.View
 
             // set the colours for the graph
             System.Windows.Controls.DataVisualization.ResourceDictionaryCollection lineSeriesPalette = new System.Windows.Controls.DataVisualization.ResourceDictionaryCollection();
-            Brush currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
-            Brush currentBrush2 = new SolidColorBrush(Color.FromRgb(200, 20, 20)); //Red
+            Brush currentBrush;
 
+
+            if (index == 1)
+            {
+                currentBrush = new SolidColorBrush(Color.FromRgb(200, 20, 20)); //Red
+            }
+            else 
+            {
+                currentBrush = new SolidColorBrush(Color.FromRgb(20, 200, 20)); //Green
+            }
+            
             System.Windows.ResourceDictionary pieDataPointStyles2 = new ResourceDictionary();
             Style stylePie2 = new Style(typeof(LineDataPoint));
-            stylePie2.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush2));
+            stylePie2.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush));
             pieDataPointStyles2.Add("DataPointStyle", stylePie2);
+            
 
-            // change the style of the errors
-            if (!(bool)ChkErrorsOnly.IsChecked)
-            {
-                System.Windows.ResourceDictionary pieDataPointStyles = new ResourceDictionary();
-                Style stylePie = new Style(typeof(LineDataPoint));
-                stylePie.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush));
-                pieDataPointStyles.Add("DataPointStyle", stylePie);
-                lineSeriesPalette.Add(pieDataPointStyles);
-            }
 
             // set the palette
             lineSeriesPalette.Add(pieDataPointStyles2);
@@ -676,6 +667,7 @@ namespace StarMeter.View
             {
                 DataVisButton.VerticalAlignment = VerticalAlignment.Top;
                 image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/down-arrow.png")));
+                DataRadioButtons.Visibility = Visibility.Visible;
             }
             else
             {
@@ -683,6 +675,7 @@ namespace StarMeter.View
                 {
                     Stretch = Stretch.UniformToFill
                 };
+                DataRadioButtons.Visibility = Visibility.Hidden;
             }
 
             // start the timer
@@ -1059,6 +1052,10 @@ namespace StarMeter.View
             }
             else
             {
+
+                LoadingIcon.Visibility = Visibility.Visible;
+                _loadingTimer.Start();
+
                 // if there are files...
 
                 // reset previous (before we begin time calculations)
@@ -1066,13 +1063,18 @@ namespace StarMeter.View
                 {
                     _previous[i] = new TimeSpan();
                 }
-                
-                // get the list of packets
-                var packets = _controller.ParsePackets().ToList();
 
+                System.Threading.Thread thr = new System.Threading.Thread(new ParameterizedThreadStart(DoLoading));
+                thr.SetApartmentState(ApartmentState.STA);
+                thr.IsBackground = true;
+                thr.Start();
+
+                thr.Join();
+
+                //DoLoading();
                 // display file list
                 CreateFilesDisplayedList();
-                
+
                 SortedPackets = (from pair in _controller.packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
 
                 // create the pie chart
@@ -1092,15 +1094,25 @@ namespace StarMeter.View
                 {
                     _previous[i] = new TimeSpan();
                 }
-                
             }
 
         }
 
+
+        bool done = true;
+
+        void DoLoading(object arg) 
+        {
+            // get the list of packets
+            var packets = _controller.ParsePackets().ToList();
+            done = true;
+        }
+
+
         /// <summary>
         /// Show the side panels (for graphs/filters etc)
         /// </summary>
-        void DisplaySidePanels() 
+        void DisplaySidePanels()
         {
             // hide/show the relevant panels and buttons
             FiltersPane.Width = new GridLength(3, GridUnitType.Star);
@@ -1120,8 +1132,12 @@ namespace StarMeter.View
 
             _isRightArrow = false;
 
-            StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-            EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+            try
+            {
+                StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -1613,15 +1629,23 @@ namespace StarMeter.View
         /// Reset all elements to go back to the file selection screen
         /// </summary>
         void ResetWindow()
-        {
-            
-
+        {          
             _controller.packets.Clear();         
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
             LeftSidePanel.Width = new GridLength(0, GridUnitType.Star);
             DataVisualisationPopup.Height = new GridLength(1, GridUnitType.Star);
+
+            _isUpArrow = true;
+            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")))
+            {
+                Stretch = Stretch.UniformToFill
+            };
+
+            DataVisButton.Background = image;
+
+            DataRadioButtons.Visibility = Visibility.Hidden;
 
             SortedPackets.Clear();
 
@@ -1956,7 +1980,7 @@ namespace StarMeter.View
                     var copy = _lblFoundObj.Background;
                     _colourBeforeHighlight = copy;
                     _lblFoundObj.Background = Brushes.LimeGreen;
-                    _showHighlightedPacket = new Timer();
+                    _showHighlightedPacket = new System.Timers.Timer();
                     _showHighlightedPacket.Interval = 1400;
                     _showHighlightedPacket.Elapsed += _showHighlightedPacket_Elapsed;
                     _showHighlightedPacket.Start();
@@ -2174,6 +2198,17 @@ namespace StarMeter.View
                 ProtocolSelected.Items.Add(cb);
 
             }
+        }
+
+        private void ChangeLineGraphData(object sender, EventArgs e)
+        {
+            try
+            {
+                var id = int.Parse(((RadioButton)sender).Tag.ToString());
+
+                FormatLineChart(id);
+            }
+            catch (Exception) { }
         }
     }
 }

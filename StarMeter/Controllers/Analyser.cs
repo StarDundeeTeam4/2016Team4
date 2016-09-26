@@ -85,15 +85,19 @@ namespace StarMeter.Controllers
         /// <returns>A double of the total packet rate in packets per second</returns>
         public double CalculatePacketRatePerSecond(Dictionary<Guid, Packet> packetDictionary)
         {
-            var sortedPackets = from pair in packetDictionary orderby pair.Value.DateReceived ascending select pair;
+            try
+            {
+                var sortedPackets = from pair in packetDictionary orderby pair.Value.DateReceived ascending select pair;
 
-            var timeTaken = sortedPackets.Last().Value.DateReceived - sortedPackets.First().Value.DateReceived;
-            var timeTakenInSeconds = TimeSpan.Parse(timeTaken.ToString()).TotalSeconds;
+                var timeTaken = sortedPackets.Last().Value.DateReceived - sortedPackets.First().Value.DateReceived;
+                var timeTakenInSeconds = TimeSpan.Parse(timeTaken.ToString()).TotalSeconds;
 
-            var totalPackets = CalculateTotalNoOfPackets(packetDictionary);
+                var totalPackets = CalculateTotalNoOfPackets(packetDictionary);
 
-            var packetsPerSecond = totalPackets / timeTakenInSeconds;
-            return packetsPerSecond;
+                var packetsPerSecond = totalPackets / timeTakenInSeconds;
+                return packetsPerSecond;
+            }
+            catch (Exception) { return 0; }
         }
 
         /// <summary>
@@ -133,6 +137,7 @@ namespace StarMeter.Controllers
         {
             var graphData = new List<KeyValuePair<string, int>>();
             var errorData = new List<KeyValuePair<string, int>>();
+            var dataRate = new List<KeyValuePair<string, int>>();
 
             if (packets.Length > 0)
             {
@@ -149,6 +154,7 @@ namespace StarMeter.Controllers
                 {
                     int count = 0;
                     int errorCount = 0;
+                    int charCount = 0;
 
                     TimeSpan lowerBound = startTime.Add(new TimeSpan(0, 0, 0, 0, (int)(graphInterval * (i))));
                     TimeSpan upperBound = startTime.Add(new TimeSpan(0, 0, 0, 0, (int)(graphInterval * (i + 1))));
@@ -158,6 +164,16 @@ namespace StarMeter.Controllers
                         if ((packet.DateReceived.TimeOfDay >= lowerBound) && (packet.DateReceived.TimeOfDay <= upperBound))
                         {
                             count++;
+
+                            var packetAddressLength = 0;
+                            if (packet.Address != null)
+                            {
+                                packetAddressLength = packet.Address.Length;
+                            }
+                            var packetCargoLength = packet.Cargo.Length;
+                            var packetDataChars = packetAddressLength + packetCargoLength;
+                            charCount += packetDataChars;
+
                             if (packet.IsError)
                             {
                                 errorCount++;
@@ -167,14 +183,17 @@ namespace StarMeter.Controllers
 
                     var kvp = new KeyValuePair<string, int>(lowerBound.ToString(), count);
                     var kvpError = new KeyValuePair<string, int>(lowerBound.ToString(), errorCount);
+                    var kvpData = new KeyValuePair<string, int>(lowerBound.ToString(), charCount);
                     graphData.Add(kvp);
                     errorData.Add(kvpError);
+                    dataRate.Add(kvpData);
                 }
             }
 
-            var toReturn = new List<KeyValuePair<string, int>>[2];
+            var toReturn = new List<KeyValuePair<string, int>>[3];
             toReturn[0] = graphData;
             toReturn[1] = errorData;
+            toReturn[2] = dataRate;
             return toReturn;
         }
     }
