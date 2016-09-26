@@ -72,21 +72,7 @@ namespace StarMeter.View.Helpers
         public static bool DecimalAddressSearch(Packet packet, string addressToSearch)
         {
             var address = packet.Address;
-            var finalAddressString = "";
-
-            if (address.Length > 1)
-            {
-                finalAddressString += "Physical Path: ";
-                for (var i = 0; i < address.Length - 1; i++)
-                {
-                    finalAddressString += Convert.ToInt32(address[i]) + "  ";
-                }
-            }
-            else
-            {
-                finalAddressString = Convert.ToInt32(address[0]).ToString();
-            }
-            
+            var finalAddressString = PacketLabelCreator.GetAddressLabel(address);
             return finalAddressString.Equals(addressToSearch);
         }
 
