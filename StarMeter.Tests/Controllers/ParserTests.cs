@@ -7,7 +7,6 @@ using StarMeter.Models;
 using Moq;
 using StarMeter.Interfaces;
 
-
 namespace StarMeter.Tests.Controllers
 {
     [TestClass]
@@ -57,7 +56,7 @@ namespace StarMeter.Tests.Controllers
 
             _parser.ParsePackets(readerMock.Object);
 
-            Guid id = _parser._prevPacket.GetValueOrDefault();
+            var id = _parser._prevPacket.GetValueOrDefault();
             Assert.IsTrue(_parser.PacketDict[id].IsError);
         }
 
@@ -118,7 +117,7 @@ namespace StarMeter.Tests.Controllers
 
             _parser.ParsePackets(readerMock.Object);
 
-            var expectedValue = new RmapPacket()
+            var expectedValue = new RmapPacket
             {
                 PacketId = Guid.NewGuid(),
                 PortNumber = 1,
@@ -155,7 +154,7 @@ namespace StarMeter.Tests.Controllers
 
             _parser.ParsePackets(readerMock.Object);
 
-            var expectedValue = new RmapPacket()
+            var expectedValue = new RmapPacket
             {
                 PacketId = Guid.NewGuid(),
                 PortNumber = 1,
@@ -171,17 +170,16 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestSetPrevPacket()
         {
-            Packet p1 = new Packet()
+            var p1 = new Packet
             {
                 PacketId = Guid.NewGuid()
             };
-            Packet p2 = new Packet()
+            var p2 = new Packet
             {
                 PacketId = Guid.NewGuid()
             };
             _parser.PacketDict.Add(p1.PacketId, p1);
             _parser.PacketDict.Add(p2.PacketId, p2);
-
             _parser._prevPacket = p1.PacketId;
 
             Assert.AreEqual(_parser._prevPacket, p1.PacketId);
@@ -192,16 +190,15 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void TestGetPrevPacket()
         {
-            Packet prev = new Packet();
-
+            var prev = new Packet();
             _parser.PacketDict.Add(prev.PacketId, prev);
 
-            Packet p = new Packet()
+            var p = new Packet
             {
                 PrevPacket = prev.PacketId,
             };
 
-            Packet result = _parser.GetPrevPacket(p);
+            var result = _parser.GetPrevPacket(p);
             Assert.AreEqual(prev, result);
         }
 

@@ -8,22 +8,16 @@ namespace StarMeter.Tests.Controllers
     [TestClass]
     public class RmapPacketHandlerTests
     {
-        [TestInitialize]
-        public void Initialize()
-        {
-            
-        }
-
         [TestMethod]
         public void CreateRmapPacketRangeException()
         {
             byte[] data = {0x00};
-            Packet packet = new Packet()
+            var packet = new Packet
             {
                 FullPacket = data,
             };
 
-            RmapPacket result = RmapPacketHandler.CreateRmapPacket(packet);
+            var result = RmapPacketHandler.CreateRmapPacket(packet);
 
             Assert.IsTrue(result.IsError);
             Assert.AreEqual(result.ErrorType, ErrorType.DataError);
@@ -60,8 +54,8 @@ namespace StarMeter.Tests.Controllers
                 FullPacket = packetData
                 
             };
-            var expected = 5;
 
+            const int expected = 5;
             var actual = RmapPacketHandler.GetTransactionIdentifier(packet, 2);
 
             Assert.AreEqual(expected, actual);
@@ -94,7 +88,7 @@ namespace StarMeter.Tests.Controllers
                 0x2d, 0x01, 0x0c, 0x00, 0x57, 0xff, 0xfb, 0x00, 0x00, 0x00, 0x08, 0x2e, 0xf3, 0xe3, 0x58, 0x99, 0xaa, 0xef, 0xe5, 0x20, 0x24
             };
 
-            var packet = new RmapPacket()
+            var packet = new RmapPacket
             {
                 PacketType = "Read Reply",
                 ProtocolId = 1,
@@ -203,19 +197,13 @@ namespace StarMeter.Tests.Controllers
         [TestMethod]
         public void GetSourceAddressRmapException()
         {
-            byte[] data = new byte[0];
-            Packet packet = new Packet()
+            var data = new byte[0];
+            var packet = new Packet
             {
                 FullPacket = data,
             };
-            byte[] result = RmapPacketHandler.GetSourceAddressRmap(packet);
+            var result = RmapPacketHandler.GetSourceAddressRmap(packet);
             CollectionAssert.AreEqual(data, result);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            
         }
     }
 }

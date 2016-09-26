@@ -35,7 +35,7 @@ namespace StarMeter.Tests.Controllers
             _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
             _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test2_link1.rec");
 
-            string[] response = _controller.GetFileNames();
+            var response = _controller.GetFileNames();
             string[] expected = {"test1_link1.rec", "test2_link1.rec"};
 
             Assert.IsTrue(response.SequenceEqual(expected));
@@ -46,11 +46,10 @@ namespace StarMeter.Tests.Controllers
         {
             _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec");
             _controller.filePaths.Add(@"C:\\Users\\Phil\\Desktop\\tp\\test2_link1.rec");
-
             _controller.RemoveFile("test2_link1.rec");
 
-            List <string> response = _controller.filePaths;
-            List<string> expected = new List<string> {@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec"};
+            var response = _controller.filePaths;
+            var expected = new List<string> {@"C:\\Users\\Phil\\Desktop\\tp\\test1_link1.rec"};
 
             Assert.IsTrue(response.SequenceEqual(expected));
         }
