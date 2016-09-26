@@ -25,21 +25,39 @@ namespace StarMeter.View
 
         public void ChangeColumnEvent(Object sender, RoutedEventArgs e)
         {
-            var noOfColumns = int.Parse(ColumnChange.Text);
-            var cargoByteCounter = 0;
-            MainCargoContent.Text = null;
-            try
+
+            var valid = IsValid();
+            
+
+            if (valid)
             {
+                var cargoByteCounter = 0;
+                var noOfColumns = 0;
+                MainCargoContent.Text = null;
+                int ErrorMessage = 0;
+
+                noOfColumns = int.Parse(ColumnChange.Text);
+
+                if (noOfColumns >= 30)
+                {
+                    noOfColumns = 30;
+                    ColumnChange.Text = "30";
+                    ErrorMessage = 1;
+                    
+
+                }
+                if (noOfColumns < 1)
+                {
+                    noOfColumns = 10;
+                    ColumnChange.Text = "1";
+                    ErrorMessage = 2;                   
+
+                }
+
+
                 foreach (byte cargoByte in _packet.Cargo)// byte
                 {
-                    if (noOfColumns >= 30)
-                    {
-                        noOfColumns = 30;
-                        ColumnChange.Text = "30";
 
-                        MessageBox.Show("Maximum number of packets per column is 30");
-
-                    }
                     if (cargoByteCounter.Equals(noOfColumns - 1))
                     {
                         cargoByteCounter = 0;
@@ -50,12 +68,36 @@ namespace StarMeter.View
                         cargoByteCounter++;
                         MainCargoContent.Text += CRC.ByteToHexString(cargoByte).Substring(2) + "  ";
                     }
+
+
+                }
+
+                if (ErrorMessage == 1)
+                {
+
+                    MessageBox.Show("Maximum number of packets per column is 30");
+                    ErrorMessage = 0;
+                }
+                if (ErrorMessage == 2){
+
+                    MessageBox.Show("Minimum number of packets per column is 1");
+                    ErrorMessage = 0;
                 }
             }
-            catch (Exception)
+           
+        }
+
+        bool IsValid()
+        {
+
+            //checks that the input is a number
+            try
             {
-            //Handle exception
+                var noOfColumns = int.Parse(ColumnChange.Text);
             }
+            catch (Exception) { MessageBox.Show("Invalid integer input"); return false; }
+            return true;
+
         }
 
         private void ExitButtonEvent(object sender, RoutedEventArgs e)

@@ -1591,18 +1591,28 @@ namespace StarMeter.View
         private void GoBackToFileSelection(object sender, RoutedEventArgs e)
         {
             ResetWindow();
-        }        
+        }
+
+        // <summary>
+        /// Return to the File Selection panel
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearSelectedFiles(object sender, RoutedEventArgs e)
+        {
+            SelectedFiles.Children.Clear();
+            _controller.filePaths.Clear();
+            _fileGrids.Clear();
+        }     
 
         /// <summary>
         /// Reset all elements to go back to the file selection screen
         /// </summary>
         void ResetWindow()
         {
-            SelectedFiles.Children.Clear();
-            _fileGrids.Clear();
+            
 
-            _controller.packets.Clear();
-            _controller.filePaths.Clear();
+            _controller.packets.Clear();         
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
