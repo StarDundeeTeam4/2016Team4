@@ -82,7 +82,7 @@ namespace StarMeter.View
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
 
-            AddressLabel.Content = PacketLabelCreator.GetAddressLabel(packet.Address);
+            AddressLabel.Content = "Address: " + PacketLabelCreator.GetAddressLabel(packet.Address);
             LeftArrow.Visibility = _packet.PrevPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;
