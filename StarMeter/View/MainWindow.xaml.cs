@@ -1650,34 +1650,34 @@ namespace StarMeter.View
         /// <returns></returns>
         private List<Packet> ApplyFilters(Packet[] packets, DateTime start, DateTime end)
         {
-            List<Packet> packetsFound = new List<Packet>();
+            var packetsFound = new List<Packet>();
 
-            foreach (var p in packets)
+            foreach (var packet in packets)
             {
                 #region Time Checks
-                bool validTime = true;
+                var validTime = true;
 
                 if ((start != new DateTime()) && (end != new DateTime()))
                 {
-                    validTime = LogicHelper.IsBetweenTimes(p, start, end);
-                }
-                else if ((start == new DateTime()) && (end == new DateTime()))
-                {
-                    validTime = true;
+                    validTime = LogicHelper.IsBetweenTimes(packet, start, end);
                 }
                 else if (start == new DateTime())
                 {
-                    validTime = LogicHelper.IsBeforeTime(p, end);
+                    validTime = LogicHelper.IsBeforeTime(packet, end);
                 }
                 else if (end == new DateTime())
                 {
-                    validTime = LogicHelper.IsAfterTime(p, start);
+                    validTime = LogicHelper.IsAfterTime(packet, start);
                 }
                 #endregion
 
                 #region Error Checks
-                bool matchesError = true;
-                if (!((bool)(!ChkErrorsOnly.IsChecked )|| p.IsError)) { matchesError = false; }
+                var matchesError = true;
+                var errorsOnly = !ChkErrorsOnly.IsChecked;
+                if (errorsOnly != null && !((bool)errorsOnly || packet.IsError))
+                {
+                    matchesError = false;
+                }
                 #endregion
 
                 #region Protocol checks
@@ -1707,16 +1707,14 @@ namespace StarMeter.View
                 #region Address checks
 
                 var addrSearch = addressSearch.Text.Trim();
-
-                bool validAddress = false;
-
+                bool validAddress;
                 var typeOfSearch = AddressTypeDropdown.Text;
 
                 if (addrSearch.Length > 0)
                 {
                     validAddress = typeOfSearch == "0d" 
-                        ? LogicHelper.DecimalAddressSearch(p, addrSearch) 
-                        : LogicHelper.HexAddressSearch(p, addrSearch);
+                        ? LogicHelper.DecimalAddressSearch(packet, addrSearch) 
+                        : LogicHelper.HexAddressSearch(packet, addrSearch);
                 }
                 else
                 {
@@ -1724,16 +1722,14 @@ namespace StarMeter.View
                 }
 
                 #endregion
-
+                
                 if (validTime && matchesError && validProtocol && validAddress)
                 {
-                    packetsFound.Add(p);
+                    packetsFound.Add(packet);
                 }
 
             }
-
             return packetsFound;
-
         }
                 
         /// <summary>
