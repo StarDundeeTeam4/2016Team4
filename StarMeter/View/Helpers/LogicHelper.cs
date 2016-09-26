@@ -51,7 +51,7 @@ namespace StarMeter.View.Helpers
         }
 
         /// <summary>
-        /// Check if a packets address matches the address entered
+        /// Check if a packets address matches the decimal address entered
         /// </summary>
         /// <param name="packet">The packet in question</param>
         /// <param name="addressToSearch">The address to search for</param>
@@ -77,6 +77,12 @@ namespace StarMeter.View.Helpers
             return finalAddressString.Equals(addressToSearch);
         }
 
+        /// <summary>
+        /// Check if a packets address matches the hex address entered
+        /// </summary>
+        /// <param name="packet">The packet in question</param>
+        /// <param name="addressToSearch">The address to search for</param>
+        /// <returns></returns>
         public static bool HexAddressSearch(Packet packet, string addressToSearch)
         {
             var hexPacketAddress = BitConverter.ToString(packet.Address);
