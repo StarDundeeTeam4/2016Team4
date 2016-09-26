@@ -104,6 +104,9 @@
     <Compile Include="View\MultiplePacketPopup.xaml.cs">
       <DependentUpon>MultiplePacketPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ProtocolCreator.xaml.cs">
+      <DependentUpon>ProtocolCreator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\RmapView.xaml.cs">
       <DependentUpon>RmapView.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\PacketPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ProtocolCreator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -227,6 +234,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ProtocolList.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
