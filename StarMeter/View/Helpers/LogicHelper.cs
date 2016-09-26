@@ -40,12 +40,12 @@ namespace StarMeter.View.Helpers
         }
 
         /// <summary>
-        /// Check if a packet matches a protocol search string
+        /// Check if a packet matches a decimal protocol search string
         /// </summary>
         /// <param name="packet">The packet in question</param>
         /// <param name="protocolToSearch">The search text</param>
         /// <returns></returns>
-        public static bool MatchesProtocolSearch(Packet packet, string protocolToSearch)
+        public static bool DecimalProtocolSearch(Packet packet, string protocolToSearch)
         {
             return packet.ProtocolId.ToString().Equals(protocolToSearch);
         }
