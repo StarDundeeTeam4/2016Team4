@@ -1601,6 +1601,7 @@ namespace StarMeter.View
         private void ClearSelectedFiles(object sender, RoutedEventArgs e)
         {
             SelectedFiles.Children.Clear();
+            _controller.filePaths.Clear();
             _fileGrids.Clear();
         }     
 
@@ -1611,8 +1612,7 @@ namespace StarMeter.View
         {
             
 
-            _controller.packets.Clear();
-            _controller.filePaths.Clear();
+            _controller.packets.Clear();         
             FileSelectedPane.Width = new GridLength(3, GridUnitType.Star);
             FiltersPane.Width = new GridLength(0, GridUnitType.Star);
             GraphPanelPie.Width = new GridLength(0, GridUnitType.Star);
