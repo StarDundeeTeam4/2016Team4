@@ -141,6 +141,20 @@ namespace StarMeter.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 0
+        ///1
+        ///2
+        ///237
+        ///238
+        ///250.
+        /// </summary>
+        internal static string ProtocolList {
+            get {
+                return ResourceManager.GetString("ProtocolList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap right_chevron {
