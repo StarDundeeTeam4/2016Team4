@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StarMeter.Models;
 
 namespace StarMeter.View.Helpers
@@ -33,7 +29,6 @@ namespace StarMeter.View.Helpers
             }
             return finalAddressString;
         }
-
 
         public static string GetProtocolLabel(int protocolId)
         {

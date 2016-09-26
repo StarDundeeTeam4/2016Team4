@@ -14,10 +14,10 @@ namespace StarMeter.Tests.Controllers
         {
             byte[] packet = { 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08 };
 
-            var result = CRC.RMAP_CalculateCRC(packet);
+            var result = Crc.RMAP_CalculateCRC(packet);
 
             Assert.AreEqual(result, 0x3e);
-            System.Diagnostics.Trace.WriteLine(CRC.ByteToHexString(result));
+            System.Diagnostics.Trace.WriteLine(Crc.ByteToHexString(result));
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace StarMeter.Tests.Controllers
         {
             byte[] packet = { 0x57, 0x01, 0x4c, 0x20, 0x2d, 0xff, 0xfb, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x08, 0x3e };
 
-            Assert.IsTrue(CRC.CheckCrcForPacket(packet));
+            Assert.IsTrue(Crc.CheckCrcForPacket(packet));
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace StarMeter.Tests.Controllers
                 0x06, 0xcf, 0x54, 0xd5, 0x16, 0x37, 0x96, 0xe4, 0xab, 0x6c, 0x5a, 0xb0, 0x3e
             };
 
-            Assert.IsFalse(CRC.CheckCrcForPacket(packet));
+            Assert.IsFalse(Crc.CheckCrcForPacket(packet));
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace StarMeter.Tests.Controllers
         public void TestCheckCrcForPacketError()
         {
             var nullArray = new byte[0];
-            Assert.IsFalse(CRC.CheckCrcForPacket(nullArray));
+            Assert.IsFalse(Crc.CheckCrcForPacket(nullArray));
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace StarMeter.Tests.Controllers
         public void TestByteToHexString()
         {
             const string expected = "0xff";
-            var actual = CRC.ByteToHexString(255);
+            var actual = Crc.ByteToHexString(255);
             Assert.AreEqual(expected, actual);
         }
     }

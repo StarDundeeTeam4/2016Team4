@@ -127,7 +127,7 @@ namespace StarMeter.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="packets"></param>
+        /// <param name="packets">The complete packet array with all of the packets in the transmission</param>
         /// <returns></returns>
         public List<KeyValuePair<string, int>>[] GetDataForLineChart(Packet[] packets)
         {
@@ -136,22 +136,20 @@ namespace StarMeter.Controllers
 
             if (packets.Length > 0)
             {
-                TimeSpan startTime = packets[0].DateReceived.TimeOfDay;
-                TimeSpan endTime = packets[packets.Length - 1].DateReceived.TimeOfDay;
-
-                TimeSpan timeDifference = endTime - startTime;
+                var startTime = packets[0].DateReceived.TimeOfDay;
+                var endTime = packets[packets.Length - 1].DateReceived.TimeOfDay;
+                var timeDifference = endTime - startTime;
 
                 const int numPoints = 10;
-
-                double graphInterval = timeDifference.TotalMilliseconds / numPoints;
+                var graphInterval = timeDifference.TotalMilliseconds / numPoints;
 
                 for (var i = 0; i < numPoints; i++)
                 {
-                    int count = 0;
-                    int errorCount = 0;
+                    var count = 0;
+                    var errorCount = 0;
 
-                    TimeSpan lowerBound = startTime.Add(new TimeSpan(0, 0, 0, 0, (int)(graphInterval * (i))));
-                    TimeSpan upperBound = startTime.Add(new TimeSpan(0, 0, 0, 0, (int)(graphInterval * (i + 1))));
+                    var lowerBound = startTime.Add(new TimeSpan(0, 0, 0, 0, (int)(graphInterval * i)));
+                    var upperBound = startTime.Add(new TimeSpan(0, 0, 0, 0, (int)(graphInterval * (i + 1))));
 
                     foreach (var packet in packets)
                     {
@@ -164,14 +162,12 @@ namespace StarMeter.Controllers
                             }
                         }
                     }
-
                     var kvp = new KeyValuePair<string, int>(lowerBound.ToString(), count);
                     var kvpError = new KeyValuePair<string, int>(lowerBound.ToString(), errorCount);
                     graphData.Add(kvp);
                     errorData.Add(kvpError);
                 }
             }
-
             var toReturn = new List<KeyValuePair<string, int>>[2];
             toReturn[0] = graphData;
             toReturn[1] = errorData;

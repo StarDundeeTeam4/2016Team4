@@ -87,6 +87,5 @@ namespace StarMeter.View.Helpers
             var hexPacketAddress = BitConverter.ToString(packet.Address).ToLower();
             return hexPacketAddress.Equals(addressToSearch.ToLower());
         }
-
     }
 }

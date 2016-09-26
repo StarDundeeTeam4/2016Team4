@@ -58,17 +58,11 @@ namespace StarMeter.View
             ErrorIcon.Source = logo;
 
             TimeLabel.Content = packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-            var protocolId = packet.ProtocolId;
-            ProtocolLabel.Content = PacketLabelCreator.GetProtocolLabel(protocolId);
+            ProtocolLabel.Content = PacketLabelCreator.GetProtocolLabel(packet.ProtocolId);
 
-            if (packet.ErrorType.Equals(ErrorType.SequenceError)) 
-            {
-                SequenceNumberLabel.Foreground = Brushes.Red;
-            }
-            else
-            {
-                SequenceNumberLabel.Foreground = Brushes.White;
-            }
+            SequenceNumberLabel.Foreground = packet.ErrorType.Equals(ErrorType.SequenceError) 
+                ? Brushes.Red 
+                : Brushes.White;
 
             if (packet.ErrorType.Equals(ErrorType.DataError))
             {
@@ -76,13 +70,13 @@ namespace StarMeter.View
             }
             else
             {
-                BrushConverter bc = new BrushConverter();
-                CargoButton.Background = (Brush)bc.ConvertFromString("#FF4A4D54");
+                var brushConverter = new BrushConverter();
+                CargoButton.Background = (Brush)brushConverter.ConvertFromString("#FF4A4D54");
             }
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
-
             AddressLabel.Content = "Address: " + PacketLabelCreator.GetAddressLabel(packet.Address);
+
             LeftArrow.Visibility = _packet.PrevPacket == null 
                 ? Visibility.Collapsed 
                 : Visibility.Visible;

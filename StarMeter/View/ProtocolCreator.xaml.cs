@@ -2,23 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace StarMeter.View
 {
     /// <summary>
     /// Interaction logic for ProtocolCreator.xaml
     /// </summary>
-    public partial class ProtocolCreator : Window
+    public partial class ProtocolCreator
     {
         public static KeyValuePair<int, string> CreatedObject;
 
@@ -38,36 +29,36 @@ namespace StarMeter.View
                 {
                     //TODO: change to comma thing
 
-                    StreamWriter sr = new StreamWriter("../../Resources/ProtocolList.txt", true);
-
-                    sr.WriteLine(txtProtocolID.Text + " (" + txtProtocolName.Text +")");
-
-                    sr.Close();
+                    var streamWriter = new StreamWriter("../../Resources/ProtocolList.txt", true);
+                    streamWriter.WriteLine(txtProtocolID.Text + " (" + txtProtocolName.Text +")");
+                    streamWriter.Close();
 
                     CreatedObject = new KeyValuePair<int, string>(int.Parse(txtProtocolID.Text), txtProtocolName.Text);
                     MainWindow.Protocols.Add(CreatedObject);
 
-                    this.Close();
-                                                        
+                    Close();
                 }
                 catch (Exception) { }
             }
         }
 
-        bool IsDataValid()
+        private bool IsDataValid()
         {
-            int id = -1;
+            int id;
             // check number/ID - valid number?
             try
             {
                 id = int.Parse(txtProtocolID.Text);
             }
-            catch (Exception) { MessageBox.Show("Invalid integer input"); return false; }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid integer input"); return false;
+            }
 
             // check if ID already exists
-            foreach (var p in MainWindow.Protocols)
+            if (MainWindow.Protocols.Any(p => p.Key.Equals(id)))
             {
-                if (p.Key.Equals(id)) { MessageBox.Show("A protocol with ID of " + id + " already exists"); return false; };
+                MessageBox.Show("A protocol with ID of " + id + " already exists"); return false;
             }
 
             if (txtProtocolName.Text.Trim().Length < 1)
@@ -75,15 +66,12 @@ namespace StarMeter.View
                 MessageBox.Show("Invalid Name");
                 return false;
             }
-
             return true;
-
         }
 
         private void CancelClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
-
     }
 }

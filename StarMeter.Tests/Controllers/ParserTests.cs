@@ -56,7 +56,7 @@ namespace StarMeter.Tests.Controllers
 
             _parser.ParsePackets(readerMock.Object);
 
-            var id = _parser._prevPacket.GetValueOrDefault();
+            var id = _parser.PrevPacket.GetValueOrDefault();
             Assert.IsTrue(_parser.PacketDict[id].IsError);
         }
 
@@ -180,11 +180,11 @@ namespace StarMeter.Tests.Controllers
             };
             _parser.PacketDict.Add(p1.PacketId, p1);
             _parser.PacketDict.Add(p2.PacketId, p2);
-            _parser._prevPacket = p1.PacketId;
+            _parser.PrevPacket = p1.PacketId;
 
-            Assert.AreEqual(_parser._prevPacket, p1.PacketId);
+            Assert.AreEqual(_parser.PrevPacket, p1.PacketId);
             _parser.SetPrevPacket(p2);
-            Assert.AreEqual(_parser._prevPacket, p2.PacketId);
+            Assert.AreEqual(_parser.PrevPacket, p2.PacketId);
         }
 
         [TestMethod]
