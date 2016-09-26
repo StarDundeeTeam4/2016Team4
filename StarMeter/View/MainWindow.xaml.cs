@@ -1670,7 +1670,6 @@ namespace StarMeter.View
                     validTime = LogicHelper.IsAfterTime(packet, start);
                 }
                 #endregion
-
                 #region Error Checks
                 var matchesError = true;
                 var errorsOnly = !ChkErrorsOnly.IsChecked;
@@ -1679,30 +1678,21 @@ namespace StarMeter.View
                     matchesError = false;
                 }
                 #endregion
-
                 #region Protocol checks
-
-                //var protoSearch = protocolSearch.Text.Trim();
                 var protoSearch = ProtocolSelected.Text.Split('(');
 
-                bool validProtocol = false;
+                bool validProtocol;
                 if (protoSearch.Length > 1 && protoSearch[0].Length > 0)
                 {
-                    if (AddressTypeDropdown.SelectedIndex == 0)
-                    {
-                        validProtocol = LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim());
-                    }
-                    else 
-                    {
-                        validProtocol = LogicHelper.DecimalProtocolSearch(packet, protoSearch[0].Trim());
-                    }
+                    validProtocol = AddressTypeDropdown.SelectedIndex == 0 
+                        ? LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim()) 
+                        : LogicHelper.DecimalProtocolSearch(packet, protoSearch[0].Trim());
                 }
                 else
                 {
                     validProtocol = true;
                 }
                 #endregion
-
                 #region Address checks
 
                 var addrSearch = addressSearch.Text.Trim();
@@ -1726,7 +1716,6 @@ namespace StarMeter.View
                 {
                     packetsFound.Add(packet);
                 }
-
             }
             return packetsFound;
         }
