@@ -69,7 +69,7 @@ namespace StarMeter.Controllers
         {
             var fullPacket = packet.FullPacket;
             //Location of transaction Identifier according to protocol specification
-            var transactionBytes = new byte[] {fullPacket[addressIndex + 6], fullPacket[addressIndex + 5]};
+            var transactionBytes = new[] {fullPacket[addressIndex + 6], fullPacket[addressIndex + 5]};
             //Convert back to unsigned 16 bit integer (byte + byte = 16 bits.) 
             var final = BitConverter.ToUInt16(transactionBytes, 0);
             return final;
@@ -78,7 +78,7 @@ namespace StarMeter.Controllers
         /// <summary>
         /// Calculate the source address for the packet
         /// </summary>
-        /// <param name="rmapFullPacket">The packet's data</param>
+        /// <param name="rmapPacket"></param>
         /// <returns>The source address byte array</returns>
         public static byte[] GetSourceAddressRmap(Packet rmapPacket)
         {
@@ -102,7 +102,6 @@ namespace StarMeter.Controllers
             }
 
            return sourceAddress.ToArray();
-
         }
 
         /// <summary>
