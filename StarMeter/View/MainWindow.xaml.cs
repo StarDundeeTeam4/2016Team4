@@ -1690,12 +1690,11 @@ namespace StarMeter.View
                 {
                     if (AddressTypeDropdown.SelectedIndex == 0)
                     {
-                        // search by hex
+                        validProtocol = LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim());
                     }
                     else 
                     {
-                        // search by decimal
-                        validProtocol = LogicHelper.MatchesProtocolSearch(packet, protoSearch[0].Trim());
+                        validProtocol = LogicHelper.DecimalProtocolSearch(packet, protoSearch[0].Trim());
                     }
                 }
                 else
