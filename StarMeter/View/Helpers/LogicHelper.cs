@@ -84,8 +84,20 @@ namespace StarMeter.View.Helpers
         /// <returns></returns>
         public static bool HexAddressSearch(Packet packet, string addressToSearch)
         {
-            var hexPacketAddress = BitConverter.ToString(packet.DestinationAddress).ToLower();
-            return hexPacketAddress.Equals(addressToSearch.ToLower());
+            var hexPacketAddress = DecimalToHexValue(packet.DestinationAddress).ToLower();
+            hexPacketAddress = hexPacketAddress.Replace(" ", "").Replace("-", "");
+            addressToSearch = addressToSearch.ToLower().Replace(" ", "").Replace("-", "");
+            return hexPacketAddress.Equals(addressToSearch);
+        }
+
+        /// <summary>
+        /// Converts the packet address data into hex
+        /// </summary>
+        /// <param name="decimalAddress">The address to be converted</param>
+        /// <returns>Returns the packet address in a hex string</returns>
+        public static string DecimalToHexValue(byte[] decimalAddress)
+        {
+            return BitConverter.ToString(decimalAddress);
         }
     }
 }
