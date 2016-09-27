@@ -113,7 +113,7 @@ namespace StarMeter.View
             // setup the timer for the icon
             _loadingTimer = new System.Timers.Timer();
             _loadingTimer.Elapsed += _LoadingTimer_Elapsed;
-            _loadingTimer.Interval = 100;
+            _loadingTimer.Interval = 80;
 
             LoadProtocolList();
 
@@ -366,7 +366,7 @@ namespace StarMeter.View
 
                 var b = ComponentFetcher.GetPacketButton(p, tempTimespans[index].Value.ToString());
 
-                b.MouseLeftButtonDown += OpenPopup;
+                b.Click += OpenPopup;
 
                 sp.Children.Add(b);
                 _previous[p.PortNumber - 1] = tempTimespans[index].Value;
@@ -1093,7 +1093,6 @@ namespace StarMeter.View
                 _previous[i] = new TimeSpan();
             }
 
-
         }
 
 
@@ -1112,6 +1111,7 @@ namespace StarMeter.View
             DisplaySidePanels();
 
             LoadingScreen.Visibility = System.Windows.Visibility.Hidden;
+            _loadingTimer.Stop();
 
             cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF4A4D54");
         }
@@ -1132,7 +1132,7 @@ namespace StarMeter.View
             HeightScroller.Visibility = Visibility.Visible;
 
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
-            GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
+            //GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
 
             ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
             DataVisButton2.Background = image;
