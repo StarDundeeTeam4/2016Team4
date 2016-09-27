@@ -53,7 +53,7 @@ namespace StarMeter.View
 
             try
             {
-                var addressArray = packet.Address;
+                var addressArray = packet.DestinationAddress;
                 buttonLabel.Content = PacketLabelCreator.GetAddressLabel(addressArray);
                 var protocolId = packet.ProtocolId;
                 buttonLabel.Content += Environment.NewLine + PacketLabelCreator.GetProtocolLabel(protocolId);
