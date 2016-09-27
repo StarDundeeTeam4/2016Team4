@@ -49,6 +49,12 @@ namespace StarMeter.View
             try
             {
                 id = int.Parse(txtProtocolID.Text);
+
+                if (id < 0)
+                {
+                    MessageBox.Show("Invalid integer input"); return false;       
+                }
+
             }
             catch (Exception)
             {
@@ -71,6 +77,7 @@ namespace StarMeter.View
 
         private void CancelClick(object sender, RoutedEventArgs e)
         {
+            CreatedObject = new KeyValuePair<int, string>(-1, "Failed");
             Close();
         }
     }

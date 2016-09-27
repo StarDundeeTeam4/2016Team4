@@ -44,6 +44,22 @@
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
+
+        <Canvas Visibility="Hidden" Name="LoadingScreen" Panel.ZIndex="1" Grid.ColumnSpan="8" HorizontalAlignment="Stretch" Grid.RowSpan="5" VerticalAlignment="Stretch" Background="#E5050509">
+
+            <!--<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2.6*" />
+                </Grid.ColumnDefinitions>-->
+
+                <Image Name="LoadingIcon" Visibility="Visible" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch" Margin="580, 400, 0, 0"/>
+                <Label Name="LoadingMessage" Visibility="Visible" Margin="580, 500, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..." FontSize="20" HorizontalContentAlignment="Center"/>
+
+            <!--</Grid>-->
+
+        </Canvas>
+
         <Grid Grid.Row="1" Grid.Column="5">
 
 
@@ -54,8 +70,8 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            
-            
+
+
             <Canvas Panel.ZIndex="9" Name="HelpPanel" Visibility="Hidden" Grid.Row ="3" Grid.Column="4" HorizontalAlignment="Right" Height="200" VerticalAlignment="Bottom" Width="168" Margin="0, 0, 10, 50" Background="#FF000000">
 
                 <Grid Height="200" Width="168">
@@ -98,7 +114,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Grid.ColumnSpan ="2" Background="Black" HorizontalAlignment="Stretch" Margin="10, 0, 10, 0">
-                    
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="4*"/>
                         <ColumnDefinition Width="*"/>
@@ -132,14 +148,14 @@
                     <RowDefinition Height="2.5*" Name="ErrorAreaCollapse" />
                     <RowDefinition Height=".7*" />
                 </Grid.RowDefinitions>
-                
+
                 <Grid Grid.Row="0">
-                   
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="5*" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
+
                     <DVC:Chart Grid.Row="0" Name="ErrorPieChart" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                         <DVC:Chart.Series>
                             <DVC:PieSeries Title="Experience" 
@@ -149,12 +165,12 @@
                             </DVC:PieSeries>
                         </DVC:Chart.Series>
                     </DVC:Chart>
-                    
+
                     <Label Name="ErrorPerc" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Foreground="White" FontFamily="Gill Sans MT" FontSize="16">Error Percentage: 0%</Label>
-                    
+
                 </Grid>
-                
-                
+
+
 
                 <Grid Grid.Row="1" Margin="10,0,10,0">
                     <Grid.RowDefinitions>
@@ -231,7 +247,7 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Grid.Column="3" >
-                
+
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*" />
@@ -252,7 +268,7 @@
                         <RadioButton Tag="2" Checked="ChangeLineGraphData" Panel.ZIndex="10" GroupName="DataToDisplay" Foreground="White" FontFamily="Gill Sans MT" Grid.Row="3" VerticalContentAlignment="Center">Data Rate</RadioButton>
 
                     </Grid>
-                    
+
                     <!-- Chart for displaying the data rates, assigned to the bottom row -->
                     <DVC:Chart Grid.Column="0" Visibility="Visible" Background="Transparent" VerticalAlignment="Stretch"
                         Name="RatesLineChart" Grid.Row="0" Padding="0,0,0,0" BorderBrush="{x:Null}" Foreground="White" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14">
@@ -260,11 +276,11 @@
                         IndependentValuePath="Key" ItemsSource="{Binding}" 
                         IsSelectionEnabled="True"/>
                     </DVC:Chart>
-                    
-                    
-                    
+
+
+
                 </Grid>
-                
+
 
             </Grid>
 
@@ -285,7 +301,8 @@
                 <ColumnDefinition Width="*"  Name="Port3BHeader"/>
                 <ColumnDefinition Width="*"  Name="Port4AHeader"/>
                 <ColumnDefinition Width="*"  Name="Port4BHeader"/>
-                <ColumnDefinition Width="18" /><!-- Adjust to align with the scroll bar -->
+                <ColumnDefinition Width="18" />
+                <!-- Adjust to align with the scroll bar -->
                 <ColumnDefinition Width="50000*" Name="NoPacketsHead"/>
             </Grid.ColumnDefinitions>
 
@@ -324,9 +341,9 @@
                         <ColumnDefinition Width="50000*" Name="NoPacketsArea"/>
                     </Grid.ColumnDefinitions>
 
-                                        
+
                     <Label Grid.Column="10" Foreground="White" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="16">No Packets to Display</Label>
-                    
+
                     <!-- Container for the time elements -->
                     <StackPanel Background="#FF616161" Name="TimeList" Margin="0,0,0,-0.4" Grid.RowSpan="2"/>
 
@@ -352,7 +369,7 @@
             </ScrollViewer>
         </Grid>
 
-        
+
         <!-- Logo -->
         <Grid>
             <Grid.ColumnDefinitions>
@@ -382,8 +399,8 @@
 
 
             <ScrollViewer Grid.Row="2" Background="#33000000" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
-                
-                
+
+
                 <StackPanel Name="SelectedFiles"/>
             </ScrollViewer>
 
@@ -394,17 +411,6 @@
             <Button Name="CmdSelectFile" Grid.Row="1" Content="Select File" Click="FileSelection" Margin="10,0,10,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" BorderBrush="{x:Null}" FontSize="16"></Button>
             <Button Margin="10,5,10,5" BorderThickness="0" Name ="cmdBeginAnalysis" Grid.Row="3" HorizontalAlignment="Stretch" Content="Begin Analysis" Foreground="White" Click="cmdBeginAnalysis_Click" FontFamily="Gill Sans MT" FontSize="16" Background="#FF37A300"/>
             <Button Margin="10,5,10,5" BorderThickness="0" Name ="cmdBeginAnalysis1" Grid.Row="4" HorizontalAlignment="Stretch" Content="Remove All Files" Foreground="White" Click="ClearSelectedFiles" FontFamily="Gill Sans MT" FontSize="16" Background="Red"/>
-
-            <Grid Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2.6*" />
-                </Grid.ColumnDefinitions>
-
-                <Image Name="LoadingIcon" Visibility="Hidden" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch"/>
-                <Label Name="LoadingMessage" Visibility="Hidden" Margin="10, 0, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..." FontSize="16"/>
-
-            </Grid>
 
         </Grid>
 
@@ -504,12 +510,12 @@
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="1">
-                            
+
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="4*"/>
                             </Grid.ColumnDefinitions>
-                            
+
                             <TextBox TextChanged="addressSearch_TextChanged" x:Name="addressSearch" Margin="10,5,10,5" TextWrapping="Wrap" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Gill Sans MT" FontSize="14" Grid.Column="1"/>
                             <ComboBox Margin="10,5,0,5" Name="AddressTypeDropdown" SelectedIndex="0" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="12">
                                 <ComboBoxItem FontFamily="Gill Sans MT" FontSize="15" >0x</ComboBoxItem>
@@ -611,5 +617,6 @@
         </Grid>
 
     </Grid>
+        
 
 </Window>

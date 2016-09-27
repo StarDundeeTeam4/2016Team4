@@ -71,6 +71,7 @@ namespace StarMeter.View
         public delegate void UpdateSlider();
         public delegate void UpdateAnimation();
         public delegate void ResetColour();
+        public delegate void CreatePacketPage();
         
         // error list objects
         Button _lblFoundObj;
@@ -371,8 +372,7 @@ namespace StarMeter.View
                 _previous[p.PortNumber - 1] = tempTimespans[index].Value;
             }
         }
-
-                
+                        
         /// <summary>
         /// Remove all packets from the screen
         /// </summary>
@@ -502,12 +502,6 @@ namespace StarMeter.View
         /// <param name="e"></param>
         private void FileSelection(object sender, RoutedEventArgs e)
         {
-            // show the loading icon
-            LoadingIcon.Visibility = Visibility.Visible;
-            LoadingMessage.Visibility = Visibility.Visible;
-            LoadingMessage.Content = "Selecting File";
-            _loadingTimer.Start();
-
             // open a file dialog
             var ofd = new OpenFileDialog
             {
@@ -521,8 +515,6 @@ namespace StarMeter.View
             // if the user cancels, hide the form and hide the loading icon
             if (confirmed != true)
             {
-                LoadingIcon.Visibility = Visibility.Hidden;
-                LoadingMessage.Visibility = Visibility.Hidden;
                 return;
             }
 
@@ -531,12 +523,7 @@ namespace StarMeter.View
             // display file name in list
             List<string> filesAdded = _controller.AddFileNames(ofd.FileNames);
             AddFileSelected(filesAdded);
-
-            // hide loading icon
-            LoadingIcon.Visibility = System.Windows.Visibility.Hidden;
-            LoadingMessage.Visibility = System.Windows.Visibility.Hidden;
-            _loadingTimer.Stop();
-
+            
         }
         
         /// <summary>
@@ -1032,6 +1019,9 @@ namespace StarMeter.View
         /// </summary>
         void CalculateStats() 
         {
+
+            
+
             lblNumPackets.Content = "Total Data Characters: " + _analyser.CalculateTotalNoOfDataChars(_controller.Packets);
             lblPacketsPerSec.Content = "Packets per Second: " + Math.Round(_analyser.CalculatePacketRatePerSecond(_controller.Packets), 5);
 
@@ -1052,8 +1042,8 @@ namespace StarMeter.View
             }
             else
             {
-
-                LoadingIcon.Visibility = Visibility.Visible;
+                LoadingScreen.Visibility = Visibility.Visible;
+                LoadingMessage.Content = "Loading";
                 _loadingTimer.Start();
 
                 // if there are files...
@@ -1064,50 +1054,67 @@ namespace StarMeter.View
                     _previous[i] = new TimeSpan();
                 }
 
-                System.Threading.Thread thr = new System.Threading.Thread(new ParameterizedThreadStart(DoLoading));
+
+                System.Threading.Thread thr = new System.Threading.Thread(new ParameterizedThreadStart(DoWork));
                 thr.SetApartmentState(ApartmentState.STA);
                 thr.IsBackground = true;
                 thr.Start();
 
-                thr.Join();
-
-                //DoLoading();
-                // display file list
-                CreateFilesDisplayedList();
-
-                SortedPackets = (from pair in _controller.Packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
-
-                // create the pie chart
-                CreateChart();
-
-                PageIndex = 0;
-
-                // display the rest of the the elements
-                SetupElements(false);
-                CalculateStats();
-                DisplayErrorList();
-                DisplaySidePanels();
-
-
-                // reset _previous for the next load
-                for (int i = 0; i < 8; i++)
-                {
-                    _previous[i] = new TimeSpan();
-                }
             }
 
         }
 
 
-        bool done = true;
-
         void DoLoading(object arg) 
         {
             // get the list of packets
             var packets = _controller.ParsePackets().ToList();
-            done = true;
         }
 
+        void DoWork(object arg) 
+        {
+
+            System.Threading.Thread thrLoad = new System.Threading.Thread(new ParameterizedThreadStart(DoLoading));
+            thrLoad.SetApartmentState(ApartmentState.STA);
+            thrLoad.IsBackground = true;
+            thrLoad.Start();
+
+            thrLoad.Join();
+
+            SortedPackets = (from pair in _controller.Packets orderby pair.Value.DateReceived ascending select pair.Value).ToList();
+            
+            PageIndex = 0;
+            
+            this.Dispatcher.Invoke(new CreatePacketPage(CreatePage));
+            
+            // reset _previous for the next load
+            for (int i = 0; i < 8; i++)
+            {
+                _previous[i] = new TimeSpan();
+            }
+
+
+        }
+
+
+        void CreatePage() 
+        {
+            // display file list
+            CreateFilesDisplayedList();
+
+            // create the pie chart
+            CreateChart();
+
+            // display the rest of the the elements
+            SetupElements(false);
+            CalculateStats();
+            DisplayErrorList();
+            DisplaySidePanels();
+
+            LoadingScreen.Visibility = System.Windows.Visibility.Hidden;
+
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF4A4D54");
+        }
 
         /// <summary>
         /// Show the side panels (for graphs/filters etc)
@@ -2166,25 +2173,34 @@ namespace StarMeter.View
 
         private void ProtocolSelected_SelectionChanged(object sender, EventArgs e)
         {
-            if (ProtocolSelected.Text == "ADD NEW PROTOCOL") 
+            if (ProtocolSelected.Text == "Add New Protocol") 
             {
                 // add protocol to list
                 ProtocolCreator pc = new ProtocolCreator();
                 pc.ShowDialog();
 
-                KeyValuePair<int, string> kvp = ProtocolCreator.CreatedObject;
+                if (ProtocolCreator.CreatedObject.Key != -1)
+                {
+                    KeyValuePair<int, string> kvp = ProtocolCreator.CreatedObject;
 
-                // add to list
-                ComboBoxItem cb = new ComboBoxItem();
-                cb.Content = kvp.Key + " (" + kvp.Value + ")";
-                cb.FontFamily = new FontFamily("Gill Sans MT");
-                cb.FontSize = 14;
-                cb.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
-                cb.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
-                cb.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
-                cb.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                    // add to list
+                    ComboBoxItem cb = new ComboBoxItem();
+                    cb.Content = kvp.Key + " (" + kvp.Value + ")";
+                    cb.FontFamily = new FontFamily("Gill Sans MT");
+                    cb.FontSize = 14;
+                    cb.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
+                    cb.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
+                    cb.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
+                    cb.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
 
-                ProtocolSelected.Items.Add(cb);
+                    ProtocolSelected.Items.Add(cb);
+
+                    ProtocolSelected.SelectedValue = ProtocolSelected.Items.Count - 1;
+                }
+                else 
+                {
+                    ProtocolSelected.SelectedValue = 0;
+                }
 
             }
         }
