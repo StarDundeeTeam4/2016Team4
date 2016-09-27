@@ -75,7 +75,7 @@ namespace StarMeter.View
             }
 
             SequenceNumberLabel.Content = "Sequence Number: " + packet.SequenceNum;
-            AddressLabel.Content = "DestinationAddress: " + PacketLabelCreator.GetAddressLabel(packet.DestinationAddress);
+            AddressLabel.Content = PacketLabelCreator.GetAddressLabel(packet.DestinationAddress);
 
             LeftArrow.Visibility = _packet.PrevPacket == null 
                 ? Visibility.Collapsed 
@@ -181,22 +181,21 @@ namespace StarMeter.View
         private void cmdToggleAddressType_Click(object sender, RoutedEventArgs e)
         {
             hex = !hex;
-
             string output = "";
-
             if (hex)
             {
                 // get the hex value
-                output = "";
+                var hexValue = LogicHelper.DecimalToHexValue(_packet.DestinationAddress).Replace("-", " ");
+                output = "Destination Address: " + hexValue ;
+                cmdToggleAddressType.Content = "Switch to Decimal";
             }
             else 
             {
                 // get the dec value
-                output = "";
+                output = PacketLabelCreator.GetAddressLabel(_packet.DestinationAddress);
+                cmdToggleAddressType.Content = "Switch to Hex";
             }
-
             AddressLabel.Content = output;
-
         }
     }
 }
