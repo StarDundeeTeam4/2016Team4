@@ -98,11 +98,19 @@ namespace StarMeter.Controllers
                 addressArray = new byte[addressLength];
                 Array.Copy(rmapPacket.FullPacket, destinationKeyIndex + 1, addressArray, 0, addressLength);
             }
-            catch (IndexOutOfRangeException e)
+            catch (Exception e)
             {
-                System.Diagnostics.Trace.WriteLine("IndexOutOfRangeException in GetSecondaryAddressRmap");
+                if (e is IndexOutOfRangeException)
+                {
+                    System.Diagnostics.Trace.WriteLine("IndexOutOfRangeException in GetSecondaryAddressRmap");
+                }
+                if (e is OverflowException)
+                {
+                    System.Diagnostics.Trace.WriteLine("OverflowException in GetSecondaryAddressRmap");
+                }
                 System.Diagnostics.Trace.WriteLine(e);
             }
+            
 
             return addressArray;
         }

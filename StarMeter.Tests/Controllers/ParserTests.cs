@@ -160,7 +160,7 @@ namespace StarMeter.Tests.Controllers
                 PortNumber = 1,
                 DestinationAddress = new byte[] { 33 },
                 PacketType = "Read",
-                SecondaryAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02 }
+                SecondaryAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02, 0xfe }
             };
             var result = _parser.PacketDict.Values.FirstOrDefault();
             Assert.AreEqual(expectedValue.SecondaryAddress.Length, ((RmapPacket)result).SecondaryAddress.Length);
