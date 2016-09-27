@@ -42,9 +42,9 @@ namespace StarMeter.View.Helpers
         public static string GetSourcePathAddress(RmapPacket packet)
         {
             string sourcePathAdd = null;
-            for (var i = 0; i < packet.SourcePathAddress.Length - 1; i++)
+            for (var i = 0; i < packet.SecondaryAddress.Length - 1; i++)
             {
-                sourcePathAdd += Convert.ToInt32(packet.SourcePathAddress[i]) + "  ";
+                sourcePathAdd += Convert.ToInt32(packet.SecondaryAddress[i]) + "  ";
             }
             return sourcePathAdd;
         }

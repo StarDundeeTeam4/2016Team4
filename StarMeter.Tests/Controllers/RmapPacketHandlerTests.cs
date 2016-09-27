@@ -202,7 +202,7 @@ namespace StarMeter.Tests.Controllers
             {
                 FullPacket = data,
             };
-            var result = RmapPacketHandler.GetSourceAddressRmap(packet);
+            var result = RmapPacketHandler.GetSecondaryAddressRmap(packet);
             CollectionAssert.AreEqual(data, result);
         }
     }

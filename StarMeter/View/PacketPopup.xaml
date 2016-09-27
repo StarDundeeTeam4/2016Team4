@@ -74,7 +74,7 @@
             
             <Label x:Name="ProtocolLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
             <Label x:Name="SequenceNumberLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
-            <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Address:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
+            <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="DestinationAddress:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
 
         </Grid>
 
