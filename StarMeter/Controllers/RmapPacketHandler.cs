@@ -18,7 +18,6 @@ namespace StarMeter.Controllers
             BitArray rmapCommandByte = null;
             byte destinationKey = 0x00;
             var rmapPacketType = "";
-            byte[] primaryAddress = null;
             byte[] secondaryAddress = null;
             var addressIndex = PacketHandler.GetLogicalAddressIndex(packet);
 
@@ -31,7 +30,6 @@ namespace StarMeter.Controllers
                 rmapCommandByte = new BitArray(new[] {packet.FullPacket[addressIndex + 2]});
                 destinationKey = GetDestinationKey(packet);
                 rmapPacketType = GetRmapType(rmapCommandByte);
-                primaryAddress = packet.DestinationAddress;
                 secondaryAddress = GetSecondaryAddressRmap(packet);
             }
             catch (IndexOutOfRangeException)
