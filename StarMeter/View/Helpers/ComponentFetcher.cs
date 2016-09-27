@@ -45,7 +45,7 @@ namespace StarMeter.View.Helpers
 
             try
             {
-                packetLabel.Content = PacketLabelCreator.GetAddressLabel(packet.Address);
+                packetLabel.Content = PacketLabelCreator.GetAddressLabel(packet.DestinationAddress);
                 packetLabel.Content += Environment.NewLine + PacketLabelCreator.GetProtocolLabel(packet.ProtocolId);
             }
             catch (Exception)

@@ -19,7 +19,7 @@ namespace StarMeter.Controllers
             packet.Crc = GetCrc(packet); //can't fail unless everything is fucked
 
             //next four lines must be done in order as if packet ends early, everything before will work and everything after will fail anyway
-            packet.Address = GetAddressArray(packet);
+            packet.DestinationAddress = GetAddressArray(packet);
             packet.ProtocolId = GetProtocolId(packet);
             packet.SequenceNum = GetSequenceNumber(packet);
             packet.Cargo = GetCargoArray(packet);

@@ -29,7 +29,7 @@ namespace StarMeter.View
                 DestinationKeyLabel.Content += packet.DestinationKey.ToString();
             }
 
-            if (packet.SourcePathAddress.Length == 0)
+            if (packet.SecondaryAddress.Length == 0)
             {
                 SourcePathAddressLabel.Content += "No Path Address";
             }

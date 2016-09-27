@@ -121,7 +121,7 @@ namespace StarMeter.Tests.Controllers
             {
                 PacketId = Guid.NewGuid(),
                 PortNumber = 1,
-                Address = new byte[]{33},
+                DestinationAddress = new byte[]{33},
                 PacketType = "Read Reply"
             };
             var result = _parser.PacketDict.Values.FirstOrDefault();
@@ -158,13 +158,13 @@ namespace StarMeter.Tests.Controllers
             {
                 PacketId = Guid.NewGuid(),
                 PortNumber = 1,
-                Address = new byte[] { 33 },
+                DestinationAddress = new byte[] { 33 },
                 PacketType = "Read",
-                SourcePathAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02 }
+                SecondaryAddress = new byte[]{ 0x00, 0x00, 0x03, 0x02, 0xfe }
             };
             var result = _parser.PacketDict.Values.FirstOrDefault();
-            Assert.AreEqual(expectedValue.SourcePathAddress.Length, ((RmapPacket)result).SourcePathAddress.Length);
-            Assert.AreEqual(expectedValue.SourcePathAddress[0], ((RmapPacket)result).SourcePathAddress[0]);
+            Assert.AreEqual(expectedValue.SecondaryAddress.Length, ((RmapPacket)result).SecondaryAddress.Length);
+            Assert.AreEqual(expectedValue.SecondaryAddress[0], ((RmapPacket)result).SecondaryAddress[0]);
         }
 
         [TestMethod]

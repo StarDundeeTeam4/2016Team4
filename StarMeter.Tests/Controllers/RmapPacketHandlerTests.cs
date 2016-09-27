@@ -200,9 +200,9 @@ namespace StarMeter.Tests.Controllers
             var data = new byte[0];
             var packet = new Packet
             {
-                FullPacket = data,
+                FullPacket = data
             };
-            var result = RmapPacketHandler.GetSourceAddressRmap(packet);
+            var result = RmapPacketHandler.GetSecondaryAddressRmap(packet);
             CollectionAssert.AreEqual(data, result);
         }
     }

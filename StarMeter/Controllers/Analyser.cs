@@ -28,9 +28,9 @@ namespace StarMeter.Controllers
             foreach (var packet in packetDictionary.Values)
             {
                 var packetAddressLength = 0;
-                if (packet.Address != null)
+                if (packet.DestinationAddress != null)
                 {
-                    packetAddressLength = packet.Address.Length;
+                    packetAddressLength = packet.DestinationAddress.Length;
                 }
                 var packetCargoLength = packet.Cargo.Length;
                 var packetDataChars = packetAddressLength + packetCargoLength;
@@ -164,9 +164,9 @@ namespace StarMeter.Controllers
                             count++;
 
                             var packetAddressLength = 0;
-                            if (packet.Address != null)
+                            if (packet.DestinationAddress != null)
                             {
-                                packetAddressLength = packet.Address.Length;
+                                packetAddressLength = packet.DestinationAddress.Length;
                             }
                             var packetCargoLength = packet.Cargo.Length;
                             var packetDataChars = packetAddressLength + packetCargoLength;
