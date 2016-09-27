@@ -44,7 +44,7 @@ namespace StarMeter.Tests.Controllers
             DateReceived = DateTime.ParseExact("08-09-2016 15:12:50.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
             IsError = true,
-            Address = ExampleAddress
+            DestinationAddress = ExampleAddress
         };
 
         private static readonly Packet Packet2 = new Packet
@@ -52,7 +52,7 @@ namespace StarMeter.Tests.Controllers
             PacketId = Guid.NewGuid(),
             DateReceived = DateTime.ParseExact("08-09-2016 15:12:52.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
-            Address = ExampleAddress
+            DestinationAddress = ExampleAddress
         };
 
         private static readonly Packet Packet3 = new Packet
@@ -60,7 +60,7 @@ namespace StarMeter.Tests.Controllers
             PacketId = Guid.NewGuid(),
             DateReceived = DateTime.ParseExact("08-09-2016 15:12:54.081", "dd-MM-yyyy HH:mm:ss.fff", null),
             Cargo = ExampleCargo,
-            Address = ExampleAddress
+            DestinationAddress = ExampleAddress
         };
 
         private readonly Dictionary<Guid,Packet> _packetDict = new Dictionary<Guid, Packet>
