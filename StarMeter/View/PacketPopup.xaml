@@ -74,8 +74,17 @@
             
             <Label x:Name="ProtocolLabel" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Protocol:" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
             <Label x:Name="SequenceNumberLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="Seq. Num: NOT IMPLEMENTED" VerticalContentAlignment="Center" FontStyle="Italic" FontFamily="Gill Sans MT"/>
-            <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="DestinationAddress:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
+          
+            <Grid Grid.Row="5" Grid.Column="1" >
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="AddressLabel" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="White" Content="DestinationAddress:" VerticalContentAlignment="Center" FontStyle="Italic" Grid.ColumnSpan="2" FontFamily="Gill Sans MT"/>
+                <Button Name="cmdToggleAddressType" Grid.Column="1" Margin="8" FontFamily="Gill Sans MT" FontSize="10" Click="cmdToggleAddressType_Click" Background="#FF4A4D54" BorderBrush="{x:Null}" Foreground="White">Switch To Hex</Button>
+            </Grid>
+            
         </Grid>
 
         <Grid Grid.Row="2">

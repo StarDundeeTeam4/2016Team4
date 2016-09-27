@@ -53,8 +53,8 @@
                     <ColumnDefinition Width="2.6*" />
                 </Grid.ColumnDefinitions>-->
 
-                <Image Name="LoadingIcon" Visibility="Visible" VerticalAlignment="Stretch" Grid.Column="0" HorizontalAlignment="Stretch" Margin="580, 400, 0, 0"/>
-                <Label Name="LoadingMessage" Visibility="Visible" Margin="580, 500, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..." FontSize="20" HorizontalContentAlignment="Center"/>
+            <Image Name="LoadingIcon" Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center" Height="342" Width="371" Margin="580, 150, 0, 0"/>
+            <Label Name="LoadingMessage" Visibility="Visible" Margin="720, 500, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Selecting File..." FontSize="20" HorizontalContentAlignment="Center"/>
 
             <!--</Grid>-->
 
@@ -617,6 +617,6 @@
         </Grid>
 
     </Grid>
-        
+
 
 </Window>

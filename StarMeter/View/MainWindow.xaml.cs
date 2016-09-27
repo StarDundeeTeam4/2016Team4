@@ -1132,12 +1132,13 @@ namespace StarMeter.View
             HeightScroller.Visibility = Visibility.Visible;
 
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
-            //GraphPanelPie.Width = new GridLength(3, GridUnitType.Star);
 
-            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
+            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
             DataVisButton2.Background = image;
 
-            _isRightArrow = false;
+            _isRightArrow = true;
+            _count = 0;
+
 
             try
             {
