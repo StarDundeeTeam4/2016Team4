@@ -175,5 +175,28 @@ namespace StarMeter.View
             Clipboard.SetText(_packet.DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff"));
             MessageBox.Show("Copied to clipboard");
         }
+
+        bool hex = false;
+
+        private void cmdToggleAddressType_Click(object sender, RoutedEventArgs e)
+        {
+            hex = !hex;
+
+            string output = "";
+
+            if (hex)
+            {
+                // get the hex value
+                output = "";
+            }
+            else 
+            {
+                // get the dec value
+                output = "";
+            }
+
+            AddressLabel.Content = output;
+
+        }
     }
 }
