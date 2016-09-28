@@ -44,25 +44,39 @@
             <ColumnDefinition Width="0*" Name="GraphPanelPie"/>
         </Grid.ColumnDefinitions>
 
+        <Grid Visibility="Hidden" Name="LoadingScreen" Panel.ZIndex="1" Grid.ColumnSpan="5" HorizontalAlignment="Stretch" Grid.RowSpan="6" VerticalAlignment="Stretch" Background="#E5070718" >
 
-        <Canvas Visibility="Hidden" Name="LoadingScreen" Panel.ZIndex="1" Grid.ColumnSpan="8" HorizontalAlignment="Stretch" Grid.RowSpan="5" VerticalAlignment="Stretch" Background="#E5050509">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
 
-            <!--<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Image Grid.Row="1" Name="LoadingIcon" Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center" Height="342" Width="371" Source="/StarMeter;component/Resources/rocket.gif"/>
+            <Label Grid.Row="2" Name="LoadingMessage" Visibility="Visible" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..." FontSize="20" HorizontalContentAlignment="Center"/>
+
+        </Grid>
+
+        <!--<Canvas Visibility="Visible" >
+
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2.6*" />
-                </Grid.ColumnDefinitions>-->
+                </Grid.ColumnDefinitions>
 
-            <Image Name="LoadingIcon" Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center" Height="342" Width="371" Margin="580, 150, 0, 0"/>
-            <Label Name="LoadingMessage" Visibility="Visible" Margin="720, 500, 0, 0" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Selecting File..." FontSize="20" HorizontalContentAlignment="Center"/>
+                <Image Name="LoadingIcon" Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Center" Height="342" Width="371" Margin="429,10,940.8,650">
+                    <Image.OpacityMask>
+                        <ImageBrush ImageSource="/StarMeter;component/Resources/rocket.gif" Stretch="Uniform"/>
+                    </Image.OpacityMask>
+                </Image>
+                <Label Name="LoadingMessage" Visibility="Visible" Foreground="White" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="Selecting File..." FontSize="20" HorizontalContentAlignment="Center"/>
 
-            <!--</Grid>-->
+            </Grid>
 
-        </Canvas>
+        </Canvas>-->
 
         <Grid Grid.Row="1" Grid.Column="5">
-
-
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*" Name="FileAreaCollapsible" />
@@ -174,7 +188,7 @@
 
                 <Grid Grid.Row="1" Margin="10,0,10,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="1.2*"/>
                         <RowDefinition Height="4*" Name="ErrorCollapse"/>
                     </Grid.RowDefinitions>
 
@@ -190,7 +204,16 @@
                                 <ImageBrush ImageSource="/StarMeter;component/Resources/minus.png"/>
                             </Button.Background>
                         </Button>
-                        <Label Foreground="White" FontFamily="Gill Sans MT" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Name="ErrorHeader">Error List (0 total):</Label>
+                        <Grid>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1.1*" />
+                                <RowDefinition Height="*" Name="ErrorDescription"/>
+                            </Grid.RowDefinitions>
+
+                            <Label Foreground="White" FontFamily="Gill Sans MT" FontSize="14" FontStyle="Italic" VerticalContentAlignment="Center" Name="ErrorHeader">Error List (0 total):</Label>
+                            <Label Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="10" FontStyle="Italic" VerticalContentAlignment="Center" Name="ErrorDesc">Click an error to go to it</Label>
+                        </Grid>
                     </Grid>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -214,12 +237,12 @@
         </Grid >
 
 
-        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left">
+        <Button Panel.ZIndex="10" BorderThickness="2" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="top" Click="PrevPage" Name="PrevPageBtn" HorizontalAlignment="Left" BorderBrush="White">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/left chevron.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
-        <Button BorderThickness="0" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0">
+        <Button Panel.ZIndex="10" BorderThickness="2" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Top" Click="NextPage" Name="NextPageBtn" HorizontalAlignment="Left" Margin="50,0,0,0" BorderBrush="White">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/right chevron.png" Stretch="Uniform"/>
             </Button.Background>
@@ -227,15 +250,15 @@
 
         <Label Foreground="White" Name="lblNumShowing" Grid.Row="2" Grid.Column="3" Margin="100,0,0,0" FontFamily="Gill Sans MT" FontSize="14" Visibility="Hidden">Showing 0 to 0 of 0 results</Label>
 
-        <Button Panel.ZIndex="10" Grid.Row="2" Grid.Column="3"  Width="50" Content="" VerticalAlignment="Stretch" Click="ShowDataVisPopup" Name="DataVisButton" BorderThickness="0" Visibility="Hidden">
+        <Button Panel.ZIndex="10" Grid.Row="2" Grid.Column="3" Content="" VerticalAlignment="Top" Click="ShowDataVisPopup" Name="DataVisButton" BorderThickness="0" Visibility="Hidden" Height="20" Width="140" >
             <Button.Background>
-                <ImageBrush ImageSource="pack://application:,,,/Resources/up-arrow.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="/StarMeter;component/Resources/chart button.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
 
-        <Button Grid.Row="1" Grid.Column="4"  Height="50" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch" BorderThickness="0" HorizontalAlignment="Stretch">
+        <Button Grid.Row="1" Grid.Column="4" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch" BorderThickness="0" HorizontalAlignment="Stretch" Margin="0.4,282,-0.4,282">
             <Button.Background>
-                <ImageBrush ImageSource="pack://application:,,,/Resources/right-arrow.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="/StarMeter;component/Resources/stats button.png" Stretch="Uniform"/>
             </Button.Background>
         </Button>
 
@@ -256,7 +279,7 @@
                     <Grid Grid.Column="1" Visibility="Hidden" Name="DataRadioButtons">
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="1.2*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
@@ -267,6 +290,8 @@
                         <RadioButton Tag="1" Checked="ChangeLineGraphData" Panel.ZIndex="10" GroupName="DataToDisplay" Foreground="White" FontFamily="Gill Sans MT" Grid.Row="2" VerticalContentAlignment="Center">Error Rate</RadioButton>
                         <RadioButton Tag="2" Checked="ChangeLineGraphData" Panel.ZIndex="10" GroupName="DataToDisplay" Foreground="White" FontFamily="Gill Sans MT" Grid.Row="3" VerticalContentAlignment="Center">Data Rate</RadioButton>
 
+                        <TextBlock TextWrapping="Wrap" Grid.Row="4"  Name="lblLineGraphDisplaying" Foreground="White" FontFamily="Gill Sans MT">"Currently Displaying: How many packets were received between the intervals shown"</TextBlock>
+                        
                     </Grid>
 
                     <!-- Chart for displaying the data rates, assigned to the bottom row -->
@@ -338,12 +363,11 @@
                         <ColumnDefinition Width="*" Name="Port3B"/>
                         <ColumnDefinition Width="*" Name="Port4A"/>
                         <ColumnDefinition Width="*" Name="Port4B"/>
-                        <ColumnDefinition Width="50000*" Name="NoPacketsArea"/>
+                        <ColumnDefinition Width="5000*" Name="NoPacketsArea"/>
                     </Grid.ColumnDefinitions>
 
-
-                    <Label Grid.Column="10" Foreground="White" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="16">No Packets to Display</Label>
-
+                    <Label BorderThickness="0" Grid.Column="9" Foreground="White" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="Gill Sans MT" FontSize="16">No Packets to Display</Label>
+            
                     <!-- Container for the time elements -->
                     <StackPanel Background="#FF616161" Name="TimeList" Margin="0,0,0,-0.4" Grid.RowSpan="2"/>
 
@@ -379,7 +403,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Image HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" />
+            <Image Name="StarLogo" HorizontalAlignment="Left" Grid.Row ="0" Grid.Column="0" VerticalAlignment="Top" Source="/StarMeter;component/Resources/STAR Dundee.png" >
+                <Image.OpacityMask>
+                    <ImageBrush ImageSource="/StarMeter;component/Resources/STAR Dundee.png"/>
+                </Image.OpacityMask>
+            </Image>
         </Grid>
 
 
@@ -419,9 +447,9 @@
                 <ColumnDefinition Width="1*" Name="LeftPanelButton"/>
             </Grid.ColumnDefinitions>
 
-            <Button Height="50" Content="" BorderThickness="0" Click="ShowDataVisPopup3" Name="DataVisButton3" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="Collapsed">
+            <Button Content="" BorderThickness="0" Click="ShowDataVisPopup3" Name="DataVisButton3" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Visibility="Collapsed" Margin="0.4,282,-0.4,282">
                 <Button.Background>
-                    <ImageBrush ImageSource="pack://application:,,,/Resources/left-arrow.png" Stretch="UniformToFill"/>
+                    <ImageBrush ImageSource="/StarMeter;component/Resources/filter button2.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
         </Grid>
@@ -434,18 +462,18 @@
                     <RowDefinition Height="0.32*" Name="Heading"/>
                     <RowDefinition Height=".7*" Name="PortInfoButtons"/>
                     <RowDefinition Height="1.4*" Name="PortChecks"/>
-                    <RowDefinition Height=".2*" Name="ErrorsOnly"/>
                     <RowDefinition Height=".7*" Name="AddressSearch"/>
                     <RowDefinition Height=".7*" Name="ProtocolSearch"/>
                     <RowDefinition Height=".9*" Name="TimeFilters"/>
+                    <RowDefinition Height=".2*" Name="ErrorsOnly"/>
                     <RowDefinition Height=".7*" Name="ApplyButton"/>
                     <RowDefinition Height=".35*" Name="ResetBit"></RowDefinition>
                 </Grid.RowDefinitions>
 
 
-                <Button Name="cmdApplyFilters" Grid.Row="7" FontSize="16" FontFamily="Gill Sans MT" Background="#FF4A4D54" Foreground="White" Margin="0,8,0,8" Click="cmdApplyFilters_Click" BorderBrush="{x:Null}">APPLY FILTERS</Button>
+                <Button Name="cmdApplyFilters" Grid.Row="7" FontSize="16" FontFamily="Gill Sans MT" Background="#FF4A4D54" Foreground="White" Margin="0,5,0,8" Click="cmdApplyFilters_Click" BorderBrush="{x:Null}">APPLY FILTERS</Button>
 
-                <Grid Grid.Row="3" Background="#4C000000" Margin="0,0,0,5">
+                <Grid Grid.Row="6" Background="#4C000000" Margin="0,5,0,0">
                     <CheckBox Margin="10,0,0,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" Content="Display errors only" VerticalAlignment="Center" Foreground="White" Name="ChkErrorsOnly" FontFamily="Gill Sans MT" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
                 </Grid>
 
@@ -501,7 +529,7 @@
                     </Grid>
                 </Grid>
 
-                <Grid Grid.Row="4" Margin="0,0,0,4" Background="#4C000000">
+                <Grid Grid.Row="3" Margin="0,0,0,4" Background="#4C000000">
 
                     <Grid Name="AddressSearching">
                         <Grid.RowDefinitions>
@@ -527,7 +555,7 @@
 
                 </Grid>
 
-                <Grid Grid.Row="5" Background="#4C000000" Margin="0,0,0,4">
+                <Grid Grid.Row="4" Background="#4C000000" Margin="0,0,0,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="35*"/>
                         <RowDefinition Height="35*"/>
@@ -545,7 +573,7 @@
                     <!--<TextBox TextChanged="protocolSearch_TextChanged" Grid.Row="1" Grid.Column="0" x:Name="protocolSearch" Margin="10,5,10,5" FontFamily="Gill Sans MT" FontSize="14"/>-->
                 </Grid>
 
-                <Grid Margin="0,0,0,0" Grid.Row="6" Name="TimeFilterSection" Background="#4C000000">
+                <Grid Margin="0,0,0,0" Grid.Row="5" Name="TimeFilterSection" Background="#4C000000">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1.2*"/>
                         <RowDefinition Height="2*"/>
@@ -555,7 +583,9 @@
 
                     <Grid Name="TimeInput" Grid.Row="1">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="5*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
@@ -565,16 +595,26 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <Label Margin="5,0,5,0" Grid.Column="0" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">Start Time</Label>
-                        <Label Margin="5,0,5,0" Grid.Column="1" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">End Time</Label>
+                        <Label Margin="5,0,5,0" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">Start Time</Label>
+                        <Label Margin="5,0,5,0" HorizontalContentAlignment="Center" Grid.Column="2" Grid.Row="0" Foreground="White" FontFamily="Gill Sans MT" FontSize="14">End Time</Label>
 
-                        <Label Margin="5,0,5,0" Grid.Column="0" Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="8.8">(dd/mm/yyyy hh/mm/ss/fff)</Label>
-                        <Label Margin="5,0,5,0" Grid.Column="1" Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="8.8">(dd/mm/yyyy hh/mm/ss/fff)</Label>
+                        <Label Grid.ColumnSpan="2" Margin="5,0,5,0" Grid.Column="0" Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="8.8">(dd/mm/yyyy hh/mm/ss/fff)</Label>
+                        <Label Grid.ColumnSpan="2" Margin="5,0,5,0" Grid.Column="2" Grid.Row="1" Foreground="White" FontFamily="Gill Sans MT" FontSize="8.8">(dd/mm/yyyy hh/mm/ss/fff)</Label>
 
-                        <TextBox TextChanged="StartTimeTextBox_TextChanged" Grid.Column="0" Grid.Row="2" Margin="8,0,10,5"  Name="StartTimeTextBox" FontFamily="Gill Sans MT" FontSize="11"/>
-                        <TextBox TextChanged="EndTimeTextBox_TextChanged" Grid.Column="1" Grid.Row="2" Margin="8,0,10,5" Name="EndTimeTextBox" FontFamily="Gill Sans MT" FontSize="11"/>
+                        <TextBox Grid.ColumnSpan="2" TextChanged="StartTimeTextBox_TextChanged" Grid.Column="0" Grid.Row="2" Margin="8,0,8,5"  Name="StartTimeTextBox" FontFamily="Gill Sans MT" FontSize="11"/>
+                        <TextBox Grid.ColumnSpan="2" TextChanged="EndTimeTextBox_TextChanged" Grid.Column="2" Grid.Row="2" Margin="10,0,8,5" Name="EndTimeTextBox" FontFamily="Gill Sans MT" FontSize="11"/>
+                        <Button Tag="0" Click="OpenTimeEdit" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Margin="0,0,8,0">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/StarMeter;component/Resources/edit.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                        <Button Tag="1" Click="OpenTimeEdit" Content="" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Margin="0,0,8,0">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/StarMeter;component/Resources/edit.png" Stretch="Uniform"/>
+                            </Button.Background>
+                        </Button>
+                    
                     </Grid>
-
                 </Grid>
                 <Grid Grid.Row="8">
                     <Grid.ColumnDefinitions>

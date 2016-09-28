@@ -145,7 +145,7 @@ namespace StarMeter.Controllers
                 var endTime = packets[packets.Length - 1].DateReceived.TimeOfDay;
                 var timeDifference = endTime - startTime;
 
-                const int numPoints = 10;
+                const int numPoints = 15;
                 var graphInterval = timeDifference.TotalMilliseconds / numPoints;
 
                 for (var i = 0; i < numPoints; i++)
