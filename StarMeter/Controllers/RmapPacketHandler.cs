@@ -94,7 +94,7 @@ namespace StarMeter.Controllers
                         break;
                     }
                 }
-                var addressLength = secondaryAddressIndex - destinationKeyIndex + 1;
+                var addressLength = secondaryAddressIndex - destinationKeyIndex;
                 addressArray = new byte[addressLength];
                 Array.Copy(rmapPacket.FullPacket, destinationKeyIndex + 1, addressArray, 0, addressLength);
             }
