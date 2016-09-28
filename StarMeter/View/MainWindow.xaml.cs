@@ -167,6 +167,9 @@ namespace StarMeter.View
             }
         }
 
+
+        int _prevCount = 0;
+
         /// <summary>
         /// Update which frame of the gif to display
         /// </summary>
@@ -177,6 +180,7 @@ namespace StarMeter.View
                 _animCount = 0; // go back to start
             }
             LoadingIcon.Source = _gifDecoder.Frames[_animCount];
+           
         }
 
         /// <summary>
@@ -431,7 +435,7 @@ namespace StarMeter.View
             };
             RatesLineChart.Series.Add(lineSeries);
 
-            RatesLineChart.DataContext =  _lineChartData[index];
+            RatesLineChart.DataContext = _lineChartData[index];
 
             // format the legend
             Legend legend = ObjectFinder.FindChild<Legend>(RatesLineChart, "Legend");
@@ -652,15 +656,18 @@ namespace StarMeter.View
 
             if (_isUpArrow)
             {
-                DataVisButton.VerticalAlignment = VerticalAlignment.Top;
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/down-arrow.png")));
+                //DataVisButton.VerticalAlignment = VerticalAlignment.Top;
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/chart button2.png")))
+                {
+                    Stretch = Stretch.Uniform
+                };
                 DataRadioButtons.Visibility = Visibility.Visible;
             }
             else
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")))
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/chart button.png")))
                 {
-                    Stretch = Stretch.UniformToFill
+                    Stretch = Stretch.Uniform
                 };
                 DataRadioButtons.Visibility = Visibility.Hidden;
             }
@@ -688,11 +695,11 @@ namespace StarMeter.View
 
             if (_isRightArrow)
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button.png")));
             }
             else
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button2.png")));
             }
 
             // start the timer
@@ -718,11 +725,11 @@ namespace StarMeter.View
 
             if (_isLeftArrow)
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/filter button2.png")));
             }
             else
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/right-arrow.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/filter button.png")));
             }
 
             // start the timer
@@ -857,7 +864,7 @@ namespace StarMeter.View
         {
             if (!_isUpArrow)
             {
-                DataVisButton.VerticalAlignment = VerticalAlignment.Stretch;
+                //DataVisButton.VerticalAlignment = VerticalAlignment.Stretch;
             }
         }
         
@@ -1069,6 +1076,10 @@ namespace StarMeter.View
         {
             // get the list of packets
             var packets = _controller.ParsePackets().ToList();
+
+            // for presentation purposes?
+            //Thread.Sleep(1000);
+
         }
 
         void DoWork(object arg) 
@@ -1133,11 +1144,11 @@ namespace StarMeter.View
 
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
 
-            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/left-arrow.png")));
+            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button2.png")));
             DataVisButton2.Background = image;
 
             _isRightArrow = true;
-            _count = 0;
+            _count2 = 0;
 
 
             try
@@ -1646,9 +1657,9 @@ namespace StarMeter.View
             DataVisualisationPopup.Height = new GridLength(1, GridUnitType.Star);
 
             _isUpArrow = true;
-            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/up-arrow.png")))
+            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/chart button.png")))
             {
-                Stretch = Stretch.UniformToFill
+                Stretch = Stretch.Uniform
             };
 
             DataVisButton.Background = image;
@@ -1901,12 +1912,14 @@ namespace StarMeter.View
                 ErrorAreaCollapse.Height = new GridLength(2.5, GridUnitType.Star);                 
                 ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/minus.png")));
                 cmdCollapseErrorList.Background = image;
+                ErrorDescription.Height = new GridLength(1, GridUnitType.Star);
             }
             else
             {
                 ErrorCollapse.Height = new GridLength(0, GridUnitType.Star);
                 ErrorAreaCollapse.Height = new GridLength(.3, GridUnitType.Star);
                 ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/plus.png")));
+                ErrorDescription.Height = new GridLength(0, GridUnitType.Star);
                 cmdCollapseErrorList.Background = image;
             }
         }
@@ -2206,6 +2219,9 @@ namespace StarMeter.View
             }
         }
 
+
+        private string[] lineDisplayLabels = new string[] { "How many packets were received", "How many errors were picked up", "How many data characters were read" }; 
+
         private void ChangeLineGraphData(object sender, EventArgs e)
         {
             try
@@ -2213,8 +2229,32 @@ namespace StarMeter.View
                 var id = int.Parse(((RadioButton)sender).Tag.ToString());
 
                 FormatLineChart(id);
+
+                lblLineGraphDisplaying.Text = "Currently Displaying: " + lineDisplayLabels[id] + " between the intervals shown";
+
             }
             catch (Exception) { }
+        }
+
+        private void OpenTimeEdit(object sender, RoutedEventArgs e)
+        {
+            var tag = int.Parse(((Button)sender).Tag.ToString());
+
+            string content = "";
+            if (tag == 0) { content = StartTimeTextBox.Text; }
+            if (tag == 1) { content = EndTimeTextBox.Text; }
+
+            TimeSelector ts = new TimeSelector();
+            ts.SetupElements(content);
+
+            ts.ShowDialog();
+
+            if(ts.DateCreated != "")
+            {
+                if (tag == 0) { StartTimeTextBox.Text = ts.DateCreated; }
+                if (tag == 1) { EndTimeTextBox.Text = ts.DateCreated; }
+            }
+
         }
     }
 }

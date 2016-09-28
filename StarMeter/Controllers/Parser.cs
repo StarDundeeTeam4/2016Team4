@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using StarMeter.Interfaces;
 using StarMeter.Models;
+using System.IO;
 
 namespace StarMeter.Controllers
 {
@@ -19,6 +20,7 @@ namespace StarMeter.Controllers
         /// <returns>A Dictionary of Packets paired with their IDs of the file's contents</returns>
         public Dictionary<Guid, Packet> ParseFile(string filePath)
         {
+         
             PrevPacket = null;
             var streamReader = new StreamReaderWrapper(filePath);
             PacketDict.Clear();

@@ -166,4 +166,31 @@
   <data name="ProtocolList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ProtocolList.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="chart_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\chart button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="chart_button2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\chart button2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="filter_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\filter button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="filter_button2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\filter button2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="stats_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stats button.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="stats_button2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stats button2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WIN_20160927_16_24_10_Pro" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WIN_20160927_16_24_10_Pro.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="info" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\info.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\edit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
