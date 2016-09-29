@@ -149,6 +149,32 @@ namespace StarMeter.View
             catch (Exception e) { }
         }
 
+        void RemoveProtocolFromFile(string protocol) 
+        {
+            var allLines = File.ReadAllLines("../../Resources/ProtocolList.txt");
+
+            StreamWriter sw = new StreamWriter("../../Resources/ProtocolList.txt", false);
+
+            foreach (var l in allLines) 
+            {
+                if (!l.Split('@')[0].Trim().Equals(protocol.Split('@')[0].Trim())) 
+                {
+                    sw.WriteLine(l);
+                }
+            }
+
+            sw.Close();
+
+        }
+
+        void RemoveProtocol(object sender, RoutedEventArgs e) 
+        {
+            var objectSelected = ((ComboBoxItem)sender);
+            var content = objectSelected.Content.ToString();
+            RemoveProtocolFromFile(content);
+            ProtocolSelected.Items.Remove(objectSelected);
+        }
+
         void AddProtocolObjects() 
         {
             foreach (var p in Protocols)
@@ -162,6 +188,7 @@ namespace StarMeter.View
                 cb.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
                 cb.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
                 cb.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                cb.MouseRightButtonUp += RemoveProtocol;
 
                 ProtocolSelected.Items.Add(cb);
             }
@@ -342,6 +369,8 @@ namespace StarMeter.View
                 btn.Tag = tempTimespans[index].Key + "@" + p.PortNumber;
 
                 btn.Click += ViewMultiplePackets;
+                
+                btn.ToolTip = null;
 
                 Label l = (Label)btn.Content;
                 btn.Tag = tempTimespans[index].Key + "@" + p.PortNumber;
@@ -441,6 +470,7 @@ namespace StarMeter.View
             Legend legend = ObjectFinder.FindChild<Legend>(RatesLineChart, "Legend");
             if (legend != null)
             {
+                legend.FontFamily = new System.Windows.Media.FontFamily("Gill Sans MT");
                 legend.Visibility = Visibility.Hidden;
                 legend.Foreground = new SolidColorBrush(Colors.White);
                 legend.Background = new SolidColorBrush(Colors.Transparent);
@@ -466,9 +496,9 @@ namespace StarMeter.View
             Style stylePie2 = new Style(typeof(LineDataPoint));
             stylePie2.Setters.Add(new Setter(LineDataPoint.BackgroundProperty, currentBrush));
             pieDataPointStyles2.Add("DataPointStyle", stylePie2);
+
+            RatesLineChart.FontSize = 10;
             
-
-
             // set the palette
             lineSeriesPalette.Add(pieDataPointStyles2);
             RatesLineChart.Palette = lineSeriesPalette;
@@ -695,11 +725,17 @@ namespace StarMeter.View
 
             if (_isRightArrow)
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button.png")))
+                {
+                    Stretch = Stretch.Uniform
+                };
             }
             else
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button2.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button2.png")))
+                {
+                    Stretch = Stretch.Uniform
+                };
             }
 
             // start the timer
@@ -725,11 +761,17 @@ namespace StarMeter.View
 
             if (_isLeftArrow)
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/filter button2.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/filter button2.png")))
+                {
+                    Stretch = Stretch.Uniform
+                };
             }
             else
             {
-                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/filter button.png")));
+                image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/filter button.png")))
+                {
+                    Stretch = Stretch.Uniform
+                };
             }
 
             // start the timer
@@ -1144,7 +1186,10 @@ namespace StarMeter.View
 
             RightButtonColumn.Width = new GridLength(0.25, GridUnitType.Star);
 
-            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button2.png")));
+            ImageBrush image = new ImageBrush(new BitmapImage(new Uri(@"pack://application:,,,/Resources/stats button2.png")))
+            {
+                Stretch = Stretch.Uniform
+            };
             DataVisButton2.Background = image;
 
             _isRightArrow = true;
@@ -1474,15 +1519,13 @@ namespace StarMeter.View
                         
             try
             {
-                StartTimeTextBox.Text = SortedPackets[0].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
-                EndTimeTextBox.Text = SortedPackets[SortedPackets.Count - 1].DateReceived.ToString("dd-MM-yyyy HH:mm:ss.fff");
+                StartTimeTextBox.Text = "";
+                EndTimeTextBox.Text = "";
             }
             catch (Exception) { }
-
-            CreateDataRateGraph(_controller.Packets.Values.ToArray());
-
-            // reset the colour of the Apply button
-            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF4A4D54");
+            
+            // reset the colour of the Apply button1
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
         
         /// <summary>
@@ -1703,6 +1746,10 @@ namespace StarMeter.View
                 if ((start != new DateTime()) && (end != new DateTime()))
                 {
                     validTime = LogicHelper.IsBetweenTimes(packet, start, end);
+                }
+                else if (start == new DateTime() && end == new DateTime())
+                {
+                    validTime = true;
                 }
                 else if (start == new DateTime())
                 {
@@ -2241,11 +2288,12 @@ namespace StarMeter.View
             var tag = int.Parse(((Button)sender).Tag.ToString());
 
             string content = "";
-            if (tag == 0) { content = StartTimeTextBox.Text; }
-            if (tag == 1) { content = EndTimeTextBox.Text; }
+            string timeToChange = "";
+            if (tag == 0) { content = StartTimeTextBox.Text; timeToChange = "Start"; }
+            if (tag == 1) { content = EndTimeTextBox.Text; timeToChange = "End"; }
 
             TimeSelector ts = new TimeSelector();
-            ts.SetupElements(content);
+            ts.SetupElements(content, timeToChange);
 
             ts.ShowDialog();
 

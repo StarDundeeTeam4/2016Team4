@@ -27,7 +27,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label x:Name="Label" Grid.Row="0"  Content="Rmap Properties View" Width="290" HorizontalAlignment="Center" HorizontalContentAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontSize="16" />
+            <Label x:Name="Label" Grid.Row="0"  Content="RMAP Properties View" Width="290" HorizontalAlignment="Center" HorizontalContentAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Margin="0,-3,0,0" FontFamily="Gill Sans MT" FontSize="16" />
 
         </Grid>
 

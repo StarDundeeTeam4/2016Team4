@@ -1,7 +1,7 @@
 ﻿<Window x:Class="StarMeter.View.ProtocolCreator"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ProtocolCreator" Height="300" Width="300" ResizeMode="NoResize">
+        Title="Add a new Protocol" Height="300" Width="300" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="169*"/>

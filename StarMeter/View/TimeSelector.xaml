@@ -1,7 +1,7 @@
 ﻿<Window x:Class="StarMeter.View.TimeSelector"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="TimeSelector" Height="329.6" Width="382.4" ResizeMode="NoResize" Background="#FF686868">
+        Title="Set the X time" Height="329.6" Width="382.4" ResizeMode="NoResize" Background="#FF686868">
     <Grid>
 
         <Grid.RowDefinitions>
