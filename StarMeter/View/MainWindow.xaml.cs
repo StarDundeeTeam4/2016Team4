@@ -1775,7 +1775,7 @@ namespace StarMeter.View
                 if (protoSearch.Length > 1 && protoSearch[0].Length > 0)
                 {
                     validProtocol = ProtocolSelected.SelectedIndex == 0 
-                        ? LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim()) 
+                        ? LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim())
                         : LogicHelper.DecimalProtocolSearch(packet, protoSearch[0].Trim());
                 }
                 else
@@ -2263,6 +2263,8 @@ namespace StarMeter.View
                 {
                     ProtocolSelected.SelectedValue = 0;
                 }
+
+                cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
 
             }
         }
