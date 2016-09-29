@@ -26,10 +26,13 @@ namespace StarMeter.View
             InitializeComponent();
         }
 
-        public void SetupElements(string content) 
+        public void SetupElements(string content, string timeToChange) 
         {
             // split the date already selected, and put into the correct text boxes
             try{
+
+                this.Title = "Select the " + timeToChange + " time";
+
                 string[] splitDate = content.Split('-');
                 txtDay.Text = splitDate[0];
                 txtMonth.Text = splitDate[1];

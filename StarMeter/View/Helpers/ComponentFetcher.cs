@@ -77,6 +77,15 @@ namespace StarMeter.View.Helpers
 
             packetButton.SetResourceReference(FrameworkElement.StyleProperty, packetStatus);
             packetButton.Name = "btn" + nameOutput;
+            if (packet.IsError)
+            {
+                packetButton.ToolTip = packet.ErrorType;
+            }
+            else 
+            {
+                packetButton.ToolTip = "No Errors";
+            }
+            packetButton.BorderThickness = new Thickness(0);
             return packetButton;
             #endregion
         }

@@ -45,7 +45,7 @@ namespace StarMeter.View
             {
                 logo.UriSource = new Uri("pack://application:,,,/Resources/tick.png");
                 logo.EndInit();
-                lblErrorMsg.Content = "SUCCESS";
+                lblErrorMsg.Content = "NO ERRORS";
             }
             else
             {

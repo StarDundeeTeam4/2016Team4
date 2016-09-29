@@ -178,9 +178,9 @@ namespace StarMeter.Controllers
                             }
                         }
                     }
-                    var kvp = new KeyValuePair<string, int>(lowerBound.ToString(), count);
-                    var kvpError = new KeyValuePair<string, int>(lowerBound.ToString(), errorCount);
-                    var kvpData = new KeyValuePair<string, int>(lowerBound.ToString(), charCount);
+                    var kvp = new KeyValuePair<string, int>(lowerBound.ToString().Substring(0, lowerBound.ToString().Length - 4), count);
+                    var kvpError = new KeyValuePair<string, int>(lowerBound.ToString().Substring(0, lowerBound.ToString().Length - 4), errorCount);
+                    var kvpData = new KeyValuePair<string, int>(lowerBound.ToString().Substring(0, lowerBound.ToString().Length - 4), charCount);
                     graphData.Add(kvp);
                     errorData.Add(kvpError);
                     dataRate.Add(kvpData);

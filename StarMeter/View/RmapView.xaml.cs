@@ -22,7 +22,7 @@ namespace StarMeter.View
                 DestinationKeyLabel.Content = "Status: ";
                 DestinationKeyLabel.Content += packet.DestinationKey > 0 
                     ? "Command Failed Execution" 
-                    : "Command Succesful";
+                    : "Command Successful";
             }
             else
             {

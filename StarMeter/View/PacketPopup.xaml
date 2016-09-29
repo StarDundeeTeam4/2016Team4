@@ -96,7 +96,7 @@
 
 
             <Button Grid.Row="2" Grid.Column="0" Content="View Cargo" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ViewCargo" Margin="15,0,15,0" BorderBrush="{x:Null}" Name="CargoButton"/>
-            <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View Rmap Properties" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ShowRmapProperties" Margin="15,0,15,0" BorderBrush="{x:Null}" Grid.Column="1"/>
+            <Button Name="ViewRmapPropertiesButton" Grid.Row="2" Content="View RMAP Properties" Background="#FF4A4D54" Foreground="White" FontFamily="Gill Sans MT" FontSize="16" Click="ShowRmapProperties" Margin="15,0,15,0" BorderBrush="{x:Null}" Grid.Column="1"/>
 
 
         </Grid>

@@ -84,6 +84,16 @@ namespace StarMeter.View
             }
 
             button.SetResourceReference(StyleProperty, sty);
+
+            if (packet.IsError)
+            {
+                button.ToolTip = packet.ErrorType;
+            }
+            else
+            {
+                button.ToolTip = "No Errors";
+            }
+
             return button;
             #endregion
         }
