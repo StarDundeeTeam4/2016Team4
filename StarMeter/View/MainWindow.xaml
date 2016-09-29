@@ -558,18 +558,20 @@
                 <Grid Grid.Row="4" Background="#4C000000" Margin="0,0,0,4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="35*"/>
+                        <RowDefinition Height="15*"/>
                         <RowDefinition Height="35*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <ComboBox DropDownClosed="ProtocolSelected_SelectionChanged" SelectedIndex="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="No Protocol Selected" Name="ProtocolSelected" Margin="10,5,10,5" Grid.Row="1" FontFamily="Gill Sans MT" FontSize="15">
+                    <ComboBox DropDownClosed="ProtocolSelected_SelectionChanged" SelectedIndex="1" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Text="No Protocol Selected" Name="ProtocolSelected" Margin="10,5,10,5" Grid.Row="2" FontFamily="Gill Sans MT" FontSize="15">
                         <ComboBoxItem FontFamily="Gill Sans MT" Background="#FF236004" Foreground="White" FontSize="15" Name="cbNEW">Add New Protocol</ComboBoxItem>
                         <ComboBoxItem FontFamily="Gill Sans MT" FontSize="15" Name="cbi0">None</ComboBoxItem>
                     </ComboBox>
 
                     <Label HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0" Content="PROTOCOL SEARCHING" Foreground="White" VerticalAlignment="Center" FontSize="16" FontFamily="Gill Sans MT" Margin="10,0,10,0"/>
+                    <TextBlock HorizontalAlignment="Left" Grid.Row="1" Grid.Column="0" Text="(Right-click an item to remove it)" Foreground="White" VerticalAlignment="Center" FontSize="10" FontFamily="Gill Sans MT" Margin="10,0,0,0"/>
                     <!--<TextBox TextChanged="protocolSearch_TextChanged" Grid.Row="1" Grid.Column="0" x:Name="protocolSearch" Margin="10,5,10,5" FontFamily="Gill Sans MT" FontSize="14"/>-->
                 </Grid>
 
