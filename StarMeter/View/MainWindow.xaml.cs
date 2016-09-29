@@ -1774,7 +1774,7 @@ namespace StarMeter.View
                 bool validProtocol;
                 if (protoSearch.Length > 1 && protoSearch[0].Length > 0)
                 {
-                    validProtocol = AddressTypeDropdown.SelectedIndex == 0 
+                    validProtocol = ProtocolSelected.SelectedIndex == 0 
                         ? LogicHelper.HexAddressSearch(packet, protoSearch[0].Trim()) 
                         : LogicHelper.DecimalProtocolSearch(packet, protoSearch[0].Trim());
                 }
@@ -2253,6 +2253,7 @@ namespace StarMeter.View
                     cb.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Left;
                     cb.VerticalAlignment = System.Windows.VerticalAlignment.Stretch;
                     cb.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                    cb.MouseRightButtonUp += RemoveProtocol;
 
                     ProtocolSelected.Items.Add(cb);
 
