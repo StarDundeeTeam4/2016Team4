@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Linq;
 using StarMeter.Models;
 
 namespace StarMeter.View.Helpers
 {
-    public class PacketLabelCreator
+    public static class PacketLabelCreator
     {
         public static string GetAddressLabel(byte[] packetAddress)
         {
@@ -13,21 +14,21 @@ namespace StarMeter.View.Helpers
                 if (packetAddress.Length > 1)
                 {
                     finalAddressString += "Physical Path: ";
-                    for (var i = 0; i < packetAddress.Length - 1; i++)
+                    for (int i = 0; i < packetAddress.Length; i++)
                     {
-                        finalAddressString += Convert.ToInt32(packetAddress[i]) + "  ";
+                        finalAddressString += Convert.ToInt32(packetAddress[i]) + " ";
                     }
                 }
                 else
                 {
-                    finalAddressString = Convert.ToInt32(packetAddress[0]).ToString();
+                    finalAddressString = Convert.ToInt32(packetAddress[0]).ToString() + " ";
                 }
             }
             else
             {
-                finalAddressString = "No Address";
+                finalAddressString = "No Address ";
             }
-            return finalAddressString;
+            return finalAddressString.Remove(finalAddressString.Length - 1);
         }
 
         public static string GetProtocolLabel(int protocolId)
