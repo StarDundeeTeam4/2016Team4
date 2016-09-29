@@ -1118,10 +1118,6 @@ namespace StarMeter.View
         {
             // get the list of packets
             var packets = _controller.ParsePackets().ToList();
-
-            // for presentation purposes?
-            //Thread.Sleep(1000);
-
         }
 
         void DoWork(object arg) 
