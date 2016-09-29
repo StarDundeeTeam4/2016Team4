@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using StarMeter.Models;
 using StarMeter.View.Helpers;
+using System;
 
 namespace StarMeter.View
 {
@@ -29,13 +30,18 @@ namespace StarMeter.View
                 DestinationKeyLabel.Content += packet.DestinationKey.ToString();
             }
 
-            if (packet.SecondaryAddress.Length == 0)
+            if (packet.SecondaryAddress.Length == 1 && packet.SecondaryAddress[0] > 32)
             {
-                SourcePathAddressLabel.Content += "No Path Address";
+                SourcePathAddressLabel.Content = "Source " + PacketLabelCreator.GetAddressLabel(packet.DestinationAddress);
             }
             else
             {
-                SourcePathAddressLabel.Content = PacketLabelCreator.GetSourcePathAddress(packet);
+                var finalAddressString = "Physical Path: ";
+                for (var i = 0; i < packet.SecondaryAddress.Length - 1; i++)
+                {
+                    finalAddressString += Convert.ToInt32(packet.SecondaryAddress[i]) + "  ";
+                }
+                SourcePathAddressLabel.Content = finalAddressString;
             }
             CommandByteLabel.Content += ToBitString(Reverse(packet.CommandByte));
             PacketTypeLabel.Content += packet.PacketType;
