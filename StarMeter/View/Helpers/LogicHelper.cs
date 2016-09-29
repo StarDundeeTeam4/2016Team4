@@ -3,7 +3,7 @@ using System;
 
 namespace StarMeter.View.Helpers
 {
-    public class LogicHelper
+    public static class LogicHelper
     {
         /// <summary>
         /// Check if a packet is received after a certain time
