@@ -3,7 +3,7 @@ using System;
 
 namespace StarMeter.View.Helpers
 {
-    public class LogicHelper
+    public static class LogicHelper
     {
         /// <summary>
         /// Check if a packet is received after a certain time
@@ -71,9 +71,9 @@ namespace StarMeter.View.Helpers
         /// <returns></returns>
         public static bool DecimalAddressSearch(Packet packet, string addressToSearch)
         {
-            var address = packet.DestinationAddress;
-            var finalAddressString = PacketLabelCreator.GetAddressLabel(address);
-            return finalAddressString.Equals(addressToSearch);
+            byte[] address = packet.DestinationAddress;
+            string finalAddressString = PacketLabelCreator.GetAddressLabel(address);
+            return finalAddressString.EndsWith(addressToSearch);
         }
 
         /// <summary>
