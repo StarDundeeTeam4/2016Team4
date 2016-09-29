@@ -2264,9 +2264,9 @@ namespace StarMeter.View
                     ProtocolSelected.SelectedValue = 0;
                 }
 
-                cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
-
             }
+
+            cmdApplyFilters.Background = (Brush)_brushConvertor.ConvertFromString("#FF37A300");
         }
 
 
