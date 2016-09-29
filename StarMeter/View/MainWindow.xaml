@@ -256,7 +256,7 @@
             </Button.Background>
         </Button>
 
-        <Button Grid.Row="1" Grid.Column="4" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch" BorderThickness="0" HorizontalAlignment="Stretch" Margin="0.4,307,-0.4,315.2" Height="137.59">
+        <Button Grid.Row="1" Grid.Column="4" Content=""  Click="ShowDataVisPopup2" Name="DataVisButton2" VerticalAlignment="Stretch" BorderThickness="0" HorizontalAlignment="Stretch" Margin="0.4,285,-0.4,315.2" Height="142">
             <Button.Background>
                 <ImageBrush ImageSource="/StarMeter;component/Resources/stats button.png" Stretch="Uniform"/>
             </Button.Background>
